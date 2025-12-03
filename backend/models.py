@@ -42,6 +42,8 @@ class Shift(SQLModel, table=True):
     start_time: datetime
     end_time: datetime
     notes: Optional[str] = None
+    parent_id: Optional[int] = Field(default=None) # For recurrence grouping
+    is_vacation: bool = Field(default=False)
     
     employee: Optional[Employee] = Relationship(back_populates="shifts")
-    role: Role = Relationship(back_populates="shifts")
+    role: Optional[Role] = Relationship(back_populates="shifts")
