@@ -1,0 +1,141 @@
+This is a great project idea. Excel is often the "database of choice" for businesses, but it lacks the logic constraints needed for complex scheduling (like preventing double-booking or managing shift rules).
+
+Building a program that sits on top of Excel allows you to keep the data where users are comfortable while enforcing rules via your code.
+
+Here are the three most common architectural approaches to building this, ranging from simple to complex.
+
+### 1. The "Live Control" Method (Python + xlwings)
+This is the best route if you want to use Excel as the *User Interface*. The user has Excel open, but your Python script runs in the background, listening for button clicks in Excel to run complex scheduling algorithms.
+
+* **How it works:** You create a button in Excel that triggers a Python script. The script reads the current sheet, calculates the schedule, and writes the results back instantly.
+* **Key Libraries:** `xlwings` (specifically designed to let Python control a live Excel instance).
+* **Pros:** Users stay in Excel (familiar environment); you get the power of Python.
+* **Cons:** Requires the user to have Python installed (or a compiled .exe).
+
+### 2. The "Import/Export" Method (Standalone App)
+This is the best route if you want a clean, custom interface (GUI) and only use Excel for data storage or reporting.
+
+* **How it works:** You build a dedicated app (web or desktop). The user uploads their current Excel sheet (or the app reads it from a shared drive), the app ingests the data, you do the drag-and-drop scheduling in your app, and then "Export" the finished schedule back to an Excel file.
+* **Key Libraries:**
+    * **Python:** `pandas` (for heavy data logic) and `openpyxl` (to read/write .xlsx files without needing Excel installed).
+    * **Web:** React/Vue (frontend) + Node.js (backend using `xlsx` library).
+* **Pros:** You control the UI entirely; prevents data corruption; handles complex logic easily.
+* **Cons:** The "sync" isn't live.
+
+### 3. The "Embedded" Method (VBA/Office Scripts)
+This is the legacy method. You write the code directly inside the Excel file.
+
+* **How it works:** You use Visual Basic for Applications (VBA) to write macros.
+* **Pros:** No external software needed; the code lives in the file.
+* **Cons:** VBA is an older language; debugging is difficult; version control (Git) is almost impossible with binary Excel files. **I generally recommend avoiding this for modern development unless strict IT policies force you to.**
+
+---
+
+### Architecture Visualization
+
+To help you decide, here is how the "Live Control" (Option 1) vs. "Standalone" (Option 2) differs in data flow:
+
+
+
+### Crucial Considerations
+
+Before you start coding, you need to solve two major logic problems specific to Excel integration:
+
+1.  **The "Data Type" Problem:** Excel is loose with data. A user can type "Next Tuesday" into a cell you expect to be a Date format (`2023-12-01`). Your program *must* have robust error handling to sanitize Excel data before trying to schedule it.
+2.  **The "File Lock" Problem:** If you go with **Option 2** (Standalone), what happens if your program tries to read the Excel file while the user has it open? Usually, the OS locks the file. You will need to handle "Permission Denied" errors gracefully.
+
+### Recommendation
+
+Given your interest in **local development and tooling** (like your recent exploration of local AI and hardware), I recommend **Option 1 (Python + xlwings)** or **Option 2 (Python + Pandas + a GUI)**.
+
+Python allows you to leverage powerful data libraries (like `pandas`) to handle the scheduling logic, which is much harder to do in JavaScript or VBA.
+
+**Would you like to see a basic Python code snippet using `pandas` to read a "Shift" spreadsheet and detect a double-booking?**
+'
+
+
+
+Here is a complete **Software Requirements Document (SRD)** optimized for an AI coding assistant (like the one you are using).
+
+You can copy and paste the text below directly into your AI chat. It provides the context, constraints, and file structure needed to get a working prototype in one shot.
+
+-----
+
+# **Project: Local Shift Scheduler (MVP)**
+
+### **1. Executive Summary**
+
+Build a **Zero-Cost, Local-First** web application for scheduling employee work shifts.
+The app must allow a manager to view a **Resource Timeline** (Rows = Employees, Columns = Time), drag-and-drop shifts onto that timeline, and prevent basic scheduling conflicts.
+**Constraint:** Must use 100% Free/Open Source libraries. No paid SaaS components.
+
+### **2. Tech Stack (Strict)**
+
+  * **Frontend:** React (Vite) + **Toast UI Calendar** (for the timeline view) + Axios.
+  * **Backend:** Python **FastAPI**.
+  * **Database:** **SQLite** (local file `schedule.db`).
+  * **ORM:** **SQLModel** (This is critical: do not use raw SQLAlchemy; use SQLModel for better FastAPI integration).
+  * **Styling:** TailwindCSS (for the layout outside the calendar).
+
+### **3. Core Features (Mandatory)**
+
+1.  **Resource View:** The main page must be a "Daily/Weekly" view where the Y-axis lists **Employees** and the X-axis is **Time**.
+2.  **CRUD Operations:**
+      * Create a shift (Click & Drag or Button).
+      * Edit a shift (Resize or Click to open modal).
+      * Delete a shift.
+3.  **Conflict Logic (Backend):** The API must reject a shift creation if the `employee_id` already has a shift that overlaps with the `start_time` and `end_time`.
+4.  **Role Validation:** Shifts must be assigned a `role_id` (e.g., "Cook"). Visuals should color-code shifts based on this Role.
+
+### **4. Database Schema (SQLModel)**
+
+*Please implement these exact models in `models.py`:*
+
+  * **Employee:** `id` (int), `first_name` (str), `last_name` (str), `default_role_id` (int, optional).
+  * **Role:** `id` (int), `name` (str), `color_hex` (str).
+  * **Shift:** `id` (int), `employee_id` (FK), `role_id` (FK), `start_time` (datetime), `end_time` (datetime).
+      * *Note: Ensure start/end times are stored as timezone-naive UTC or ISO strings for SQLite compatibility.*
+
+### **5. API Endpoints Required**
+
+  * `GET /employees/`: List all employees (for the Calendar Y-Axis).
+  * `GET /roles/`: List all roles (to populate dropdowns).
+  * `GET /shifts/`: Returns shifts between `start_date` and `end_date`.
+  * `POST /shifts/`: Create a new shift. **Must return 400 error if overlapping.**
+  * `PUT /shifts/{id}`: Update time/role.
+  * `DELETE /shifts/{id}`: Remove shift.
+
+### **6. Implementation Guidelines for AI**
+
+  * **Directory Structure:**
+    ```text
+    /scheduler-app
+      /backend
+        main.py        # FastAPI app
+        models.py      # SQLModel tables
+        database.py    # SQLite connection
+      /frontend
+        /src
+          components/
+            Calendar.jsx  # Toast UI implementation
+    ```
+  * **Frontend Specifics:**
+      * Use `@toast-ui/react-calendar`.
+      * For the "Resource View", you must map the `employees` API response to the calendar's `calendars` prop (where `id` = employee ID, `name` = Employee Name).
+      * Disable the "Task" and "Allday" panels; strictly show the time grid.
+
+### **7. Seed Data**
+
+Please create a `seed_db.py` script that pre-fills the database with:
+
+  * **3 Roles:** "Manager" (Red), "Server" (Blue), "Cook" (Green).
+  * **5 Employees:** Alice, Bob, Charlie, David, Eve.
+  * **10 Sample Shifts** spread across the current week.
+
+-----
+
+### **How to Use This Document**
+
+1.  **Copy the text above.**
+2.  **Paste it** into your AI coding tool (Cursor, Cline, GitHub Copilot, etc.).
+3.  **Add the instruction:** *"Generate the backend code first. Start with `models.py` and `database.py` using SQLModel."*

@@ -1,0 +1,9 @@
+fastapi
+sqlmodel
+uvicorn
+python-multipart
+openpyxl
+pytesseract
+Pillow
+pdf2image
+python-dateutil
