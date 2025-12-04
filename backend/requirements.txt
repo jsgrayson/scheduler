@@ -6,10 +6,7 @@ openpyxl
 pytesseract
 Pillow
 pdf2image
-python-multipart
-pytesseract
-Pillow
-pdf2image
 python-dateutil
 opencv-python-headless
 numpy
+pillow-heif

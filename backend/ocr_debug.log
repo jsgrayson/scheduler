@@ -1,0 +1,1799 @@
+Angle 0: Score 0 (Times: 0, Days: 0)
+Angle 90: Score 19 (Times: 6, Days: 7)
+Angle 180: Score 0 (Times: 0, Days: 0)
+Angle 270: Score 0 (Times: 0, Days: 0)
+Determined Document Angle: 90 with Score 19
+DEBUG: Found Location Header: Supervisors in line: WORK SCHEDULE SUPERVISORS
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: Found Date Row with 7 dates
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: '3' at X: 361.0, Y: 362.0
+DEBUG: Line Item: '9:O0A-5.30P' at X: 598.5, Y: 413.0
+DEBUG: Line Item: '9:OOA-5.30P' at X: 1014.5, Y: 410.0
+DEBUG: Line Item: '9:OOA-5.30P' at X: 1223.0, Y: 409.0
+DEBUG: Line Item: '9:OOA-5:30P' at X: 1430.0, Y: 408.0
+DEBUG: Line Item: 'OFF' at X: 1641.0, Y: 407.0
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Jochy G. (Sup)' at X: 151.0, Y: 419.0
+DEBUG: Line Item: '9:OOA-5.30P' at X: 807.0, Y: 413.0
+DEBUG: Processing Row: 'Jochy G. (Sup)' -> Employee Match: Jochy (Loc: Supervisors)
+DEBUG: Row 'Jochy G. (Sup)' Time Slots: {2: '9:OOA-5.30P'}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='9:00A - 5:30P', Matches=['9:00A - 5:30P']
+DEBUG: Loop finished for row 'Jochy G. (Sup)'. Row Shifts: 1
+DEBUG: Created Shift for Jochy: 2025-12-08 09:00:00 - 2025-12-08 17:00:00 (Supervisors)
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Alonso F. (Sup)' at X: 152.0, Y: 493.0
+DEBUG: Line Item: '5:OOP-1:30A' at X: 391.0, Y: 490.0
+DEBUG: Line Item: 'OFF' at X: 601.0, Y: 488.0
+DEBUG: Line Item: 'OFF' at X: 808.0, Y: 487.0
+DEBUG: Line Item: '5:O0P-1:30A' at X: 1016.0, Y: 486.0
+DEBUG: Line Item: '5:OOP-1:30A' at X: 1224.0, Y: 485.0
+DEBUG: Line Item: '5.OOP-1:30A' at X: 1432.0, Y: 483.0
+DEBUG: Line Item: '5OOP-1:30A' at X: 1640.0, Y: 481.0
+DEBUG: Processing Row: 'Alonso F. (Sup)' -> Employee Match: None (Loc: Supervisors)
+DEBUG: Row 'Alonso F. (Sup)' Time Slots: {0: '5:OOP-1:30A', 1: 'OFF', 2: 'OFF', 3: '5:O0P-1:30A', 4: '5:OOP-1:30A', 5: '5.OOP-1:30A', 6: '5OOP-1:30A'}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Alonso F. (Sup)'. Row Shifts: 5
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Tattupi' at X: 181.54331779660026, Y: 559.5
+DEBUG: Line Item: '9 004-5.38P ' at X: 397.0, Y: 565.0
+DEBUG: Line Item: '5-88p+384' at X: 602.0, Y: 563.0
+DEBUG: Line Item: '5-08P+384' at X: 808.0, Y: 561.0
+DEBUG: Line Item: 'OF' at X: 1010.0, Y: 560.0
+DEBUG: Line Item: 'OFL' at X: 1217.0, Y: 558.0
+DEBUG: Line Item: 'OFF' at X: 1432.0, Y: 558.0
+DEBUG: Line Item: '9 88A 530P' at X: 1640.0, Y: 555.0
+DEBUG: Processing Row: 'Tattupi' -> Employee Match: None (Loc: Supervisors)
+DEBUG: Row 'Tattupi' Time Slots: {0: '9 004-5.38P ', 1: '5-88p+384', 2: '5-08P+384', 3: 'OF', 4: 'OFL', 5: 'OFF', 6: '9 88A 530P'}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='5 - 08P+384', Matches=['5 - 08P']
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Tattupi'. Row Shifts: 4
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Excer' at X: 93.0, Y: 568.0
+DEBUG: Processing Row: 'Excer' -> Employee Match: None (Loc: Supervisors)
+DEBUG: Row 'Excer' Time Slots: {}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Excer'. Row Shifts: 0
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Maria C. (Sup)' at X: 151.5, Y: 643.0
+DEBUG: Line Item: '1:00A-9.30A' at X: 391.5, Y: 638.5
+DEBUG: Line Item: '1:00A-9.30A' at X: 600.0, Y: 637.0
+DEBUG: Line Item: '1:OOA-9:30A' at X: 807.5, Y: 636.0
+DEBUG: Line Item: 'OFF' at X: 1017.0, Y: 635.0
+DEBUG: Line Item: 'OFF' at X: 1225.0, Y: 634.0
+DEBUG: Line Item: '1:00A-9:30A' at X: 1432.0, Y: 631.0
+DEBUG: Line Item: '1:OOA-9:30A' at X: 1642.0, Y: 631.0
+DEBUG: Processing Row: 'Maria C. (Sup)' -> Employee Match: None (Loc: Supervisors)
+DEBUG: Row 'Maria C. (Sup)' Time Slots: {0: '1:00A-9.30A', 1: '1:00A-9.30A', 2: '1:OOA-9:30A', 3: 'OFF', 4: 'OFF', 5: '1:00A-9:30A', 6: '1:OOA-9:30A'}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='1:00A - 9:30A', Matches=['1:00A - 9:30A']
+DEBUG: Loop finished for row 'Maria C. (Sup)'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Jim E (Sup) Office 3rd sl4 Office 3rd 2ffE 3R | 1:O0A-9:30A 1:O0A-9:30A
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Jim E (Sup)' at X: 152.5, Y: 717.5
+DEBUG: Line Item: 'Office 3rd' at X: 392.5, Y: 712.5
+DEBUG: Line Item: 'sl4' at X: 364.0, Y: 680.0
+DEBUG: Line Item: 'Office 3rd' at X: 600.0, Y: 712.0
+DEBUG: Line Item: '2ffE 3R |' at X: 814.0961614904829, Y: 711.0
+DEBUG: Line Item: '1:O0A-9:30A' at X: 1017.0, Y: 709.0
+DEBUG: Line Item: '1:O0A-9:30A' at X: 1225.0, Y: 707.0
+DEBUG: Processing Row: 'Jim E (Sup)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Jim E (Sup)' Time Slots: {0: 'Office 3rd sl4', 1: 'Office 3rd', 2: '2ffE 3R |', 3: '1:O0A-9:30A', 4: '1:O0A-9:30A'}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='2FFE 3R 1', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'Jim E (Sup)'. Row Shifts: 3
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: '94-22' at X: 392.0, Y: 790.0
+DEBUG: Line Item: '2A-L4H' at X: 608.0, Y: 795.0
+DEBUG: Line Item: '3-2i__' at X: 791.776870070302, Y: 790.0
+DEBUG: Line Item: '94-3' at X: 1628.5, Y: 778.0
+DEBUG: Line Item: '30' at X: 1710.0, Y: 749.0
+DEBUG: Found Location Header: Office in line: Robert W (Float)
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Robert W (Float)' at X: 153.0, Y: 793.0
+DEBUG: Processing Row: 'Robert W (Float)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Robert W (Float)' Time Slots: {}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Robert W (Float)'. Row Shifts: 0
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Ralph R:' at X: 149.0, Y: 942.0
+DEBUG: Processing Row: 'Ralph R' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Ralph R' Time Slots: {}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Ralph R'. Row Shifts: 0
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Ken D.' at X: 152.0, Y: 1015.0
+DEBUG: Processing Row: 'Ken D' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Ken D' Time Slots: {}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Ken D'. Row Shifts: 0
+DEBUG: First Column X: 391.5, Margin: 50
+DEBUG: Line Item: 'Jeremy G_' at X: 148.5, Y: 1093.5
+DEBUG: Processing Row: 'Jeremy G' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Jeremy G' Time Slots: {}
+DEBUG: Day Columns (X): [(391.5, 'SATURDAY'), (599.0, 'SUNDAY'), (809.0, 'MONDAY'), (1015.5, 'TUESDAY'), (1222.5, 'WEDNESDAY'), (1433.0, 'THURSDAY'), (1639.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Jeremy G'. Row Shifts: 0
+DEBUG: Found Location Header: Office in line: OFFICE
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: Found Date Row with 5 dates
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Jeremy G. (SupIA)' at X: 204.0, Y: 347.0
+DEBUG: Line Item: 'OFF' at X: 483.0, Y: 343.0
+DEBUG: Line Item: 'OFF' at X: 732.0, Y: 341.0
+DEBUG: Line Item: '8:OOA-4.30P' at X: 971.5, Y: 338.5
+DEBUG: Line Item: '8:OOA-4.30P' at X: 1211.0, Y: 337.0
+DEBUG: Line Item: '8:OOA-4.30P' at X: 1444.0, Y: 336.0
+DEBUG: Line Item: '8:OOA-4:30P' at X: 1674.0, Y: 333.0
+DEBUG: Line Item: '8;OOA-4:30P' at X: 1906.0, Y: 331.0
+DEBUG: Processing Row: 'Jeremy G. (SupIA)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Jeremy G. (SupIA)' Time Slots: {0: 'OFF', 1: 'OFF', 2: '8:OOA-4.30P', 3: '8:OOA-4.30P', 4: '8:OOA-4.30P', 5: '8:OOA-4:30P', 6: '8;OOA-4:30P'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='8:00A - 4:30P', Matches=['8:00A - 4:30P']
+DEBUG: Loop finished for row 'Jeremy G. (SupIA)'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Debbie P. (Off: Mgd OFF OFF 8:OOA-4:30P 8:OOA-4.30P 8:O0A-4.30P 8.OOA-4.30P 8.OOA-4:30P
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Debbie P. (Off:' at X: 174.0, Y: 414.0
+DEBUG: Line Item: 'Mgd' at X: 322.3539281003999, Y: 416.0
+DEBUG: Line Item: 'OFF' at X: 482.0, Y: 409.0
+DEBUG: Line Item: 'OFF' at X: 732.0, Y: 409.0
+DEBUG: Line Item: '8:OOA-4:30P' at X: 971.5, Y: 406.0
+DEBUG: Line Item: '8:OOA-4.30P' at X: 1211.0, Y: 404.0
+DEBUG: Line Item: '8:O0A-4.30P' at X: 1443.0, Y: 402.0
+DEBUG: Line Item: '8.OOA-4.30P' at X: 1675.0, Y: 402.0
+DEBUG: Line Item: '8.OOA-4:30P' at X: 1906.0, Y: 400.0
+DEBUG: Processing Row: 'Debbie P. (Off: Mgd' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Debbie P. (Off: Mgd' Time Slots: {0: 'OFF', 1: 'OFF', 2: '8:OOA-4:30P', 3: '8:OOA-4.30P', 4: '8:O0A-4.30P', 5: '8.OOA-4.30P', 6: '8.OOA-4:30P'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='8:00A - 4:30P', Matches=['8:00A - 4:30P']
+DEBUG: Loop finished for row 'Debbie P. (Off: Mgd'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Erin A. (RecptAR) OFF OFF 8.30A-5:OOP 8.30A-5:OOP 8.30A-5:OOP 8.30A-5:O0P 8.30A-5:O0P
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Erin A. (RecptAR)' at X: 196.0, Y: 481.0
+DEBUG: Line Item: 'OFF' at X: 483.0, Y: 476.0
+DEBUG: Line Item: 'OFF' at X: 732.0, Y: 473.0
+DEBUG: Line Item: '8.30A-5:OOP' at X: 972.0, Y: 473.0
+DEBUG: Line Item: '8.30A-5:OOP' at X: 1212.0, Y: 472.0
+DEBUG: Line Item: '8.30A-5:OOP' at X: 1443.5, Y: 470.0
+DEBUG: Line Item: '8.30A-5:O0P' at X: 1674.5, Y: 468.0
+DEBUG: Line Item: '8.30A-5:O0P' at X: 1906.0, Y: 466.0
+DEBUG: Processing Row: 'Erin A. (RecptAR)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Erin A. (RecptAR)' Time Slots: {0: 'OFF', 1: 'OFF', 2: '8.30A-5:OOP', 3: '8.30A-5:OOP', 4: '8.30A-5:OOP', 5: '8.30A-5:O0P', 6: '8.30A-5:O0P'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='8:30A - 5:00P', Matches=['8:30A - 5:00P']
+DEBUG: Loop finished for row 'Erin A. (RecptAR)'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Harolyn D. (AdIAu) 12:O0P-8:30P 12:O0P-8.30P 12:0OP-8:30P OFF OFF 12:O0P-8.30P 12:OOP-8.30P
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Harolyn D. (AdIAu)' at X: 196.5, Y: 549.5
+DEBUG: Line Item: '12:O0P-8:30P' at X: 482.0, Y: 543.0
+DEBUG: Line Item: '12:O0P-8.30P' at X: 733.0, Y: 542.0
+DEBUG: Line Item: '12:0OP-8:30P' at X: 973.0, Y: 542.0
+DEBUG: Line Item: 'OFF' at X: 1213.0, Y: 539.0
+DEBUG: Line Item: 'OFF' at X: 1445.0, Y: 538.0
+DEBUG: Line Item: '12:O0P-8.30P' at X: 1676.0, Y: 536.0
+DEBUG: Line Item: '12:OOP-8.30P' at X: 1906.5, Y: 534.5
+DEBUG: Processing Row: 'Harolyn D. (AdIAu)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Harolyn D. (AdIAu)' Time Slots: {0: '12:O0P-8:30P', 1: '12:O0P-8.30P', 2: '12:0OP-8:30P', 3: 'OFF', 4: 'OFF', 5: '12:O0P-8.30P', 6: '12:OOP-8.30P'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='12:00P - 8:30P', Matches=['12:00P - 8:30P']
+DEBUG: Loop finished for row 'Harolyn D. (AdIAu)'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Katelin $ (Admin) 8:O0A-4:30P 8.OOA-4:30P 4:00P-12:30A 12:OOP-8.30P 12:O0P-8.30P OFF OFF
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Katelin $ (Admin)' at X: 201.0, Y: 616.0
+DEBUG: Line Item: '8:O0A-4:30P' at X: 481.5, Y: 612.0
+DEBUG: Line Item: '8.OOA-4:30P' at X: 731.5, Y: 609.5
+DEBUG: Line Item: '4:00P-12:30A' at X: 972.0, Y: 608.5
+DEBUG: Line Item: '12:OOP-8.30P' at X: 1212.5, Y: 607.0
+DEBUG: Line Item: '12:O0P-8.30P' at X: 1444.5, Y: 604.5
+DEBUG: Line Item: 'OFF' at X: 1675.0, Y: 603.0
+DEBUG: Line Item: 'OFF' at X: 1907.0, Y: 603.0
+DEBUG: Processing Row: 'Katelin $ (Admin)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Katelin $ (Admin)' Time Slots: {0: '8:O0A-4:30P', 1: '8.OOA-4:30P', 2: '4:00P-12:30A', 3: '12:OOP-8.30P', 4: '12:O0P-8.30P', 5: 'OFF', 6: 'OFF'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='4:00P - 12:30A', Matches=['4:00P - 12:30A']
+DEBUG: Loop finished for row 'Katelin $ (Admin)'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Brooke M: (Admin) 4:OOP-12:30A 4:OOP-12:30A OFF OFF 4:O0P_12:30A 4:OOP-12:30A 4:O0P-12:30A
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Brooke M: (Admin)' at X: 196.5, Y: 684.0
+DEBUG: Line Item: '4:OOP-12:30A' at X: 482.0, Y: 680.0
+DEBUG: Line Item: '4:OOP-12:30A' at X: 731.0, Y: 679.0
+DEBUG: Line Item: 'OFF' at X: 973.0, Y: 677.0
+DEBUG: Line Item: 'OFF' at X: 1213.0, Y: 675.0
+DEBUG: Line Item: '4:O0P_12:30A' at X: 1444.0, Y: 673.0
+DEBUG: Line Item: '4:OOP-12:30A' at X: 1674.0, Y: 672.0
+DEBUG: Line Item: '4:O0P-12:30A' at X: 1905.0, Y: 670.0
+DEBUG: Processing Row: 'Brooke M: (Admin)' -> Employee Match: Brooke (Loc: Office)
+DEBUG: Row 'Brooke M: (Admin)' Time Slots: {0: '4:OOP-12:30A', 1: '4:OOP-12:30A', 2: 'OFF', 3: 'OFF', 4: '4:O0P_12:30A', 5: '4:OOP-12:30A', 6: '4:O0P-12:30A'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Brooke M: (Admin)'. Row Shifts: 5
+DEBUG: Created Shift for Brooke: 2025-12-06 09:00:00 - 2025-12-06 17:00:00 (Office)
+DEBUG: Created Shift for Brooke: 2025-12-07 09:00:00 - 2025-12-07 17:00:00 (Office)
+DEBUG: Created Shift for Brooke: 2025-12-03 09:00:00 - 2025-12-03 17:00:00 (Office)
+DEBUG: Created Shift for Brooke: 2025-12-11 09:00:00 - 2025-12-11 17:00:00 (Office)
+DEBUG: Created Shift for Brooke: 2025-12-12 09:00:00 - 2025-12-12 17:00:00 (Office)
+DEBUG: Found Location Header: Office in line: Meghan S. (Admin) Z7wJ7243 OFF OFF 1200A8.30A Jil Op. 12:00A-8:30A 12:O0A-8:30A 12:O0A-8:30A 12:00A-8:30A
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Meghan S. (Admin)' at X: 192.0, Y: 751.0
+DEBUG: Line Item: 'Z7wJ7243' at X: 459.0, Y: 718.0
+DEBUG: Line Item: 'OFF' at X: 481.0, Y: 746.0
+DEBUG: Line Item: 'OFF' at X: 733.0, Y: 745.0
+DEBUG: Line Item: '1200A8.30A' at X: 972.5, Y: 742.0
+DEBUG: Line Item: 'Jil' at X: 924.5117299038009, Y: 714.0
+DEBUG: Line Item: 'Op.' at X: 988.0, Y: 713.0
+DEBUG: Line Item: '12:00A-8:30A' at X: 1213.5, Y: 741.0
+DEBUG: Line Item: '12:O0A-8:30A' at X: 1445.0, Y: 740.0
+DEBUG: Line Item: '12:O0A-8:30A' at X: 1675.0, Y: 738.0
+DEBUG: Line Item: '12:00A-8:30A' at X: 1905.5, Y: 735.5
+DEBUG: Processing Row: 'Meghan S. (Admin)' -> Employee Match: Meghan (Loc: Office)
+DEBUG: Row 'Meghan S. (Admin)' Time Slots: {0: 'Z7wJ7243 OFF', 1: 'OFF', 2: '1200A8.30A Jil Op.', 3: '12:00A-8:30A', 4: '12:O0A-8:30A', 5: '12:O0A-8:30A', 6: '12:00A-8:30A'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='1200A8:30A J11 0P:', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'Meghan S. (Admin)'. Row Shifts: 5
+DEBUG: Created Shift for Meghan: 2025-12-08 09:00:00 - 2025-12-08 17:00:00 (Office)
+DEBUG: Created Shift for Meghan: 2025-12-09 09:00:00 - 2025-12-09 17:00:00 (Office)
+DEBUG: Created Shift for Meghan: 2025-12-03 09:00:00 - 2025-12-03 17:00:00 (Office)
+DEBUG: Created Shift for Meghan: 2025-12-11 09:00:00 - 2025-12-11 17:00:00 (Office)
+DEBUG: Created Shift for Meghan: 2025-12-12 09:00:00 - 2025-12-12 17:00:00 (Office)
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Jim E. (SupIo)' at X: 191.0, Y: 815.0
+DEBUG: Line Item: '12004-830A' at X: 482.5, Y: 811.5
+DEBUG: Line Item: '376' at X: 423.0, Y: 778.0
+DEBUG: Line Item: '3F' at X: 495.0, Y: 780.0
+DEBUG: Line Item: '12:OOA-8:30A' at X: 732.0, Y: 811.0
+DEBUG: Line Item: 'Siw' at X: 909.5, Y: 785.5
+DEBUG: Line Item: '1n-8-' at X: 951.5, Y: 813.5
+DEBUG: Line Item: '30' at X: 1032.5960601516695, Y: 791.0
+DEBUG: Line Item: 'SUP 3' at X: 1213.0, Y: 809.0
+DEBUG: Line Item: 'SUP 3' at X: 1444.0, Y: 808.0
+DEBUG: Processing Row: 'Jim E. (SupIo) 376' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Jim E. (SupIo) 376' Time Slots: {0: '12004-830A 3F', 1: '12:OOA-8:30A', 2: 'Siw 1n-8- 30', 3: 'SUP 3', 4: 'SUP 3'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='51W 1N - 8 -  30', Matches=['8 -  30']
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Jim E. (SupIo) 376'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Robert W. (Float)
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Robert W. (Float)' at X: 209.5, Y: 886.0
+DEBUG: Processing Row: 'Robert W. (Float)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Robert W. (Float)' Time Slots: {}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Robert W. (Float)'. Row Shifts: 0
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Mariah Mercer HRC' at X: 197.0, Y: 952.0
+DEBUG: Line Item: '2:O0P-10:30P' at X: 483.0, Y: 948.0
+DEBUG: Line Item: '2:OOP-10:30P' at X: 732.0, Y: 946.0
+DEBUG: Line Item: 'OFF' at X: 974.0, Y: 945.0
+DEBUG: Line Item: 'OFF' at X: 1214.0, Y: 943.0
+DEBUG: Line Item: '2:OOP-10:30P' at X: 1444.5, Y: 940.5
+DEBUG: Line Item: '2:OOP_10:30P' at X: 1675.5, Y: 938.5
+DEBUG: Line Item: '2:O0P-10:30P' at X: 1907.0, Y: 938.0
+DEBUG: Processing Row: 'Mariah Mercer HRC' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Mariah Mercer HRC' Time Slots: {0: '2:O0P-10:30P', 1: '2:OOP-10:30P', 2: 'OFF', 3: 'OFF', 4: '2:OOP-10:30P', 5: '2:OOP_10:30P', 6: '2:O0P-10:30P'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Mariah Mercer HRC'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Paul M: (AFM) 5:O0P-2:OOA 5:O0P-2:OOA OFF OFF 5.OOP-2:O0A 5:OOP-2:OOA 5.O0P-2:OOA
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Paul M: (AFM)' at X: 198.0, Y: 1019.0
+DEBUG: Line Item: '5:O0P-2:OOA' at X: 482.0, Y: 1015.0
+DEBUG: Line Item: '5:O0P-2:OOA' at X: 732.5, Y: 1012.0
+DEBUG: Line Item: 'OFF' at X: 974.0, Y: 1012.0
+DEBUG: Line Item: 'OFF' at X: 1213.0, Y: 1009.0
+DEBUG: Line Item: '5.OOP-2:O0A' at X: 1444.0, Y: 1008.0
+DEBUG: Line Item: '5:OOP-2:OOA' at X: 1675.0, Y: 1006.0
+DEBUG: Line Item: '5.O0P-2:OOA' at X: 1906.0, Y: 1004.0
+DEBUG: Processing Row: 'Paul M: (AFM)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Paul M: (AFM)' Time Slots: {0: '5:O0P-2:OOA', 1: '5:O0P-2:OOA', 2: 'OFF', 3: 'OFF', 4: '5.OOP-2:O0A', 5: '5:OOP-2:OOA', 6: '5.O0P-2:OOA'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Paul M: (AFM)'. Row Shifts: 5
+DEBUG: Found Location Header: Office in line: Michelle D: (Ad)
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Michelle D: (Ad)' at X: 198.0, Y: 1225.0
+DEBUG: Processing Row: 'Michelle D: (Ad)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Michelle D: (Ad)' Time Slots: {}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Michelle D: (Ad)'. Row Shifts: 0
+DEBUG: Found Location Header: Office in line: Isabella D. (Ad) 4:OOP-12:30A
+DEBUG: First Column X: 482.0, Margin: 50
+DEBUG: Line Item: 'Isabella D. (Ad)' at X: 201.0, Y: 1292.0
+DEBUG: Line Item: '4:OOP-12:30A' at X: 1214.0, Y: 1284.0
+DEBUG: Processing Row: 'Isabella D. (Ad)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Isabella D. (Ad)' Time Slots: {3: '4:OOP-12:30A'}
+DEBUG: Day Columns (X): [(482.0, 'SATURDAY'), (732.0, 'SUNDAY'), (973.0, 'MONDAY'), (1213.0, 'TUESDAY'), (1443.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1906.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Isabella D. (Ad)'. Row Shifts: 1
+DEBUG: Found Location Header: Maintenance in line: WORK SCHEDULE MAINTENANCE
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: Found Date Row with 7 dates
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Winston P' at X: 174.0, Y: 358.0
+DEBUG: Line Item: 'OFF' at X: 417.0, Y: 354.0
+DEBUG: Line Item: '9.30A-6:OOP' at X: 625.0, Y: 353.0
+DEBUG: Line Item: '9.30A-6:O0P' at X: 833.0, Y: 351.0
+DEBUG: Line Item: '9.30A-6.O0P' at X: 1041.0, Y: 349.0
+DEBUG: Line Item: '9:30A-6:OOP' at X: 1248.5, Y: 347.5
+DEBUG: Line Item: '9.30A-6:O0P' at X: 1457.0, Y: 345.0
+DEBUG: Line Item: 'OFF' at X: 1665.0, Y: 344.0
+DEBUG: Processing Row: 'Winston P' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Winston P' Time Slots: {0: 'OFF', 1: '9.30A-6:OOP', 2: '9.30A-6:O0P', 3: '9.30A-6.O0P', 4: '9:30A-6:OOP', 5: '9.30A-6:O0P', 6: 'OFF'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='9:30A - 6:00P', Matches=['9:30A - 6:00P']
+DEBUG: Loop finished for row 'Winston P'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Jose R_' at X: 173.5, Y: 432.0
+DEBUG: Line Item: '7:OOA-3.30P' at X: 416.5, Y: 427.5
+DEBUG: Line Item: '10:O0A-6.30P' at X: 626.0, Y: 427.0
+DEBUG: Line Item: '10:OOA-6.30P' at X: 834.0, Y: 425.0
+DEBUG: Line Item: 'OFF' at X: 1042.0, Y: 424.0
+DEBUG: Line Item: 'OFF' at X: 1250.0, Y: 422.0
+DEBUG: Line Item: '10:OOA-6:30P' at X: 1458.0, Y: 421.0
+DEBUG: Line Item: '10:OOA-6.30P' at X: 1665.5, Y: 417.5
+DEBUG: Processing Row: 'Jose R' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Jose R' Time Slots: {0: '7:OOA-3.30P', 1: '10:O0A-6.30P', 2: '10:OOA-6.30P', 3: 'OFF', 4: 'OFF', 5: '10:OOA-6:30P', 6: '10:OOA-6.30P'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='10:00A - 6:30P', Matches=['10:00A - 6:30P']
+DEBUG: Loop finished for row 'Jose R'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Dan R-' at X: 174.0, Y: 507.0
+DEBUG: Line Item: 'OFF' at X: 417.0, Y: 503.0
+DEBUG: Line Item: 'OFF' at X: 626.0, Y: 501.0
+DEBUG: Line Item: '9:OOA-5.30P' at X: 845.5, Y: 499.0
+DEBUG: Line Item: '9:OOA-5.30P' at X: 1053.5, Y: 497.0
+DEBUG: Line Item: '9:OOA-5.30P' at X: 1262.0, Y: 495.0
+DEBUG: Line Item: 'OFF' at X: 1457.0, Y: 494.0
+DEBUG: Line Item: 'OFF' at X: 1666.0, Y: 492.0
+DEBUG: Processing Row: 'Dan R-' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Dan R-' Time Slots: {0: 'OFF', 1: 'OFF', 2: '9:OOA-5.30P', 3: '9:OOA-5.30P', 4: '9:OOA-5.30P', 5: 'OFF', 6: 'OFF'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='9:00A - 5:30P', Matches=['9:00A - 5:30P']
+DEBUG: Loop finished for row 'Dan R-'. Row Shifts: 3
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Edwin F_' at X: 175.0, Y: 581.0
+DEBUG: Line Item: '9.30A-6:00P' at X: 417.0, Y: 577.0
+DEBUG: Line Item: 'OFF' at X: 627.0, Y: 574.0
+DEBUG: Line Item: 'OFF' at X: 834.5, Y: 572.0
+DEBUG: Line Item: '5:30P-2:O0A' at X: 1042.0, Y: 572.0
+DEBUG: Line Item: '5.30P-2:O0A' at X: 1249.0, Y: 569.0
+DEBUG: Line Item: '1:OOP-9:30P' at X: 1459.0, Y: 568.0
+DEBUG: Line Item: '9:30A-6.O0P' at X: 1665.5, Y: 565.5
+DEBUG: Processing Row: 'Edwin F' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Edwin F' Time Slots: {0: '9.30A-6:00P', 1: 'OFF', 2: 'OFF', 3: '5:30P-2:O0A', 4: '5.30P-2:O0A', 5: '1:OOP-9:30P', 6: '9:30A-6.O0P'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Edwin F'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Gossett J_' at X: 174.0, Y: 656.0
+DEBUG: Line Item: '5.30P-2:OOA' at X: 417.5, Y: 651.5
+DEBUG: Line Item: '5.30P-2:OOA' at X: 625.0, Y: 650.0
+DEBUG: Line Item: '5.30P-2:00A' at X: 833.5, Y: 647.5
+DEBUG: Line Item: 'OFF' at X: 1043.0, Y: 647.0
+DEBUG: Line Item: 'OFF' at X: 1250.0, Y: 646.0
+DEBUG: Line Item: '5.30P-2:OOA' at X: 1458.0, Y: 643.0
+DEBUG: Line Item: '5.30P-2:OOA' at X: 1666.0, Y: 641.0
+DEBUG: Processing Row: 'Gossett J' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Gossett J' Time Slots: {0: '5.30P-2:OOA', 1: '5.30P-2:OOA', 2: '5.30P-2:00A', 3: 'OFF', 4: 'OFF', 5: '5.30P-2:OOA', 6: '5.30P-2:OOA'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='5:30P - 2:00A', Matches=['5:30P - 2:00A']
+DEBUG: Loop finished for row 'Gossett J'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Bryan M' at X: 173.0, Y: 733.5
+DEBUG: Line Item: '130A-10:O0A' at X: 419.0, Y: 727.0
+DEBUG: Line Item: 'OFF' at X: 627.0, Y: 726.0
+DEBUG: Line Item: 'OFF' at X: 835.0, Y: 724.0
+DEBUG: Line Item: '1:30A-10.O0A' at X: 1042.5, Y: 721.5
+DEBUG: Line Item: '1:30A-10.OOA' at X: 1250.0, Y: 720.0
+DEBUG: Line Item: '1:30A-10:00A' at X: 1458.5, Y: 716.0
+DEBUG: Line Item: '1:30A-10:O0A' at X: 1665.5, Y: 716.0
+DEBUG: Processing Row: 'Bryan M' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Bryan M' Time Slots: {0: '130A-10:O0A', 1: 'OFF', 2: 'OFF', 3: '1:30A-10.O0A', 4: '1:30A-10.OOA', 5: '1:30A-10:00A', 6: '1:30A-10:O0A'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Bryan M'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: '6 38ed48H c/3rtsU64' at X: 524.5, Y: 788.0
+DEBUG: Line Item: '6.30P 3 08A' at X: 835.0, Y: 799.0
+DEBUG: Line Item: '6.30p 3 80A' at X: 1459.0, Y: 795.0
+DEBUG: Line Item: '6.30P 3 08A ' at X: 1667.0, Y: 792.0
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Lotif Raheem' at X: 177.0, Y: 806.0
+DEBUG: Processing Row: 'Lotif Raheem' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Lotif Raheem' Time Slots: {}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Lotif Raheem'. Row Shifts: 0
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: '1:30A-10:O0A' at X: 419.0, Y: 950.0
+DEBUG: Line Item: '1;30A-10:00A | 1:30A-10:00A' at X: 731.5, Y: 946.0
+DEBUG: Line Item: '10A 7' at X: 587.0, Y: 917.0
+DEBUG: Line Item: '10p 7' at X: 792.0, Y: 916.0
+DEBUG: Line Item: '10:O0A-6.30P' at X: 1458.0, Y: 942.0
+DEBUG: Line Item: '10.OOA-6.30P' at X: 1668.0, Y: 941.0
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Ken D_' at X: 175.0, Y: 954.0
+DEBUG: Processing Row: 'Ken D' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Ken D' Time Slots: {}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Ken D'. Row Shifts: 0
+DEBUG: Found Location Header: Maintenance in line: Eric N. (Sup-Mgr) OFF OFF 8.OOA-4:30P 8.OOA-4:30P 8:OOA-4:30P 8:O0A-4:30P 8:OOA-4.30P
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Eric N. (Sup-Mgr)' at X: 179.0, Y: 1029.0
+DEBUG: Line Item: 'OFF' at X: 420.0, Y: 1025.0
+DEBUG: Line Item: 'OFF' at X: 628.0, Y: 1022.0
+DEBUG: Line Item: '8.OOA-4:30P' at X: 835.0, Y: 1022.0
+DEBUG: Line Item: '8.OOA-4:30P' at X: 1043.0, Y: 1020.0
+DEBUG: Line Item: '8:OOA-4:30P' at X: 1251.0, Y: 1019.0
+DEBUG: Line Item: '8:O0A-4:30P' at X: 1459.0, Y: 1017.0
+DEBUG: Line Item: '8:OOA-4.30P' at X: 1667.0, Y: 1015.0
+DEBUG: Processing Row: 'Eric N. (Sup-Mgr)' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Eric N. (Sup-Mgr)' Time Slots: {0: 'OFF', 1: 'OFF', 2: '8.OOA-4:30P', 3: '8.OOA-4:30P', 4: '8:OOA-4:30P', 5: '8:O0A-4:30P', 6: '8:OOA-4.30P'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='8:00A - 4:30P', Matches=['8:00A - 4:30P']
+DEBUG: Loop finished for row 'Eric N. (Sup-Mgr)'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Ralph R (Sup)' at X: 179.5, Y: 1102.5
+DEBUG: Line Item: '4:30P-I:OOA' at X: 419.0, Y: 1099.0
+DEBUG: Line Item: 'OFF' at X: 629.0, Y: 1096.0
+DEBUG: Line Item: 'OFF' at X: 835.5, Y: 1095.0
+DEBUG: Line Item: '4:30P-I:OOA' at X: 1043.5, Y: 1093.5
+DEBUG: Line Item: '4:30P-1:OOA' at X: 1251.0, Y: 1092.0
+DEBUG: Line Item: '4.30P-1:OOA' at X: 1460.0, Y: 1091.0
+DEBUG: Line Item: '4.30P_I:OOA' at X: 1667.0, Y: 1089.0
+DEBUG: Processing Row: 'Ralph R (Sup)' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Ralph R (Sup)' Time Slots: {0: '4:30P-I:OOA', 1: 'OFF', 2: 'OFF', 3: '4:30P-I:OOA', 4: '4:30P-1:OOA', 5: '4.30P-1:OOA', 6: '4.30P_I:OOA'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Ralph R (Sup)'. Row Shifts: 5
+DEBUG: First Column X: 416.0, Margin: 50
+DEBUG: Line Item: 'Ken D' at X: 174.0, Y: 1176.0
+DEBUG: Line Item: '9 A-5:30P' at X: 418.5, Y: 1173.0
+DEBUG: Line Item: '5 OOP-1 30AH' at X: 626.5, Y: 1172.0
+DEBUG: Line Item: '5 OP-1:30A.' at X: 834.5, Y: 1170.0
+DEBUG: Line Item: 'ITR30A-8 OP' at X: 1050.0, Y: 1168.0
+DEBUG: Line Item: 'OFF' at X: 1255.0, Y: 1167.0
+DEBUG: Line Item: 'OFF' at X: 1461.0, Y: 1165.0
+DEBUG: Line Item: '130A-3 OOP' at X: 1675.5, Y: 1161.5
+DEBUG: Processing Row: 'Ken D' -> Employee Match: None (Loc: Maintenance)
+DEBUG: Row 'Ken D' Time Slots: {0: '9 A-5:30P', 1: '5 OOP-1 30AH', 2: '5 OP-1:30A.', 3: 'ITR30A-8 OP', 4: 'OFF', 5: 'OFF', 6: '130A-3 OOP'}
+DEBUG: Day Columns (X): [(416.0, 'SATURDAY'), (624.5, 'SUNDAY'), (834.0, 'MONDAY'), (1042.0, 'TUESDAY'), (1248.5, 'WEDNESDAY'), (1457.0, 'THURSDAY'), (1666.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Col 2 Cleaned='5 0P - 1:30A:', Matches=['0P - 1:30A']
+DEBUG: Loop finished for row 'Ken D'. Row Shifts: 5
+DEBUG: Found Location Header: Plaza in line: PLAZA
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: Found Date Row with 6 dates
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'GraceAnn Gordong' at X: 194.0, Y: 425.0
+DEBUG: Line Item: '10.O0A-6:OOP' at X: 463.5, Y: 420.5
+DEBUG: Line Item: 'OFF' at X: 714.0, Y: 419.0
+DEBUG: Line Item: 'OFF' at X: 963.0, Y: 417.0
+DEBUG: Line Item: '10.OOA-6:O0P' at X: 1213.5, Y: 414.0
+DEBUG: Line Item: '10:O0A-6:OOP' at X: 1445.5, Y: 412.0
+DEBUG: Line Item: '10:OOA-6:OOP' at X: 1677.0, Y: 410.0
+DEBUG: Line Item: '10:OOA-6.0OP' at X: 1907.5, Y: 407.5
+DEBUG: Processing Row: 'GraceAnn Gordong' -> Employee Match: None (Loc: Plaza)
+DEBUG: Row 'GraceAnn Gordong' Time Slots: {0: '10.O0A-6:OOP', 1: 'OFF', 2: 'OFF', 3: '10.OOA-6:O0P', 4: '10:O0A-6:OOP', 5: '10:OOA-6:OOP', 6: '10:OOA-6.0OP'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'GraceAnn Gordong'. Row Shifts: 5
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Maritza Rodriguez' at X: 181.5, Y: 493.0
+DEBUG: Line Item: '5.OOP-I;OOA' at X: 463.0, Y: 488.0
+DEBUG: Line Item: 'OFF' at X: 715.0, Y: 485.0
+DEBUG: Line Item: 'OFF' at X: 964.0, Y: 483.0
+DEBUG: Line Item: '5:OOP_1:OOA' at X: 1213.0, Y: 482.0
+DEBUG: Line Item: '5:OOP-1:OOA' at X: 1442.5, Y: 479.0
+DEBUG: Line Item: '5:O0P-1:OOA' at X: 1675.0, Y: 476.0
+DEBUG: Line Item: '5.OOP-1:OOA' at X: 1905.5, Y: 474.5
+DEBUG: Processing Row: 'Maritza Rodriguez' -> Employee Match: None (Loc: Plaza)
+DEBUG: Row 'Maritza Rodriguez' Time Slots: {0: '5.OOP-I;OOA', 1: 'OFF', 2: 'OFF', 3: '5:OOP_1:OOA', 4: '5:OOP-1:OOA', 5: '5:O0P-1:OOA', 6: '5.OOP-1:OOA'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Loop finished for row 'Maritza Rodriguez'. Row Shifts: 5
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Steve Zagorski' at X: 179.0, Y: 560.0
+DEBUG: Line Item: 'OFF' at X: 465.0, Y: 555.0
+DEBUG: Line Item: '70x-6p' at X: 676.0, Y: 523.0
+DEBUG: Line Item: '6.00p2:O0A' at X: 713.5, Y: 553.0
+DEBUG: Line Item: '6:0Op-2:OOA' at X: 961.5, Y: 552.0
+DEBUG: Line Item: '6.00p-2:O0A' at X: 1213.0, Y: 549.0
+DEBUG: Line Item: '6.00p-2:O0A' at X: 1443.5, Y: 546.5
+DEBUG: Line Item: '6:00p-2:OOA' at X: 1675.0, Y: 545.0
+DEBUG: Line Item: 'OFF' at X: 1907.0, Y: 541.0
+DEBUG: Processing Row: 'Steve Zagorski' -> Employee Match: None (Loc: Plaza)
+DEBUG: Row 'Steve Zagorski' Time Slots: {0: 'OFF', 1: '70x-6p 6.00p2:O0A', 2: '6:0Op-2:OOA', 3: '6.00p-2:O0A', 4: '6.00p-2:O0A', 5: '6:00p-2:OOA', 6: 'OFF'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='6:00P - 2:00A', Matches=['6:00P - 2:00A']
+DEBUG: Loop finished for row 'Steve Zagorski'. Row Shifts: 5
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Joshua Leighton' at X: 178.0, Y: 626.5
+DEBUG: Line Item: 'OFF' at X: 465.0, Y: 621.0
+DEBUG: Line Item: '2:OOA-10:OOA' at X: 713.5, Y: 618.5
+DEBUG: Line Item: '2:OOA-10:OOA' at X: 962.5, Y: 617.0
+DEBUG: Line Item: '2:OOA-10:00A' at X: 1213.5, Y: 614.5
+DEBUG: Line Item: '2:OOA-10:OOA' at X: 1444.5, Y: 612.5
+DEBUG: Line Item: '2:OOA-10:OOA' at X: 1676.0, Y: 610.0
+DEBUG: Line Item: 'OFF' at X: 1908.0, Y: 608.0
+DEBUG: Processing Row: 'Joshua Leighton' -> Employee Match: None (Loc: Plaza)
+DEBUG: Row 'Joshua Leighton' Time Slots: {0: 'OFF', 1: '2:OOA-10:OOA', 2: '2:OOA-10:OOA', 3: '2:OOA-10:00A', 4: '2:OOA-10:OOA', 5: '2:OOA-10:OOA', 6: 'OFF'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='2:00A - 10:00A', Matches=['2:00A - 10:00A']
+DEBUG: Loop finished for row 'Joshua Leighton'. Row Shifts: 5
+DEBUG: Found Location Header: Conrac in line: Jessica White Conrac 5.O0P-1:OOA 5:O0P-I:OOA Conrac
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Jessica White' at X: 179.0, Y: 695.0
+DEBUG: Line Item: 'Conrac' at X: 464.0, Y: 695.0
+DEBUG: Line Item: '5.O0P-1:OOA' at X: 713.0, Y: 688.0
+DEBUG: Line Item: '5:O0P-I:OOA' at X: 962.5, Y: 685.0
+DEBUG: Line Item: 'Conrac' at X: 1909.0, Y: 682.0
+DEBUG: Processing Row: 'Jessica White' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'Jessica White' Time Slots: {0: 'Conrac', 1: '5.O0P-1:OOA', 2: '5:O0P-I:OOA', 6: 'Conrac'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Col 2 Cleaned='5:00P - 1:00A', Matches=['5:00P - 1:00A']
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Jessica White'. Row Shifts: 4
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Cherone Levy' at X: 179.5, Y: 760.5
+DEBUG: Line Item: '6:O0P-2:OOA' at X: 465.0, Y: 756.0
+DEBUG: Line Item: '6:O0P-2:O0A' at X: 1907.5, Y: 742.5
+DEBUG: Processing Row: 'Cherone Levy' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'Cherone Levy' Time Slots: {0: '6:O0P-2:OOA', 6: '6:O0P-2:O0A'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Cherone Levy'. Row Shifts: 2
+DEBUG: Found Location Header: Lot 3 in line: Asia Breedlove XZiEu2z bztt 10:OOA-6:OOP Lot 3 Lot 3 Conrac Conrac
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Asia Breedlove' at X: 180.0, Y: 829.0
+DEBUG: Line Item: 'XZiEu2z bztt' at X: 735.5, Y: 845.5
+DEBUG: Line Item: '10:OOA-6:OOP' at X: 965.5, Y: 820.0
+DEBUG: Line Item: 'Lot 3' at X: 1214.0, Y: 823.0
+DEBUG: Line Item: 'Lot 3' at X: 1446.0, Y: 822.0
+DEBUG: Line Item: 'Conrac' at X: 1676.0, Y: 819.5
+DEBUG: Line Item: 'Conrac' at X: 1908.5, Y: 817.0
+DEBUG: Processing Row: 'Asia Breedlove' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Asia Breedlove' Time Slots: {1: 'XZiEu2z bztt', 2: '10:OOA-6:OOP', 3: 'Lot 3', 4: 'Lot 3', 5: 'Conrac', 6: 'Conrac'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='10:00A - 6:00P', Matches=['10:00A - 6:00P']
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Asia Breedlove'. Row Shifts: 6
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Lynn Tamsin' at X: 180.0, Y: 897.0
+DEBUG: Line Item: '10:ORAHCOOP' at X: 715.5, Y: 892.0
+DEBUG: Processing Row: 'Lynn Tamsin' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Lynn Tamsin' Time Slots: {1: '10:ORAHCOOP'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Lynn Tamsin'. Row Shifts: 1
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Lawrence Minor' at X: 181.0, Y: 963.0
+DEBUG: Line Item: '2:OOA-1O:OOA' at X: 464.5, Y: 957.0
+DEBUG: Line Item: '2:OOA-10:OOA' at X: 1909.0, Y: 945.0
+DEBUG: Processing Row: 'Lawrence Minor' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Lawrence Minor' Time Slots: {0: '2:OOA-1O:OOA', 6: '2:OOA-10:OOA'}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Lawrence Minor'. Row Shifts: 2
+DEBUG: First Column X: 464.0, Margin: 50
+DEBUG: Line Item: 'Ro-6Bjui' at X: 122.0, Y: 1098.0
+DEBUG: Processing Row: 'Ro-6Bjui' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Ro-6Bjui' Time Slots: {}
+DEBUG: Day Columns (X): [(464.0, 'SATURDAY'), (714.0, 'SUNDAY'), (964.5, 'MONDAY'), (1213.0, 'TUESDAY'), (1444.0, 'WEDNESDAY'), (1676.0, 'THURSDAY'), (1907.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Ro-6Bjui'. Row Shifts: 0
+DEBUG: Found Location Header: Conrac in line: CONRAC- GARAGE
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 584.0, Margin: 50
+DEBUG: Line Item: 'Vilma Vevecka' at X: 316.0, Y: 377.0
+DEBUG: Line Item: '11:00A-ZeO0P' at X: 584.5, Y: 374.0
+DEBUG: Line Item: '11:O0A-7:OOP' at X: 815.0, Y: 372.0
+DEBUG: Line Item: '11:O0A-7:OOP' at X: 1046.5, Y: 370.0
+DEBUG: Line Item: '11;O0A-7:OOP' at X: 1277.0, Y: 369.0
+DEBUG: Line Item: '11:00A-7:OOP' at X: 1508.0, Y: 367.0
+DEBUG: Line Item: 'OFF' at X: 1739.0, Y: 365.0
+DEBUG: Line Item: 'OFF' at X: 1970.0, Y: 363.0
+DEBUG: Processing Row: 'Vilma Vevecka' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'Vilma Vevecka' Time Slots: {0: '11:00A-ZeO0P', 1: '11:O0A-7:OOP', 2: '11:O0A-7:OOP', 3: '11;O0A-7:OOP', 4: '11:00A-7:OOP', 5: 'OFF', 6: 'OFF'}
+DEBUG: Day Columns (X): [(584.0, 'SATURDAY'), (815.0, 'SUNDAY'), (1046.0, 'MONDAY'), (1277.0, 'TUESDAY'), (1507.5, 'WEDNESDAY'), (1738.5, 'THURSDAY'), (1970.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Col 2 Cleaned='11:00A - 7:00P', Matches=['11:00A - 7:00P']
+DEBUG: Loop finished for row 'Vilma Vevecka'. Row Shifts: 5
+DEBUG: First Column X: 584.0, Margin: 50
+DEBUG: Line Item: 'AIMEE BEDNAZ' at X: 317.0, Y: 455.0
+DEBUG: Line Item: 'OFF' at X: 584.0, Y: 453.0
+DEBUG: Line Item: '7:OOP -:O0A' at X: 814.0, Y: 452.0
+DEBUG: Line Item: '7:OOP -3:OOA' at X: 1045.0, Y: 450.0
+DEBUG: Line Item: '7:OOP -3:00A' at X: 1276.0, Y: 448.0
+DEBUG: Line Item: '7:OOP -3:00A' at X: 1507.0, Y: 448.0
+DEBUG: Line Item: '7:O0P :00A' at X: 1737.5, Y: 445.0
+DEBUG: Line Item: 'OFF' at X: 1970.0, Y: 443.0
+DEBUG: Processing Row: 'AIMEE BEDNAZ' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'AIMEE BEDNAZ' Time Slots: {0: 'OFF', 1: '7:OOP -:O0A', 2: '7:OOP -3:OOA', 3: '7:OOP -3:00A', 4: '7:OOP -3:00A', 5: '7:O0P :00A', 6: 'OFF'}
+DEBUG: Day Columns (X): [(584.0, 'SATURDAY'), (815.0, 'SUNDAY'), (1046.0, 'MONDAY'), (1277.0, 'TUESDAY'), (1507.5, 'WEDNESDAY'), (1738.5, 'THURSDAY'), (1970.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='7:00P  - 3:00A', Matches=['7:00P  - 3:00A']
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'AIMEE BEDNAZ'. Row Shifts: 5
+DEBUG: First Column X: 584.0, Margin: 50
+DEBUG: Line Item: 'Judith Bednarz' at X: 318.0, Y: 538.0
+DEBUG: Line Item: '3.O0A-11:00A' at X: 583.0, Y: 536.0
+DEBUG: Line Item: '3:OOA-11:O0A' at X: 815.0, Y: 534.0
+DEBUG: Line Item: '3:O0A-11:00A' at X: 1046.0, Y: 532.0
+DEBUG: Line Item: 'OFF' at X: 1277.0, Y: 529.0
+DEBUG: Line Item: 'OFF' at X: 1509.0, Y: 527.0
+DEBUG: Line Item: '3:OOA-11:OOA' at X: 1739.0, Y: 526.0
+DEBUG: Line Item: '3 OOA-I1;OOA' at X: 1969.0, Y: 524.0
+DEBUG: Processing Row: 'Judith Bednarz' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'Judith Bednarz' Time Slots: {0: '3.O0A-11:00A', 1: '3:OOA-11:O0A', 2: '3:O0A-11:00A', 3: 'OFF', 4: 'OFF', 5: '3:OOA-11:OOA', 6: '3 OOA-I1;OOA'}
+DEBUG: Day Columns (X): [(584.0, 'SATURDAY'), (815.0, 'SUNDAY'), (1046.0, 'MONDAY'), (1277.0, 'TUESDAY'), (1507.5, 'WEDNESDAY'), (1738.5, 'THURSDAY'), (1970.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='3:00A - 11:00A', Matches=['3:00A - 11:00A']
+DEBUG: Loop finished for row 'Judith Bednarz'. Row Shifts: 5
+DEBUG: Found Location Header: Lot 3 in line: Asia Breedlove Plaza Lot 3 Lot 3 11;00A-7:OOP 11:00A-7:OOP
+DEBUG: First Column X: 584.0, Margin: 50
+DEBUG: Line Item: 'Asia Breedlove' at X: 317.0, Y: 617.0
+DEBUG: Line Item: 'Plaza' at X: 1046.0, Y: 617.0
+DEBUG: Line Item: 'Lot 3' at X: 1277.0, Y: 615.0
+DEBUG: Line Item: 'Lot 3' at X: 1508.0, Y: 614.0
+DEBUG: Line Item: '11;00A-7:OOP' at X: 1739.5, Y: 605.5
+DEBUG: Line Item: '11:00A-7:OOP' at X: 1971.0, Y: 604.0
+DEBUG: Processing Row: 'Asia Breedlove' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Asia Breedlove' Time Slots: {2: 'Plaza', 3: 'Lot 3', 4: 'Lot 3', 5: '11;00A-7:OOP', 6: '11:00A-7:OOP'}
+DEBUG: Day Columns (X): [(584.0, 'SATURDAY'), (815.0, 'SUNDAY'), (1046.0, 'MONDAY'), (1277.0, 'TUESDAY'), (1507.5, 'WEDNESDAY'), (1738.5, 'THURSDAY'), (1970.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='P1AZA', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Asia Breedlove'. Row Shifts: 5
+DEBUG: Found Location Header: Plaza in line: Jessica White 7:OOP -3:00A Plaza Plaza 7:OOP -3:OOA
+DEBUG: First Column X: 584.0, Margin: 50
+DEBUG: Line Item: 'Jessica White' at X: 318.0, Y: 696.0
+DEBUG: Line Item: '7:OOP -3:00A' at X: 584.0, Y: 694.0
+DEBUG: Line Item: 'Plaza' at X: 816.0, Y: 699.0
+DEBUG: Line Item: 'Plaza' at X: 1048.0, Y: 698.0
+DEBUG: Line Item: '7:OOP -3:OOA' at X: 1970.0, Y: 684.0
+DEBUG: Processing Row: 'Jessica White' -> Employee Match: None (Loc: Plaza)
+DEBUG: Row 'Jessica White' Time Slots: {0: '7:OOP -3:00A', 1: 'Plaza', 2: 'Plaza', 6: '7:OOP -3:OOA'}
+DEBUG: Day Columns (X): [(584.0, 'SATURDAY'), (815.0, 'SUNDAY'), (1046.0, 'MONDAY'), (1277.0, 'TUESDAY'), (1507.5, 'WEDNESDAY'), (1738.5, 'THURSDAY'), (1970.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='P1AZA', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'Jessica White'. Row Shifts: 4
+DEBUG: Found Location Header: Lot 1 in line: Sharon Moyer Lot Lot 1 3:OOA-11:OOA 3OOA-I1:00A Lot 3
+DEBUG: First Column X: 584.0, Margin: 50
+DEBUG: Line Item: 'Sharon Moyer' at X: 320.0, Y: 776.0
+DEBUG: Line Item: 'Lot' at X: 810.0, Y: 778.0
+DEBUG: Line Item: 'Lot 1' at X: 1048.0, Y: 777.0
+DEBUG: Line Item: '3:OOA-11:OOA' at X: 1277.0, Y: 768.0
+DEBUG: Line Item: '3OOA-I1:00A' at X: 1508.0, Y: 767.0
+DEBUG: Line Item: 'Lot 3' at X: 1739.0, Y: 770.0
+DEBUG: Processing Row: 'Sharon Moyer' -> Employee Match: None (Loc: Lot 1)
+DEBUG: Row 'Sharon Moyer' Time Slots: {1: 'Lot', 2: 'Lot 1', 3: '3:OOA-11:OOA', 4: '3OOA-I1:00A', 5: 'Lot 3'}
+DEBUG: Day Columns (X): [(584.0, 'SATURDAY'), (815.0, 'SUNDAY'), (1046.0, 'MONDAY'), (1277.0, 'TUESDAY'), (1507.5, 'WEDNESDAY'), (1738.5, 'THURSDAY'), (1970.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='10T 1', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Sharon Moyer'. Row Shifts: 4
+DEBUG: Found Location Header: Lot 1 in line: LOT 1 CASHIER'S
+DEBUG: Found Location Header: Cashier in line: Lot Cashiers 12/6125 12/7125 12/8/25 12/9/25 12/10/25 12111/25 12112/25
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Cindy Saulnier' at X: 316.0, Y: 380.0
+DEBUG: Line Item: 'OFF' at X: 583.0, Y: 376.0
+DEBUG: Line Item: '10.30A-6:30P' at X: 813.0, Y: 374.0
+DEBUG: Line Item: '1030A-6.30P' at X: 1044.0, Y: 372.0
+DEBUG: Line Item: '10:30A-6.30P' at X: 1275.0, Y: 370.0
+DEBUG: Line Item: '10:304-6:30P' at X: 1505.5, Y: 366.5
+DEBUG: Line Item: '10:30A-6.30P' at X: 1737.0, Y: 364.0
+DEBUG: Line Item: 'OFF' at X: 1968.0, Y: 363.0
+DEBUG: Processing Row: 'Cindy Saulnier' -> Employee Match: None (Loc: Cashier)
+DEBUG: Row 'Cindy Saulnier' Time Slots: {0: 'OFF', 1: '10.30A-6:30P', 2: '1030A-6.30P', 3: '10:30A-6.30P', 4: '10:304-6:30P', 5: '10:30A-6.30P', 6: 'OFF'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.5, 'MONDAY'), (1276.0, 'TUESDAY'), (1504.5, 'WEDNESDAY'), (1736.5, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='1030A - 6:30P', Matches=['1030A - 6:30P']
+DEBUG: Loop finished for row 'Cindy Saulnier'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Gloria Bond' at X: 316.0, Y: 459.0
+DEBUG: Line Item: '6.30P-2:30A' at X: 582.0, Y: 456.0
+DEBUG: Line Item: 'OFF' at X: 813.5, Y: 453.5
+DEBUG: Line Item: 'OFF' at X: 1044.5, Y: 452.0
+DEBUG: Line Item: '6.30P-2.30A' at X: 1274.0, Y: 450.0
+DEBUG: Line Item: '6.30P-2:30A' at X: 1506.0, Y: 448.0
+DEBUG: Line Item: '6:30P-2.30A' at X: 1736.5, Y: 444.5
+DEBUG: Line Item: '6.30P-2.30A' at X: 1967.5, Y: 443.0
+DEBUG: Processing Row: 'Gloria Bond' -> Employee Match: None (Loc: Cashier)
+DEBUG: Row 'Gloria Bond' Time Slots: {0: '6.30P-2:30A', 1: 'OFF', 2: 'OFF', 3: '6.30P-2.30A', 4: '6.30P-2:30A', 5: '6:30P-2.30A', 6: '6.30P-2.30A'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.5, 'MONDAY'), (1276.0, 'TUESDAY'), (1504.5, 'WEDNESDAY'), (1736.5, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Gloria Bond'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'mikBesc' at X: 554.0, Y: 510.0
+DEBUG: Line Item: 'Nollelys <' at X: 801.0, Y: 509.0
+DEBUG: Line Item: 'Nellels  $' at X: 1489.0, Y: 497.0
+DEBUG: Line Item: 'Nellels $' at X: 1725.0, Y: 496.0
+DEBUG: Line Item: 'Oeud' at X: 1930.0, Y: 496.0
+DEBUG: Line Item: 'cB' at X: 2044.0, Y: 489.0
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: '2330A-T0:30A' at X: 582.0, Y: 536.0
+DEBUG: Line Item: '2E0A710:0A' at X: 815.0, Y: 535.0
+DEBUG: Line Item: 'OFF' at X: 1045.0, Y: 532.0
+DEBUG: Line Item: 'OFF' at X: 1276.0, Y: 529.0
+DEBUG: Line Item: '2:30AZ10330A' at X: 1505.5, Y: 526.5
+DEBUG: Line Item: '230A770:30A' at X: 1737.5, Y: 524.5
+DEBUG: Line Item: '230A-7030A' at X: 1967.5, Y: 522.5
+DEBUG: Found Location Header: Lot 3 in line: Sheila Andersen 10:30A-6:30P Lot 3 Lot 3 10.30A-6.30P
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Sheila Andersen' at X: 316.5, Y: 617.5
+DEBUG: Line Item: '10:30A-6:30P' at X: 583.5, Y: 614.5
+DEBUG: Line Item: 'Lot 3' at X: 1277.0, Y: 615.0
+DEBUG: Line Item: 'Lot 3' at X: 1507.0, Y: 612.0
+DEBUG: Line Item: '10.30A-6.30P' at X: 1969.0, Y: 602.0
+DEBUG: Processing Row: 'Sheila Andersen' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Sheila Andersen' Time Slots: {0: '10:30A-6:30P', 3: 'Lot 3', 4: 'Lot 3', 6: '10.30A-6.30P'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.5, 'MONDAY'), (1276.0, 'TUESDAY'), (1504.5, 'WEDNESDAY'), (1736.5, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Sheila Andersen'. Row Shifts: 4
+DEBUG: Found Location Header: Lot 3 in line: Sharon Moyer 6.30P-2:30A 6.30P-2.30A Conrac Conrac Lot 3
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Sharon Moyer' at X: 318.0, Y: 698.0
+DEBUG: Line Item: '6.30P-2:30A' at X: 815.0, Y: 692.0
+DEBUG: Line Item: '6.30P-2.30A' at X: 1046.0, Y: 689.0
+DEBUG: Line Item: 'Conrac' at X: 1277.5, Y: 694.0
+DEBUG: Line Item: 'Conrac' at X: 1508.0, Y: 691.0
+DEBUG: Line Item: 'Lot 3' at X: 1739.0, Y: 689.0
+DEBUG: Processing Row: 'Sharon Moyer' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Sharon Moyer' Time Slots: {1: '6.30P-2:30A', 2: '6.30P-2.30A', 3: 'Conrac', 4: 'Conrac', 5: 'Lot 3'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.5, 'MONDAY'), (1276.0, 'TUESDAY'), (1504.5, 'WEDNESDAY'), (1736.5, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='6:30P - 2:30A', Matches=['6:30P - 2:30A']
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Sharon Moyer'. Row Shifts: 5
+DEBUG: Found Location Header: Lot 3 in line: Stacian Hamilton Lot 4 Lot 4 2:30A-10:30A 2:30A-10:30A Lot 3
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Stacian Hamilton' at X: 317.0, Y: 775.0
+DEBUG: Line Item: 'Lot 4' at X: 585.0, Y: 780.0
+DEBUG: Line Item: 'Lot 4' at X: 815.0, Y: 777.0
+DEBUG: Line Item: '2:30A-10:30A' at X: 1046.0, Y: 768.0
+DEBUG: Line Item: '2:30A-10:30A' at X: 1275.5, Y: 766.0
+DEBUG: Line Item: 'Lot 3' at X: 1508.0, Y: 770.0
+DEBUG: Processing Row: 'Stacian Hamilton' -> Employee Match: Stacian (Loc: Lot 3)
+DEBUG: Row 'Stacian Hamilton' Time Slots: {0: 'Lot 4', 1: 'Lot 4', 2: '2:30A-10:30A', 3: '2:30A-10:30A', 4: 'Lot 3'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.5, 'MONDAY'), (1276.0, 'TUESDAY'), (1504.5, 'WEDNESDAY'), (1736.5, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='2:30A - 10:30A', Matches=['2:30A - 10:30A']
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Stacian Hamilton'. Row Shifts: 5
+DEBUG: Created Shift for Stacian: 2025-12-06 09:00:00 - 2025-12-06 17:00:00 (Lot 4)
+DEBUG: Created Shift for Stacian: 2025-12-07 09:00:00 - 2025-12-07 17:00:00 (Lot 4)
+DEBUG: Created Shift for Stacian: 2025-12-01 09:00:00 - 2025-12-01 17:00:00 (Lot 3)
+DEBUG: Created Shift for Stacian: 2025-12-02 09:00:00 - 2025-12-02 17:00:00 (Lot 3)
+DEBUG: Created Shift for Stacian: 2025-12-03 09:00:00 - 2025-12-03 17:00:00 (Lot 3)
+DEBUG: Found Location Header: Lot 2 in line: LOT 2
+DEBUG: Found Location Header: Lot 2 in line: Lot 2 cashiers 12/6/25 12/7/25 12/8/25 1219/25 12/10/25 12/11/25 12112125
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Darcy_Lombardi' at X: 314.0, Y: 384.0
+DEBUG: Line Item: 'OFF' at X: 582.0, Y: 381.0
+DEBUG: Line Item: '10:45A-6:45P' at X: 812.5, Y: 377.5
+DEBUG: Line Item: '10.45A-6:45P' at X: 1043.5, Y: 375.0
+DEBUG: Line Item: '10*45A-6 45P' at X: 1274.5, Y: 372.5
+DEBUG: Line Item: '10:45A-6:45P' at X: 1505.5, Y: 370.0
+DEBUG: Line Item: '10.45A-6:45P' at X: 1736.5, Y: 368.0
+DEBUG: Line Item: 'OFF' at X: 1968.0, Y: 366.0
+DEBUG: Processing Row: 'Darcy Lombardi' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Darcy Lombardi' Time Slots: {0: 'OFF', 1: '10:45A-6:45P', 2: '10.45A-6:45P', 3: '10*45A-6 45P', 4: '10:45A-6:45P', 5: '10.45A-6:45P', 6: 'OFF'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1272.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='10:45A - 6:45P', Matches=['10:45A - 6:45P']
+DEBUG: Loop finished for row 'Darcy Lombardi'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Shantae Rios' at X: 316.0, Y: 462.0
+DEBUG: Line Item: '6.45P-2;45A' at X: 582.0, Y: 458.0
+DEBUG: Line Item: '6.45P-2:45A' at X: 813.0, Y: 455.0
+DEBUG: Line Item: '6:45P-2.45A' at X: 1045.0, Y: 454.0
+DEBUG: Line Item: '6.45P-2:45A' at X: 1274.0, Y: 452.0
+DEBUG: Line Item: 'OFF' at X: 1506.0, Y: 449.0
+DEBUG: Line Item: 'OFF' at X: 1737.0, Y: 447.0
+DEBUG: Line Item: '6.45P-2:45A' at X: 1966.5, Y: 444.0
+DEBUG: Processing Row: 'Shantae Rios' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Shantae Rios' Time Slots: {0: '6.45P-2;45A', 1: '6.45P-2:45A', 2: '6:45P-2.45A', 3: '6.45P-2:45A', 4: 'OFF', 5: 'OFF', 6: '6.45P-2:45A'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1272.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='6:45P - 2:45A', Matches=['6:45P - 2:45A']
+DEBUG: Loop finished for row 'Shantae Rios'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Shacora Powell' at X: 316.0, Y: 541.0
+DEBUG: Line Item: '10:45A-6:45P' at X: 582.5, Y: 537.0
+DEBUG: Line Item: '10.45A-6.45P' at X: 1967.5, Y: 523.0
+DEBUG: Processing Row: 'Shacora Powell' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Shacora Powell' Time Slots: {0: '10:45A-6:45P', 6: '10.45A-6.45P'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1272.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Shacora Powell'. Row Shifts: 2
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Mike Bostock' at X: 318.0, Y: 620.0
+DEBUG: Line Item: '6.45P-2:45A' at X: 1505.0, Y: 607.0
+DEBUG: Line Item: '6.45P-2:45A' at X: 1737.0, Y: 604.0
+DEBUG: Processing Row: 'Mike Bostock' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Mike Bostock' Time Slots: {4: '6.45P-2:45A', 5: '6.45P-2:45A'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1272.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Mike Bostock'. Row Shifts: 2
+DEBUG: Found Location Header: Lot 3 in line: LOT 3 CASHIER'S
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Jim Quinn' at X: 315.0, Y: 380.0
+DEBUG: Line Item: '9:45A-5.45P' at X: 580.5, Y: 378.0
+DEBUG: Line Item: '9.45A-S:45P' at X: 811.5, Y: 376.0
+DEBUG: Line Item: '9:45A-5.45P' at X: 1042.5, Y: 374.0
+DEBUG: Line Item: 'OFF' at X: 1275.0, Y: 373.0
+DEBUG: Line Item: 'OFF' at X: 1506.0, Y: 371.0
+DEBUG: Line Item: '9.45A-5:45P' at X: 1736.0, Y: 369.0
+DEBUG: Line Item: '9:45A-5.45P' at X: 1966.0, Y: 367.0
+DEBUG: Processing Row: 'Jim Quinn' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Jim Quinn' Time Slots: {0: '9:45A-5.45P', 1: '9.45A-S:45P', 2: '9:45A-5.45P', 3: 'OFF', 4: 'OFF', 5: '9.45A-5:45P', 6: '9:45A-5.45P'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='9:45A - 5:45P', Matches=['9:45A - 5:45P']
+DEBUG: Loop finished for row 'Jim Quinn'. Row Shifts: 5
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Jamiel Saleh' at X: 314.5, Y: 459.5
+DEBUG: Line Item: '5.45P-1:45A' at X: 582.0, Y: 457.0
+DEBUG: Line Item: '5.45P-1:45A' at X: 812.0, Y: 455.0
+DEBUG: Line Item: '5:45P-1.45A' at X: 1044.0, Y: 453.0
+DEBUG: Line Item: 'OFF' at X: 1275.0, Y: 451.0
+DEBUG: Line Item: 'OFF' at X: 1506.0, Y: 449.0
+DEBUG: Line Item: '5.45P-1:45A' at X: 1736.0, Y: 447.0
+DEBUG: Line Item: '5:45P-1:45A' at X: 1966.5, Y: 445.0
+DEBUG: Processing Row: 'Jamiel Saleh' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Jamiel Saleh' Time Slots: {0: '5.45P-1:45A', 1: '5.45P-1:45A', 2: '5:45P-1.45A', 3: 'OFF', 4: 'OFF', 5: '5.45P-1:45A', 6: '5:45P-1:45A'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='5:45P - 1:45A', Matches=['5:45P - 1:45A']
+DEBUG: Loop finished for row 'Jamiel Saleh'. Row Shifts: 5
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Chandrakant Patel' at X: 316.0, Y: 538.0
+DEBUG: Line Item: '1:45A-9:45A' at X: 582.0, Y: 536.0
+DEBUG: Line Item: '1.45A-9:45A' at X: 814.0, Y: 535.0
+DEBUG: Line Item: '1:45A-9:45A' at X: 1044.0, Y: 533.0
+DEBUG: Line Item: '1:45A-9:45A' at X: 1275.0, Y: 531.0
+DEBUG: Line Item: 'OFF' at X: 1506.0, Y: 529.0
+DEBUG: Line Item: 'OFF' at X: 1737.0, Y: 527.0
+DEBUG: Line Item: '1.45A-9:45A' at X: 1967.0, Y: 525.0
+DEBUG: Processing Row: 'Chandrakant Patel' -> Employee Match: None (Loc: Lot 3)
+DEBUG: Row 'Chandrakant Patel' Time Slots: {0: '1:45A-9:45A', 1: '1.45A-9:45A', 2: '1:45A-9:45A', 3: '1:45A-9:45A', 4: 'OFF', 5: 'OFF', 6: '1.45A-9:45A'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='1:45A - 9:45A', Matches=['1:45A - 9:45A']
+DEBUG: Loop finished for row 'Chandrakant Patel'. Row Shifts: 5
+DEBUG: Found Location Header: Conrac in line: Sharon Moyer Lot Lot Conrac Conrac 1:45A-9.45A
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Sharon Moyer' at X: 316.0, Y: 620.0
+DEBUG: Line Item: 'Lot' at X: 807.0, Y: 620.0
+DEBUG: Line Item: 'Lot' at X: 1039.0, Y: 619.0
+DEBUG: Line Item: 'Conrac' at X: 1277.0, Y: 616.0
+DEBUG: Line Item: 'Conrac' at X: 1507.0, Y: 615.0
+DEBUG: Line Item: '1:45A-9.45A' at X: 1738.0, Y: 606.0
+DEBUG: Processing Row: 'Sharon Moyer' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'Sharon Moyer' Time Slots: {1: 'Lot', 2: 'Lot', 3: 'Conrac', 4: 'Conrac', 5: '1:45A-9.45A'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='10T', Matches=[]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Sharon Moyer'. Row Shifts: 3
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Sheila Andersen' at X: 316.0, Y: 699.0
+DEBUG: Line Item: 'Lot' at X: 577.0, Y: 703.0
+DEBUG: Line Item: '9:45A-5.4SP' at X: 1274.5, Y: 690.0
+DEBUG: Line Item: '9.45A-5.45P' at X: 1506.0, Y: 689.0
+DEBUG: Line Item: 'Lot' at X: 1962.0, Y: 691.0
+DEBUG: Processing Row: 'Sheila Andersen' -> Employee Match: None (Loc: Conrac)
+DEBUG: Row 'Sheila Andersen' Time Slots: {0: 'Lot', 3: '9:45A-5.4SP', 4: '9.45A-5.45P', 6: 'Lot'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Sheila Andersen'. Row Shifts: 2
+DEBUG: Found Location Header: Plaza in line: Asia Breedlove Plaza 5.45P-1:4SA 5:4SP-1:45A Conrac Conrac
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Asia Breedlove' at X: 317.0, Y: 778.0
+DEBUG: Line Item: 'Plaza' at X: 1046.0, Y: 779.0
+DEBUG: Line Item: '5.45P-1:4SA' at X: 1276.0, Y: 770.0
+DEBUG: Line Item: '5:4SP-1:45A' at X: 1506.0, Y: 768.0
+DEBUG: Line Item: 'Conrac' at X: 1739.0, Y: 772.0
+DEBUG: Line Item: 'Conrac' at X: 1971.0, Y: 771.0
+DEBUG: Processing Row: 'Asia Breedlove' -> Employee Match: None (Loc: Plaza)
+DEBUG: Row 'Asia Breedlove' Time Slots: {2: 'Plaza', 3: '5.45P-1:4SA', 4: '5:4SP-1:45A', 5: 'Conrac', 6: 'Conrac'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='P1AZA', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Asia Breedlove'. Row Shifts: 5
+DEBUG: Found Location Header: Lot 1 in line: Stacian Hamilton Lot 4 Lot 4 Lot 1 Lot 1:45A-9:45A
+DEBUG: First Column X: 582.0, Margin: 50
+DEBUG: Line Item: 'Stacian Hamilton' at X: 316.0, Y: 857.0
+DEBUG: Line Item: 'Lot 4' at X: 584.0, Y: 863.0
+DEBUG: Line Item: 'Lot 4' at X: 815.0, Y: 861.0
+DEBUG: Line Item: 'Lot 1' at X: 1045.0, Y: 859.0
+DEBUG: Line Item: 'Lot' at X: 1270.0, Y: 855.0
+DEBUG: Line Item: '1:45A-9:45A' at X: 1507.5, Y: 847.5
+DEBUG: Processing Row: 'Stacian Hamilton' -> Employee Match: Stacian (Loc: Lot 1)
+DEBUG: Row 'Stacian Hamilton' Time Slots: {0: 'Lot 4', 1: 'Lot 4', 2: 'Lot 1', 3: 'Lot', 4: '1:45A-9:45A'}
+DEBUG: Day Columns (X): [(582.0, 'SATURDAY'), (813.0, 'SUNDAY'), (1043.5, 'MONDAY'), (1274.0, 'TUESDAY'), (1505.0, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1968.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='10T 1', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'Stacian Hamilton'. Row Shifts: 4
+DEBUG: Created Shift for Stacian: 2025-12-06 09:00:00 - 2025-12-06 17:00:00 (Lot 4)
+DEBUG: Created Shift for Stacian: 2025-12-07 09:00:00 - 2025-12-07 17:00:00 (Lot 4)
+DEBUG: Created Shift for Stacian: 2025-12-01 09:00:00 - 2025-12-01 17:00:00 (Lot 1)
+DEBUG: Created Shift for Stacian: 2025-12-03 09:00:00 - 2025-12-03 17:00:00 (Lot 1)
+DEBUG: Found Location Header: Lot 4 in line: LOT 4 CASHIER'S
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Mike Boyster' at X: 317.0, Y: 380.0
+DEBUG: Line Item: '9:30A-5.30P' at X: 580.5, Y: 376.0
+DEBUG: Line Item: '9:30A-5:30P' at X: 812.0, Y: 375.0
+DEBUG: Line Item: '9:30A-5.30P' at X: 1044.0, Y: 373.0
+DEBUG: Line Item: 'OFF' at X: 1275.0, Y: 371.0
+DEBUG: Line Item: 'OFF' at X: 1506.0, Y: 369.0
+DEBUG: Line Item: '9:30A-5.30P' at X: 1736.0, Y: 366.0
+DEBUG: Line Item: '9.30A-5.30P' at X: 1967.0, Y: 364.0
+DEBUG: Processing Row: 'Mike Boyster' -> Employee Match: None (Loc: Lot 4)
+DEBUG: Row 'Mike Boyster' Time Slots: {0: '9:30A-5.30P', 1: '9:30A-5:30P', 2: '9:30A-5.30P', 3: 'OFF', 4: 'OFF', 5: '9:30A-5.30P', 6: '9.30A-5.30P'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1275.0, 'TUESDAY'), (1503.5, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='9:30A - 5:30P', Matches=['9:30A - 5:30P']
+DEBUG: Loop finished for row 'Mike Boyster'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Alicia Phillips' at X: 316.0, Y: 458.0
+DEBUG: Line Item: '5.30P-1:30A' at X: 582.0, Y: 456.0
+DEBUG: Line Item: 'OFF' at X: 814.0, Y: 454.0
+DEBUG: Line Item: 'OFF' at X: 1044.0, Y: 452.0
+DEBUG: Line Item: '5.30P-1:30A' at X: 1274.0, Y: 450.0
+DEBUG: Line Item: '5.30P-1:30A' at X: 1504.0, Y: 448.0
+DEBUG: Line Item: '5:30P-1;30A' at X: 1736.0, Y: 446.0
+DEBUG: Line Item: '5.30P-1:30A' at X: 1966.0, Y: 444.0
+DEBUG: Processing Row: 'Alicia Phillips' -> Employee Match: None (Loc: Lot 4)
+DEBUG: Row 'Alicia Phillips' Time Slots: {0: '5.30P-1:30A', 1: 'OFF', 2: 'OFF', 3: '5.30P-1:30A', 4: '5.30P-1:30A', 5: '5:30P-1;30A', 6: '5.30P-1:30A'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1275.0, 'TUESDAY'), (1503.5, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Alicia Phillips'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Jen Atkins' at X: 315.0, Y: 539.0
+DEBUG: Line Item: 'OFF' at X: 583.0, Y: 537.0
+DEBUG: Line Item: 'OFF' at X: 814.0, Y: 534.0
+DEBUG: Line Item: '1;30A-9:30A' at X: 1044.0, Y: 532.0
+DEBUG: Line Item: '1:30A-9:30A' at X: 1275.0, Y: 530.0
+DEBUG: Line Item: '1:30A-9:30A' at X: 1506.0, Y: 528.0
+DEBUG: Line Item: '1.30A-9:30A' at X: 1737.0, Y: 526.0
+DEBUG: Line Item: '1.30A-9:30A' at X: 1968.0, Y: 524.0
+DEBUG: Processing Row: 'Jen Atkins' -> Employee Match: None (Loc: Lot 4)
+DEBUG: Row 'Jen Atkins' Time Slots: {0: 'OFF', 1: 'OFF', 2: '1;30A-9:30A', 3: '1:30A-9:30A', 4: '1:30A-9:30A', 5: '1.30A-9:30A', 6: '1.30A-9:30A'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1275.0, 'TUESDAY'), (1503.5, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='1:30A - 9:30A', Matches=['1:30A - 9:30A']
+DEBUG: Loop finished for row 'Jen Atkins'. Row Shifts: 5
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'John Karzak' at X: 316.0, Y: 620.0
+DEBUG: Line Item: '9.30A-5:30P' at X: 1275.0, Y: 610.0
+DEBUG: Line Item: '9:30A-5.30P' at X: 1506.0, Y: 608.0
+DEBUG: Processing Row: 'John Karzak' -> Employee Match: None (Loc: Lot 4)
+DEBUG: Row 'John Karzak' Time Slots: {3: '9.30A-5:30P', 4: '9:30A-5.30P'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1275.0, 'TUESDAY'), (1503.5, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'John Karzak'. Row Shifts: 2
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Miracle C-Brown' at X: 314.5, Y: 699.5
+DEBUG: Line Item: '5.30P-1.30A' at X: 813.0, Y: 693.0
+DEBUG: Line Item: '5.30P-1:30A' at X: 1044.0, Y: 691.0
+DEBUG: Processing Row: 'Miracle C-Brown' -> Employee Match: None (Loc: Lot 4)
+DEBUG: Row 'Miracle C-Brown' Time Slots: {1: '5.30P-1.30A', 2: '5.30P-1:30A'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1275.0, 'TUESDAY'), (1503.5, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='5:30P - 1:30A', Matches=['5:30P - 1:30A']
+DEBUG: Loop finished for row 'Miracle C-Brown'. Row Shifts: 2
+DEBUG: Found Location Header: Lot 1 in line: Stacian Hamilton 1.30A-9.30A 1;30A-9:30A Lot Lot 1 Lot 3
+DEBUG: First Column X: 581.5, Margin: 50
+DEBUG: Line Item: 'Stacian Hamilton' at X: 316.0, Y: 778.0
+DEBUG: Line Item: '1.30A-9.30A' at X: 584.0, Y: 775.0
+DEBUG: Line Item: '1;30A-9:30A' at X: 814.0, Y: 774.0
+DEBUG: Line Item: 'Lot' at X: 1038.0, Y: 777.0
+DEBUG: Line Item: 'Lot 1' at X: 1275.0, Y: 775.0
+DEBUG: Line Item: 'Lot 3' at X: 1508.0, Y: 774.0
+DEBUG: Processing Row: 'Stacian Hamilton' -> Employee Match: Stacian (Loc: Lot 1)
+DEBUG: Row 'Stacian Hamilton' Time Slots: {0: '1.30A-9.30A', 1: '1;30A-9:30A', 2: 'Lot', 3: 'Lot 1', 4: 'Lot 3'}
+DEBUG: Day Columns (X): [(581.5, 'SATURDAY'), (812.5, 'SUNDAY'), (1044.0, 'MONDAY'), (1275.0, 'TUESDAY'), (1503.5, 'WEDNESDAY'), (1737.0, 'THURSDAY'), (1967.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='10T', Matches=[]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Stacian Hamilton'. Row Shifts: 4
+DEBUG: Created Shift for Stacian: 2025-12-06 09:00:00 - 2025-12-06 17:00:00 (Lot 1)
+DEBUG: Created Shift for Stacian: 2025-12-07 09:00:00 - 2025-12-07 17:00:00 (Lot 1)
+DEBUG: Created Shift for Stacian: 2025-12-02 09:00:00 - 2025-12-02 17:00:00 (Lot 1)
+DEBUG: Created Shift for Stacian: 2025-12-03 09:00:00 - 2025-12-03 17:00:00 (Lot 3)
+DEBUG: Found Location Header: Customer Lots in line: Customer Lots
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Mettttt' at X: 1285.0, Y: 305.0
+DEBUG: Line Item: 'Lat' at X: 2058.0, Y: 297.0
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Tom McCarthy' at X: 317.0, Y: 374.0
+DEBUG: Line Item: '3.45AM-12:1SPM' at X: 582.5, Y: 371.5
+DEBUG: Line Item: '345AM-12:15PM' at X: 814.0, Y: 370.0
+DEBUG: Processing Row: 'Tom McCarthy' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Tom McCarthy' Time Slots: {0: '3.45AM-12:1SPM', 1: '345AM-12:15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Tom McCarthy'. Row Shifts: 2
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Derrick Thomas' at X: 317.0, Y: 454.0
+DEBUG: Line Item: '3.30AM-12 OOPM3 3QAM-12 OPM]3 30AM12 OPM3 30AM-12:OPM3.30AM-12 OQPM' at X: 1507.0, Y: 443.0
+DEBUG: Processing Row: 'Derrick Thomas' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Derrick Thomas' Time Slots: {4: '3.30AM-12 OOPM3 3QAM-12 OPM]3 30AM12 OPM3 30AM-12:OPM3.30AM-12 OQPM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Loop finished for row 'Derrick Thomas'. Row Shifts: 1
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Jim Tillona' at X: 317.0, Y: 534.0
+DEBUG: Line Item: '4:15AM-12.45PM' at X: 584.0, Y: 532.0
+DEBUG: Line Item: '4:15AM-12.45PM' at X: 1276.0, Y: 526.0
+DEBUG: Line Item: '4:15AM-12:45PM' at X: 1507.0, Y: 523.0
+DEBUG: Line Item: '4:15AM-12.45PM' at X: 1738.0, Y: 522.0
+DEBUG: Line Item: '4:15AM-12.45PM' at X: 1969.0, Y: 520.0
+DEBUG: Processing Row: 'Jim Tillona' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Jim Tillona' Time Slots: {0: '4:15AM-12.45PM', 3: '4:15AM-12.45PM', 4: '4:15AM-12:45PM', 5: '4:15AM-12.45PM', 6: '4:15AM-12.45PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Jim Tillona'. Row Shifts: 5
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Paul Pasquarelli' at X: 317.0, Y: 615.0
+DEBUG: Line Item: '6.OOAM-2:3OPM' at X: 583.0, Y: 612.0
+DEBUG: Line Item: '6.OOAM-2:30PM' at X: 814.0, Y: 610.0
+DEBUG: Line Item: '6.OOAM-2:30PM' at X: 1046.0, Y: 608.0
+DEBUG: Line Item: '6.OOAM-2:30PM' at X: 1738.0, Y: 602.0
+DEBUG: Line Item: '6:OOAM-23OPM' at X: 1968.0, Y: 600.0
+DEBUG: Processing Row: 'Paul Pasquarelli' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Paul Pasquarelli' Time Slots: {0: '6.OOAM-2:3OPM', 1: '6.OOAM-2:30PM', 2: '6.OOAM-2:30PM', 5: '6.OOAM-2:30PM', 6: '6:OOAM-23OPM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='6:00AM - 2:30PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Paul Pasquarelli'. Row Shifts: 5
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Dan McKay' at X: 317.5, Y: 693.5
+DEBUG: Line Item: '12.45PM-9:1SPM' at X: 1047.0, Y: 687.0
+DEBUG: Line Item: '6 OOAM-2:3OPM' at X: 1276.0, Y: 686.0
+DEBUG: Line Item: '6.OOAM-2:30PM' at X: 1507.0, Y: 684.0
+DEBUG: Line Item: '6.45AM-3 15PM' at X: 1970.0, Y: 680.0
+DEBUG: Processing Row: 'Dan McKay' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Dan McKay' Time Slots: {2: '12.45PM-9:1SPM', 3: '6 OOAM-2:3OPM', 4: '6.OOAM-2:30PM', 6: '6.45AM-3 15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='12:45PM - 9:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Dan McKay'. Row Shifts: 4
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Delvin Gumbs' at X: 318.0, Y: 772.0
+DEBUG: Line Item: '6.45AM-3.1SPM' at X: 583.5, Y: 770.0
+DEBUG: Line Item: 'Hsm' at X: 713.0, Y: 742.0
+DEBUG: Line Item: '1OBAM-11:OOAM' at X: 816.0, Y: 768.0
+DEBUG: Line Item: 'E-Lot' at X: 1279.0, Y: 765.0
+DEBUG: Line Item: 'E-Lot' at X: 1509.0, Y: 762.0
+DEBUG: Line Item: 'E-Lot' at X: 1740.0, Y: 761.0
+DEBUG: Processing Row: 'Delvin Gumbs' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Delvin Gumbs' Time Slots: {0: '6.45AM-3.1SPM', 1: 'Hsm 1OBAM-11:OOAM', 3: 'E-Lot', 4: 'E-Lot', 5: 'E-Lot'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Delvin Gumbs'. Row Shifts: 5
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Leach Kelly' at X: 318.0, Y: 850.5
+DEBUG: Line Item: '3.45PM-12:15AM' at X: 815.0, Y: 848.0
+DEBUG: Processing Row: 'Leach Kelly' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Leach Kelly' Time Slots: {1: '3.45PM-12:15AM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Leach Kelly'. Row Shifts: 1
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Vincent Creary' at X: 317.0, Y: 930.5
+DEBUG: Line Item: '6.45AM-3:1SPM' at X: 1278.0, Y: 922.0
+DEBUG: Line Item: '645AM-4:1SPM' at X: 1507.5, Y: 920.0
+DEBUG: Line Item: '7:4SAM 4:15PM' at X: 1738.5, Y: 918.0
+DEBUG: Processing Row: 'Vincent Creary' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Vincent Creary' Time Slots: {3: '6.45AM-3:1SPM', 4: '645AM-4:1SPM', 5: '7:4SAM 4:15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Vincent Creary'. Row Shifts: 3
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Curtis Clarke' at X: 318.0, Y: 1011.0
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 1047.0, Y: 1004.0
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 1277.0, Y: 1003.0
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 1508.0, Y: 1000.0
+DEBUG: Line Item: '6.45AM-4:15PM' at X: 1738.0, Y: 998.0
+DEBUG: Processing Row: 'Curtis Clarke' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Curtis Clarke' Time Slots: {2: '7:45AM-4:15PM', 3: '7:45AM-4:15PM', 4: '7:45AM-4:15PM', 5: '6.45AM-4:15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='7:45AM - 4:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Curtis Clarke'. Row Shifts: 4
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Lawrence Bempong' at X: 316.5, Y: 1092.5
+DEBUG: Line Item: '6.45AM-315PM' at X: 1047.0, Y: 1085.0
+DEBUG: Line Item: '10.45AM-7:15PM' at X: 1279.0, Y: 1084.0
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 1971.0, Y: 1076.0
+DEBUG: Processing Row: 'Lawrence Bempong' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Lawrence Bempong' Time Slots: {2: '6.45AM-315PM', 3: '10.45AM-7:15PM', 6: '7:45AM-4:15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='6:45AM - 315PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Lawrence Bempong'. Row Shifts: 3
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Audley MCLean _' at X: 319.5, Y: 1153.0
+DEBUG: Line Item: '10 A5AV7.15PM' at X: 1047.0, Y: 1159.0
+DEBUG: Line Item: '10 A5A ^' at X: 1226.5, Y: 1163.0
+DEBUG: Line Item: 'TSRM' at X: 1350.0, Y: 1162.0
+DEBUG: Line Item: '[106A ABRM I19451z JspM' at X: 1853.0, Y: 1152.0
+DEBUG: Processing Row: 'Audley MCLean' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Audley MCLean' Time Slots: {2: '10 A5AV7.15PM', 3: '10 A5A ^ TSRM', 6: '[106A ABRM I19451z JspM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='10 A5AV7:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Audley MCLean'. Row Shifts: 3
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Joel Quail' at X: 319.0, Y: 1250.0
+DEBUG: Line Item: '11:45AM-8:15PM' at X: 587.0, Y: 1248.0
+DEBUG: Line Item: '6.45AM-3:15PM' at X: 816.0, Y: 1246.0
+DEBUG: Line Item: '11.45AM-8:15PM' at X: 1511.0, Y: 1239.5
+DEBUG: Line Item: '11:45AM-8:1SPM' at X: 1743.0, Y: 1237.0
+DEBUG: Line Item: '11.45AM-8.15PM' at X: 1972.0, Y: 1236.0
+DEBUG: Processing Row: 'Joel Quail' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Joel Quail' Time Slots: {0: '11:45AM-8:15PM', 1: '6.45AM-3:15PM', 4: '11.45AM-8:15PM', 5: '11:45AM-8:1SPM', 6: '11.45AM-8.15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Joel Quail'. Row Shifts: 5
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Ken Bailey' at X: 318.0, Y: 1329.0
+DEBUG: Line Item: '2:45PM-I1:15PM' at X: 585.0, Y: 1328.0
+DEBUG: Line Item: '2.45PM-11:1SPM' at X: 817.0, Y: 1326.0
+DEBUG: Line Item: '2.45PM-11:1SPM' at X: 1972.0, Y: 1314.0
+DEBUG: Processing Row: 'Ken Bailey' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Ken Bailey' Time Slots: {0: '2:45PM-I1:15PM', 1: '2.45PM-11:1SPM', 6: '2.45PM-11:1SPM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Ken Bailey'. Row Shifts: 3
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Alphonso Martin' at X: 318.5, Y: 1409.5
+DEBUG: Line Item: '10.45AM-8:15PM' at X: 818.0, Y: 1404.0
+DEBUG: Processing Row: 'Alphonso Martin' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Alphonso Martin' Time Slots: {1: '10.45AM-8:15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Alphonso Martin'. Row Shifts: 1
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Laura DeGray' at X: 318.5, Y: 1488.5
+DEBUG: Line Item: '10.OOPM-6.30AM' at X: 817.0, Y: 1483.0
+DEBUG: Line Item: '10.45PM-7:15AM' at X: 1743.0, Y: 1476.0
+DEBUG: Processing Row: 'Laura DeGray' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Laura DeGray' Time Slots: {1: '10.OOPM-6.30AM', 5: '10.45PM-7:15AM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Laura DeGray'. Row Shifts: 2
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Jeffrey Smith' at X: 318.0, Y: 1570.0
+DEBUG: Line Item: '1:45AM-8:15PM' at X: 1058.0, Y: 1562.0
+DEBUG: Line Item: '11.45AM-8:15PM' at X: 1280.0, Y: 1560.0
+DEBUG: Processing Row: 'Jeffrey Smith' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Jeffrey Smith' Time Slots: {2: '1:45AM-8:15PM', 3: '11.45AM-8:15PM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1276.0, 'TUESDAY'), (1505.5, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1967.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='1:45AM - 8:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Loop finished for row 'Jeffrey Smith'. Row Shifts: 2
+DEBUG: Found Location Header: Customer Lots in line: Customer Lots
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Robert Kyerematen' at X: 309.0, Y: 430.0
+DEBUG: Line Item: '2:OOPM-1O.3OPM2 OOPM-1O.30PM' at X: 923.0, Y: 425.0
+DEBUG: Line Item: '12:45PM-9:15P' at X: 1269.0, Y: 422.0
+DEBUG: Line Item: '12:45PM-9.15P' at X: 1500.0, Y: 420.0
+DEBUG: Line Item: '2:45PM-11:1SPM' at X: 1731.0, Y: 418.0
+DEBUG: Processing Row: 'Robert Kyerematen' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Robert Kyerematen' Time Slots: {2: '2:OOPM-1O.3OPM2 OOPM-1O.30PM', 3: '12:45PM-9:15P', 4: '12:45PM-9.15P', 5: '2:45PM-11:1SPM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='2:00PM - 10:30PM2 00PM - 10:30PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Robert Kyerematen'. Row Shifts: 4
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Joe Gerhauser' at X: 310.0, Y: 510.0
+DEBUG: Line Item: '10.45AM-7:15PM' at X: 576.0, Y: 508.0
+DEBUG: Line Item: '10.45AM-7:15PM' at X: 808.0, Y: 506.0
+DEBUG: Processing Row: 'Joe Gerhauser' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Joe Gerhauser' Time Slots: {0: '10.45AM-7:15PM', 1: '10.45AM-7:15PM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Joe Gerhauser'. Row Shifts: 2
+DEBUG: Found Location Header: Office in line: Vincent Grady 2.45PM-I1:1SPM 10.45AM-8:1SPM 10.45AM-7:1PM
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Vincent Grady' at X: 309.0, Y: 669.0
+DEBUG: Line Item: '2.45PM-I1:1SPM' at X: 1039.0, Y: 662.0
+DEBUG: Line Item: '10.45AM-8:1SPM' at X: 1500.5, Y: 656.5
+DEBUG: Line Item: '10.45AM-7:1PM' at X: 1964.0, Y: 652.0
+DEBUG: Processing Row: 'Vincent Grady' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Vincent Grady' Time Slots: {2: '2.45PM-I1:1SPM', 4: '10.45AM-8:1SPM', 6: '10.45AM-7:1PM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='2:45PM - 11:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Vincent Grady'. Row Shifts: 3
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Munroe Carter' at X: 312.0, Y: 747.0
+DEBUG: Line Item: '2 OOPM-10.3OPM' at X: 577.0, Y: 745.0
+DEBUG: Line Item: '2O0PM-10 30PM2 OPM-10 30PM2OOPM-1O:30PM_' at X: 1500.0, Y: 737.0
+DEBUG: Line Item: '2OOPM-1C.30PM' at X: 1963.0, Y: 733.0
+DEBUG: Processing Row: 'Munroe Carter' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Munroe Carter' Time Slots: {0: '2 OOPM-10.3OPM', 4: '2O0PM-10 30PM2 OPM-10 30PM2OOPM-1O:30PM_', 6: '2OOPM-1C.30PM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Munroe Carter'. Row Shifts: 3
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Franklyn Jeffers' at X: 309.5, Y: 827.0
+DEBUG: Line Item: '7:45AM-8:15PM' at X: 576.5, Y: 824.0
+DEBUG: Line Item: '7:A5AM-6:1SPM' at X: 808.5, Y: 821.0
+DEBUG: Line Item: '10.45AM-7:15PM' at X: 1040.0, Y: 820.0
+DEBUG: Line Item: '10.OOPM-6.30AM' at X: 1273.0, Y: 818.0
+DEBUG: Line Item: '1' at X: 1633.0, Y: 814.0
+DEBUG: Line Item: 'O:A5AM-7:1SPM' at X: 1739.5, Y: 813.0
+DEBUG: Line Item: '12.45PM-9:15PM' at X: 1965.0, Y: 812.0
+DEBUG: Processing Row: 'Franklyn Jeffers' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Franklyn Jeffers' Time Slots: {0: '7:45AM-8:15PM', 1: '7:A5AM-6:1SPM', 2: '10.45AM-7:15PM', 3: '10.OOPM-6.30AM', 5: '1 O:A5AM-7:1SPM', 6: '12.45PM-9:15PM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='10:45AM - 7:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Franklyn Jeffers'. Row Shifts: 6
+DEBUG: Found Location Header: Lot 2 in line: Derrick Wallen 3.45PM-12.15AM E-Lot 2:45PM-11:1SPM 1245PM-9:15PM E-Lot
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Derrick Wallen' at X: 310.0, Y: 906.0
+DEBUG: Line Item: '3.45PM-12.15AM' at X: 577.0, Y: 904.0
+DEBUG: Line Item: 'E-Lot' at X: 1041.0, Y: 901.0
+DEBUG: Line Item: '2:45PM-11:1SPM' at X: 1501.0, Y: 896.0
+DEBUG: Line Item: '1245PM-9:15PM' at X: 1733.0, Y: 894.0
+DEBUG: Line Item: 'E-Lot' at X: 1964.0, Y: 890.0
+DEBUG: Processing Row: 'Derrick Wallen' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Derrick Wallen' Time Slots: {0: '3.45PM-12.15AM', 2: 'E-Lot', 4: '2:45PM-11:1SPM', 5: '1245PM-9:15PM', 6: 'E-Lot'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Col 2 Cleaned='E - 10T', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Derrick Wallen'. Row Shifts: 5
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Clarence_Facey' at X: 310.5, Y: 986.5
+DEBUG: Line Item: '4:OOPM-12 30AM]4:OPM-12 3AMA OPM-12 30AMl4:OOPM-12:3QAM' at X: 1385.5, Y: 975.5
+DEBUG: Line Item: '4.OOPM-12.30AM' at X: 1965.0, Y: 971.0
+DEBUG: Processing Row: 'Clarence Facey' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Clarence Facey' Time Slots: {4: '4:OOPM-12 30AM]4:OPM-12 3AMA OPM-12 30AMl4:OOPM-12:3QAM', 6: '4.OOPM-12.30AM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Clarence Facey'. Row Shifts: 2
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Wayne_Edwards' at X: 310.0, Y: 1066.5
+DEBUG: Line Item: '5.45PM-2:15AM' at X: 1040.0, Y: 1060.0
+DEBUG: Line Item: '5.45PM-Z:1SAM' at X: 1270.0, Y: 1057.0
+DEBUG: Line Item: '5.45PM-2:15AM' at X: 1501.5, Y: 1055.0
+DEBUG: Line Item: '5.45PM-2:1SAM' at X: 1734.0, Y: 1053.0
+DEBUG: Line Item: '5.45PM-2:15AM' at X: 1964.5, Y: 1050.5
+DEBUG: Processing Row: 'Wayne Edwards' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Wayne Edwards' Time Slots: {2: '5.45PM-2:15AM', 3: '5.45PM-Z:1SAM', 4: '5.45PM-2:15AM', 5: '5.45PM-2:1SAM', 6: '5.45PM-2:15AM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='5:45PM - 2:15AM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Wayne Edwards'. Row Shifts: 5
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: '2:45PM-I1:1SPM' at X: 1270.5, Y: 1137.0
+DEBUG: Line Item: '0.OOPM-6 30AM' at X: 1509.5, Y: 1134.5
+DEBUG: Line Item: 'D2' at X: 1522.0, Y: 1104.0
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Richard Abbott' at X: 311.5, Y: 1145.5
+DEBUG: Line Item: '5.45PM-Z:15AM' at X: 578.0, Y: 1144.0
+DEBUG: Line Item: '5.45PM-Z:15AM' at X: 810.0, Y: 1142.0
+DEBUG: Line Item: '1' at X: 1403.0, Y: 1136.0
+DEBUG: Processing Row: 'Richard Abbott' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Richard Abbott' Time Slots: {0: '5.45PM-Z:15AM', 1: '5.45PM-Z:15AM', 4: '1'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Richard Abbott'. Row Shifts: 2
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Edward Milner' at X: 313.0, Y: 1382.5
+DEBUG: Processing Row: 'Edward Milner' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Edward Milner' Time Slots: {}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Edward Milner'. Row Shifts: 0
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Kelvin Williams' at X: 312.0, Y: 1464.0
+DEBUG: Line Item: 'L' at X: 428.4427039706161, Y: 1434.5
+DEBUG: Line Item: 'ID' at X: 488.0, Y: 1462.0
+DEBUG: Line Item: 'ASPMZ IBAM' at X: 597.5, Y: 1462.0
+DEBUG: Line Item: 'I0 opM6 304M' at X: 1276.0, Y: 1456.0
+DEBUG: Line Item: '10ZSRM7154L' at X: 1507.0, Y: 1453.0
+DEBUG: Line Item: 'J2 ZEPME7EBAM' at X: 1734.0, Y: 1453.0
+DEBUG: Line Item: 'I0 457M' at X: 1918.0, Y: 1450.0
+DEBUG: Line Item: 'ZS4M' at X: 2032.0, Y: 1445.0
+DEBUG: Processing Row: 'Kelvin Williams L ID' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Kelvin Williams L ID' Time Slots: {0: 'ASPMZ IBAM', 3: 'I0 opM6 304M', 4: '10ZSRM7154L', 5: 'J2 ZEPME7EBAM', 6: 'I0 457M ZS4M'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Kelvin Williams L ID'. Row Shifts: 5
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'D2' at X: 1062.0, Y: 1506.0
+DEBUG: Line Item: '10.45PM-7: 15AM1O ASPM-7:15AM' at X: 1389.5, Y: 1534.5
+DEBUG: Line Item: 'D2' at X: 1285.0, Y: 1504.0
+DEBUG: Line Item: 'D2' at X: 1516.0, Y: 1502.0
+DEBUG: Line Item: '10.O0PM-6. 30AM' at X: 1967.5, Y: 1528.0
+DEBUG: Line Item: 'D2' at X: 1978.0, Y: 1497.0
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Donavan Levy' at X: 312.5, Y: 1544.5
+DEBUG: Line Item: '12:45PM-9: 1SPM1245PM-9:15PM' at X: 696.0, Y: 1539.5
+DEBUG: Line Item: '10.45PM-7:15AM' at X: 1044.0, Y: 1538.0
+DEBUG: Line Item: 'Anaatatt' at X: 2016.0, Y: 1546.0
+DEBUG: Processing Row: 'Donavan Levy' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Donavan Levy' Time Slots: {1: '12:45PM-9: 1SPM1245PM-9:15PM', 2: '10.45PM-7:15AM', 6: 'Anaatatt'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='10:45PM - 7:15AM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Donavan Levy'. Row Shifts: 3
+DEBUG: First Column X: 575.5, Margin: 50
+DEBUG: Line Item: 'Alan Blomquist' at X: 313.0, Y: 1624.0
+DEBUG: Line Item: '11.45PM-8:15AM' at X: 814.0, Y: 1620.0
+DEBUG: Line Item: '11:45PM-8:15AM] 1145PM-8:15AM' at X: 1160.0, Y: 1614.0
+DEBUG: Line Item: '1:45PM-8:1SAM] 11:45PM-8:15AM' at X: 1630.0, Y: 1613.0
+DEBUG: Processing Row: 'Alan Blomquist' -> Employee Match: None (Loc: Lot 2)
+DEBUG: Row 'Alan Blomquist' Time Slots: {1: '11.45PM-8:15AM', 3: '11:45PM-8:15AM] 1145PM-8:15AM', 5: '1:45PM-8:1SAM] 11:45PM-8:15AM'}
+DEBUG: Day Columns (X): [(575.5, 'SATURDAY'), (805.5, 'SUNDAY'), (1037.5, 'MONDAY'), (1268.0, 'TUESDAY'), (1498.0, 'WEDNESDAY'), (1730.5, 'THURSDAY'), (1961.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Alan Blomquist'. Row Shifts: 3
+DEBUG: Found Location Header: Customer Lots in line: Customer Lots
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 579.0, Margin: 50
+DEBUG: Line Item: 'Matthew Ramlall' at X: 312.0, Y: 346.0
+DEBUG: Line Item: '11:45PM-8:15AM' at X: 580.0, Y: 344.0
+DEBUG: Line Item: '10.45PM-7:1SAM' at X: 811.0, Y: 342.0
+DEBUG: Line Item: '10.OOPM-6.30AM' at X: 1042.0, Y: 340.0
+DEBUG: Line Item: '10.OOPM-6.3OAM' at X: 1737.0, Y: 332.0
+DEBUG: Line Item: '1145PM-8:15AM' at X: 1966.0, Y: 331.0
+DEBUG: Processing Row: 'Matthew Ramlall' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Matthew Ramlall' Time Slots: {0: '11:45PM-8:15AM', 1: '10.45PM-7:1SAM', 2: '10.OOPM-6.30AM', 5: '10.OOPM-6.3OAM', 6: '1145PM-8:15AM'}
+DEBUG: Day Columns (X): [(579.0, 'SATURDAY'), (809.0, 'SUNDAY'), (1042.0, 'MONDAY'), (1271.5, 'TUESDAY'), (1501.0, 'WEDNESDAY'), (1733.0, 'THURSDAY'), (1964.5, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='10:00PM - 6:30AM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Matthew Ramlall'. Row Shifts: 5
+DEBUG: First Column X: 579.0, Margin: 50
+DEBUG: Line Item: 'Matt Toma (S)' at X: 312.0, Y: 425.0
+DEBUG: Line Item: '5.30PM-Z:OOAM' at X: 1041.0, Y: 420.0
+DEBUG: Processing Row: 'Matt Toma (S)' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Matt Toma (S)' Time Slots: {2: '5.30PM-Z:OOAM'}
+DEBUG: Day Columns (X): [(579.0, 'SATURDAY'), (809.0, 'SUNDAY'), (1042.0, 'MONDAY'), (1271.5, 'TUESDAY'), (1501.0, 'WEDNESDAY'), (1733.0, 'THURSDAY'), (1964.5, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='5:30PM - Z:00AM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'Matt Toma (S)'. Row Shifts: 1
+DEBUG: First Column X: 579.0, Margin: 50
+DEBUG: Line Item: 'Scott Ganhao (S)' at X: 312.0, Y: 504.0
+DEBUG: Line Item: '5.OOPM-I:3OAM' at X: 811.0, Y: 500.0
+DEBUG: Line Item: '5.OOPM-1:3OAM' at X: 1504.0, Y: 494.0
+DEBUG: Line Item: '5.OOPM-1:3OAM' at X: 1965.0, Y: 490.0
+DEBUG: Processing Row: 'Scott Ganhao (S)' -> Employee Match: None (Loc: Customer Lots)
+DEBUG: Row 'Scott Ganhao (S)' Time Slots: {1: '5.OOPM-I:3OAM', 4: '5.OOPM-1:3OAM', 6: '5.OOPM-1:3OAM'}
+DEBUG: Day Columns (X): [(579.0, 'SATURDAY'), (809.0, 'SUNDAY'), (1042.0, 'MONDAY'), (1271.5, 'TUESDAY'), (1501.0, 'WEDNESDAY'), (1733.0, 'THURSDAY'), (1964.5, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Scott Ganhao (S)'. Row Shifts: 3
+DEBUG: Found Location Header: Office in line: Mark Dempsey (AFM)
+DEBUG: First Column X: 579.0, Margin: 50
+DEBUG: Line Item: 'Mark Dempsey (AFM)' at X: 314.0, Y: 583.0
+DEBUG: Processing Row: 'Mark Dempsey (AFM)' -> Employee Match: None (Loc: Office)
+DEBUG: Row 'Mark Dempsey (AFM)' Time Slots: {}
+DEBUG: Day Columns (X): [(579.0, 'SATURDAY'), (809.0, 'SUNDAY'), (1042.0, 'MONDAY'), (1271.5, 'TUESDAY'), (1501.0, 'WEDNESDAY'), (1733.0, 'THURSDAY'), (1964.5, 'FRIDAY')]
+DEBUG: Loop finished for row 'Mark Dempsey (AFM)'. Row Shifts: 0
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'JULIAN FELIX' at X: 314.0, Y: 376.0
+DEBUG: Line Item: '6.45AM-3:15PM' at X: 813.0, Y: 372.0
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 1042.0, Y: 369.0
+DEBUG: Line Item: '6:45AM-3:15PM' at X: 1503.5, Y: 364.5
+DEBUG: Line Item: '6:45AM-3:15PM' at X: 1736.0, Y: 362.0
+DEBUG: Line Item: '6:45AM-3:15PM' at X: 1966.0, Y: 360.0
+DEBUG: Processing Row: 'JULIAN FELIX' -> Employee Match: None (Loc: General)
+DEBUG: Row 'JULIAN FELIX' Time Slots: {1: '6.45AM-3:15PM', 2: '7:45AM-4:15PM', 4: '6:45AM-3:15PM', 5: '6:45AM-3:15PM', 6: '6:45AM-3:15PM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='7:45AM - 4:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'JULIAN FELIX'. Row Shifts: 5
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'CANUTE KERR' at X: 314.5, Y: 454.0
+DEBUG: Line Item: '6:45AM-3:15PM' at X: 581.5, Y: 451.0
+DEBUG: Line Item: '7:45AM-A:15PM' at X: 1273.5, Y: 445.0
+DEBUG: Line Item: '7:45AM-A:1SPM' at X: 1504.5, Y: 443.5
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 1735.5, Y: 441.5
+DEBUG: Line Item: '7:45AM A:15PM' at X: 1966.5, Y: 439.0
+DEBUG: Processing Row: 'CANUTE KERR' -> Employee Match: None (Loc: General)
+DEBUG: Row 'CANUTE KERR' Time Slots: {0: '6:45AM-3:15PM', 3: '7:45AM-A:15PM', 4: '7:45AM-A:1SPM', 5: '7:45AM-4:15PM', 6: '7:45AM A:15PM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'CANUTE KERR'. Row Shifts: 5
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Steve Brown' at X: 313.0, Y: 533.0
+DEBUG: Line Item: '7:45AM-4:15PM' at X: 581.5, Y: 531.5
+DEBUG: Line Item: '7:45AM- 4:15PM' at X: 811.5, Y: 529.0
+DEBUG: Line Item: '6:45AM-3:15PM' at X: 1044.0, Y: 528.0
+DEBUG: Line Item: '6.45AM-3:15PM' at X: 1273.5, Y: 525.0
+DEBUG: Processing Row: 'Steve Brown' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Steve Brown' Time Slots: {0: '7:45AM-4:15PM', 1: '7:45AM- 4:15PM', 2: '6:45AM-3:15PM', 3: '6.45AM-3:15PM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='6:45AM - 3:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Loop finished for row 'Steve Brown'. Row Shifts: 4
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Kevin Brown' at X: 314.0, Y: 614.0
+DEBUG: Line Item: '9:4SAM-6:15PM' at X: 812.0, Y: 610.0
+DEBUG: Line Item: '9:45AM-6:15PM' at X: 1044.0, Y: 607.0
+DEBUG: Line Item: '9:45AM-6:15PM' at X: 1274.5, Y: 604.5
+DEBUG: Line Item: '9:45AM-6:15PM' at X: 1505.0, Y: 604.0
+DEBUG: Line Item: '9:A5AM-6:15PM' at X: 1735.5, Y: 600.5
+DEBUG: Processing Row: 'Kevin Brown' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Kevin Brown' Time Slots: {1: '9:4SAM-6:15PM', 2: '9:45AM-6:15PM', 3: '9:45AM-6:15PM', 4: '9:45AM-6:15PM', 5: '9:A5AM-6:15PM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Col 2 Cleaned='9:45AM - 6:15PM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Kevin Brown'. Row Shifts: 5
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'KATHY MACKECHNIE]2: A5PM-11;15PM' at X: 432.0, Y: 771.5
+DEBUG: Line Item: '2:45PM-11:1SPM' at X: 1968.5, Y: 757.0
+DEBUG: Processing Row: 'KATHY MACKECHNIE]2: A5PM-11;15PM' -> Employee Match: None (Loc: General)
+DEBUG: Row 'KATHY MACKECHNIE]2: A5PM-11;15PM' Time Slots: {6: '2:45PM-11:1SPM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'KATHY MACKECHNIE]2: A5PM-11;15PM'. Row Shifts: 1
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Lawrence Bempong' at X: 315.0, Y: 854.0
+DEBUG: Line Item: 'C-Lot' at X: 1045.5, Y: 846.0
+DEBUG: Line Item: 'C-Lot' at X: 1277.0, Y: 843.0
+DEBUG: Line Item: 'C-Lot' at X: 1970.0, Y: 837.0
+DEBUG: Processing Row: 'Lawrence Bempong' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Lawrence Bempong' Time Slots: {2: 'C-Lot', 3: 'C-Lot', 6: 'C-Lot'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='C - 10T', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Lawrence Bempong'. Row Shifts: 3
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Matthew Grehn' at X: 317.0, Y: 932.0
+DEBUG: Line Item: '3:45PM-12:15AM] 11 45PM-8:15AML' at X: 700.0, Y: 929.0
+DEBUG: Line Item: '11:45PM-8:15AM10:45PM-7:15AM1O: 45PM-7:15AM' at X: 1279.0, Y: 923.0
+DEBUG: Line Item: '3.45PM-12:15AM' at X: 1968.0, Y: 916.0
+DEBUG: Processing Row: 'Matthew Grehn' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Matthew Grehn' Time Slots: {1: '3:45PM-12:15AM] 11 45PM-8:15AML', 3: '11:45PM-8:15AM10:45PM-7:15AM1O: 45PM-7:15AM', 6: '3.45PM-12:15AM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Matthew Grehn'. Row Shifts: 3
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Jay Discount' at X: 316.0, Y: 1013.5
+DEBUG: Line Item: '9:45AM-6:15PM' at X: 583.5, Y: 1008.5
+DEBUG: Line Item: '9:45AM-6:1SPM' at X: 1968.0, Y: 996.0
+DEBUG: Processing Row: 'Jay Discount' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Jay Discount' Time Slots: {0: '9:45AM-6:15PM', 6: '9:45AM-6:1SPM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Jay Discount'. Row Shifts: 2
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Anthony Pozzato' at X: 317.5, Y: 1251.0
+DEBUG: Line Item: '2:45PM-1I:1SPMJ2:A5PM-11:1SPM]2:ASPM-11;1SPM2 A5PM-11:1SPM2:A5PM-11E15PM' at X: 1276.5, Y: 1240.5
+DEBUG: Processing Row: 'Anthony Pozzato' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Anthony Pozzato' Time Slots: {3: '2:45PM-1I:1SPMJ2:A5PM-11:1SPM]2:ASPM-11;1SPM2 A5PM-11:1SPM2:A5PM-11E15PM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Loop finished for row 'Anthony Pozzato'. Row Shifts: 1
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Jeff Styles' at X: 318.0, Y: 1330.0
+DEBUG: Line Item: '3451' at X: 732.0, Y: 1325.0
+DEBUG: Line Item: '1215AM[3:45PM-12:15AMx A5PM-12:LAM3:45PM-12:15AM3:ASPM-12:15AM' at X: 1332.5, Y: 1320.5
+DEBUG: Line Item: '/e' at X: 833.0, Y: 1296.0
+DEBUG: Processing Row: 'Jeff Styles' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Jeff Styles' Time Slots: {1: '3451 /e', 3: '1215AM[3:45PM-12:15AMx A5PM-12:LAM3:45PM-12:15AM3:ASPM-12:15AM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Loop finished for row 'Jeff Styles'. Row Shifts: 2
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'JAMES GLENN' at X: 318.5, Y: 1488.5
+DEBUG: Line Item: '545PM-2:15AM' at X: 585.5, Y: 1487.0
+DEBUG: Line Item: '5.45PM-2:15AM' at X: 816.0, Y: 1486.0
+DEBUG: Processing Row: 'JAMES GLENN' -> Employee Match: None (Loc: General)
+DEBUG: Row 'JAMES GLENN' Time Slots: {0: '545PM-2:15AM', 1: '5.45PM-2:15AM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'JAMES GLENN'. Row Shifts: 2
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'D5' at X: 1010.0, Y: 1533.0
+DEBUG: Line Item: 'C-Lot' at X: 1512.0, Y: 1559.0
+DEBUG: Line Item: 'C-Lot' at X: 1743.0, Y: 1557.0
+DEBUG: Line Item: '5.45PM-2:1SAM' at X: 1971.5, Y: 1554.0
+DEBUG: Line Item: 'D5' at X: 1934.0, Y: 1524.0
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'DERRICK WALLEN' at X: 318.5, Y: 1568.0
+DEBUG: Line Item: 'C-Lot' at X: 586.0, Y: 1567.0
+DEBUG: Line Item: '5.4SPM-2:1SAM' at X: 1048.0, Y: 1564.0
+DEBUG: Processing Row: 'DERRICK WALLEN' -> Employee Match: None (Loc: General)
+DEBUG: Row 'DERRICK WALLEN' Time Slots: {0: 'C-Lot', 2: '5.4SPM-2:1SAM'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Col 2 Cleaned='5:45PM - 2:15AM', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'DERRICK WALLEN'. Row Shifts: 2
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: '5:45PM-2:1SAM' at X: 1279.5, Y: 1640.0
+DEBUG: Line Item: 'D5' at X: 1241.0, Y: 1611.0
+DEBUG: Line Item: '5:45PM-2:15AM' at X: 1510.5, Y: 1638.0
+DEBUG: Line Item: 'D5' at X: 1473.0, Y: 1607.0
+DEBUG: Line Item: '5.45PM-2:15AM' at X: 1742.0, Y: 1636.0
+DEBUG: Line Item: 'D5' at X: 1705.0, Y: 1605.0
+DEBUG: First Column X: 580.5, Margin: 50
+DEBUG: Line Item: 'Delvin Gumbs' at X: 320.0, Y: 1648.0
+DEBUG: Line Item: 'C-Lot' at X: 588.0, Y: 1646.0
+DEBUG: Line Item: 'C-Lot' at X: 818.0, Y: 1644.0
+DEBUG: Processing Row: 'Delvin Gumbs' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Delvin Gumbs' Time Slots: {0: 'C-Lot', 1: 'C-Lot'}
+DEBUG: Day Columns (X): [(580.5, 'SATURDAY'), (810.5, 'SUNDAY'), (1043.0, 'MONDAY'), (1273.0, 'TUESDAY'), (1502.5, 'WEDNESDAY'), (1735.0, 'THURSDAY'), (1966.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Loop finished for row 'Delvin Gumbs'. Row Shifts: 2
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns based on header: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+DEBUG: Header Candidate Block: 'Arthur Soucier' -> Found Days: ['thu']
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Arthur Soucier' at X: 317.0, Y: 414.0
+DEBUG: Line Item: '11:45PM-8:1SAM' at X: 585.0, Y: 413.0
+DEBUG: Line Item: '11:45PM-815AM 11:45PM-8:15AM 11:45PM-8:1SAM 11.4SPM-8:15AM' at X: 1624.5, Y: 409.0
+DEBUG: Processing Row: 'Arthur Soucier' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Arthur Soucier' Time Slots: {0: '11:45PM-8:1SAM', 5: '11:45PM-815AM 11:45PM-8:15AM 11:45PM-8:1SAM 11.4SPM-8:15AM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Arthur Soucier'. Row Shifts: 2
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Laura DeGray' at X: 315.5, Y: 495.0
+DEBUG: Line Item: 'C-Lot' at X: 815.0, Y: 493.0
+DEBUG: Line Item: 'C-Lot' at X: 1738.0, Y: 489.0
+DEBUG: Processing Row: 'Laura DeGray' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Laura DeGray' Time Slots: {1: 'C-Lot', 5: 'C-Lot'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'Laura DeGray'. Row Shifts: 2
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'AUDREY FIELDS' at X: 315.5, Y: 572.5
+DEBUG: Line Item: '10:45PM-7:1SAM  10:45PM-7:ISAM/10:45PM-7:1SAM' at X: 814.0, Y: 571.5
+DEBUG: Line Item: '10:45PM-7:1SAM/10:45PM-7:1SAM' at X: 1853.5, Y: 567.5
+DEBUG: Processing Row: 'AUDREY FIELDS' -> Employee Match: None (Loc: General)
+DEBUG: Row 'AUDREY FIELDS' Time Slots: {1: '10:45PM-7:1SAM  10:45PM-7:ISAM/10:45PM-7:1SAM', 5: '10:45PM-7:1SAM/10:45PM-7:1SAM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 5
+DEBUG: Loop finished for row 'AUDREY FIELDS'. Row Shifts: 2
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Kirk Nelson' at X: 316.0, Y: 653.0
+DEBUG: Line Item: '1:45AM-1O:15AM1:4SAM-1O:15AMA:ASAM-1O:1SAMA:A5AM-1O:15AMAASAM-1O:15AM:' at X: 1276.0, Y: 649.0
+DEBUG: Processing Row: 'Kirk Nelson' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Kirk Nelson' Time Slots: {3: '1:45AM-1O:15AM1:4SAM-1O:15AMA:ASAM-1O:1SAMA:A5AM-1O:15AMAASAM-1O:15AM:'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 3
+DEBUG: Loop finished for row 'Kirk Nelson'. Row Shifts: 1
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Matt Toma' at X: 315.0, Y: 732.0
+DEBUG: Line Item: 'C-Lot' at X: 1046.0, Y: 731.0
+DEBUG: Processing Row: 'Matt Toma' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Matt Toma' Time Slots: {2: 'C-Lot'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Col 2 Cleaned='C - 10T', Matches=[]
+DEBUG: Appended Fallback Shift for Col 2
+DEBUG: Loop finished for row 'Matt Toma'. Row Shifts: 1
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'KANTIUS JOSHUA JR_' at X: 313.0, Y: 812.0
+DEBUG: Processing Row: 'KANTIUS JOSHUA JR' -> Employee Match: None (Loc: General)
+DEBUG: Row 'KANTIUS JOSHUA JR' Time Slots: {}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'KANTIUS JOSHUA JR'. Row Shifts: 0
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Fresly Eustache' at X: 316.0, Y: 893.0
+DEBUG: Processing Row: 'Fresly Eustache' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Fresly Eustache' Time Slots: {}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Loop finished for row 'Fresly Eustache'. Row Shifts: 0
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Brian McTeauge' at X: 316.0, Y: 972.0
+DEBUG: Line Item: '1:ASAM-1O:ISAM' at X: 582.5, Y: 969.0
+DEBUG: Line Item: '1:45AM-IO:ISAM' at X: 1969.0, Y: 964.0
+DEBUG: Processing Row: 'Brian McTeauge' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Brian McTeauge' Time Slots: {0: '1:ASAM-1O:ISAM', 6: '1:45AM-IO:ISAM'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 0
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Brian McTeauge'. Row Shifts: 2
+DEBUG: First Column X: 583.0, Margin: 50
+DEBUG: Line Item: 'Scott G' at X: 314.0, Y: 1129.0
+DEBUG: Line Item: 'C-Lot' at X: 814.0, Y: 1129.0
+DEBUG: Line Item: 'C-Lot' at X: 1507.5, Y: 1126.0
+DEBUG: Line Item: 'C-Lot' at X: 1968.5, Y: 1124.0
+DEBUG: Processing Row: 'Scott G' -> Employee Match: None (Loc: General)
+DEBUG: Row 'Scott G' Time Slots: {1: 'C-Lot', 4: 'C-Lot', 6: 'C-Lot'}
+DEBUG: Day Columns (X): [(583.0, 'SATURDAY'), (814.0, 'SUNDAY'), (1045.0, 'MONDAY'), (1275.5, 'TUESDAY'), (1506.0, 'WEDNESDAY'), (1738.0, 'THURSDAY'), (1969.0, 'FRIDAY')]
+DEBUG: Appended Fallback Shift for Col 1
+DEBUG: Appended Fallback Shift for Col 4
+DEBUG: Appended Fallback Shift for Col 6
+DEBUG: Loop finished for row 'Scott G'. Row Shifts: 3

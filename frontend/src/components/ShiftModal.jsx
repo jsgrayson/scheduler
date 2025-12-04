@@ -237,7 +237,7 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
                                     <div
                                         key={idx}
                                         className={`p-2 rounded border text-sm cursor-pointer hover:bg-blue-50 ${rec.score < 50 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}
-                                        onClick={() => setFormData({ ...formData, employee_id: rec.employee.id })}
+                                        onClick={() => setEmployeeId(rec.employee.id)}
                                     >
                                         <div className="font-semibold flex justify-between">
                                             <span>{rec.employee.first_name} {rec.employee.last_name}</span>

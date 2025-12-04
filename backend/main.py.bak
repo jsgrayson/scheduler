@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Query, UploadFile, File
 from sqlmodel import Session, select
 from typing import List, Optional
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 from database import create_db_and_tables, get_session
 from models import Employee, Role, Shift, Availability
 from pydantic import BaseModel
@@ -18,28 +18,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-KNOWN_LOCATIONS = [
-    "LOT 1", "LOT 2", "LOT 3", "LOT 4", 
-    "PLAZA", "CONRAC", "OFFICE", "MAINTENANCE", 
-    "SUPERVISORS", "CUSTOMER LOTS", "CASHIER"
-]
-
-LOCATION_MAPPINGS = {
-    "SUP3": "Supervisors",
-    # "SUP": "Supervisors", # Too ambiguous, matches "Jim E (Sup)"
-    "FLOAT": "Office", 
-    "OFF: MGD": "Office",
-    "RECPTAR": "Office",
-    "ADIAU": "Office",
-    "ADMIN": "Office",
-    "AFM": "Office",
-    "AD": "Office",
-    "SUP-MGR": "Maintenance",
-    # "SUP": "Maintenance", # Too ambiguous
-}
-
-
 
 @app.on_event("startup")
 def on_startup():
@@ -840,7 +818,6 @@ import cv2
 import numpy as np
 import pillow_heif
 import easyocr
-import gc
 
 # Register HEIF opener
 pillow_heif.register_heif_opener()
@@ -886,19 +863,19 @@ def deskew_image(image):
 def correct_orientation(image):
     try:
         osd = pytesseract.image_to_osd(image)
-        # More robust parsing - check if rotation info exists
-        if '\nRotation: ' in osd:
-            rotation_line = osd.split('\nRotation: ')[1].split('\n')[0]
-            rotation = int(rotation_line)
-            if rotation != 0:
-                image = image.rotate(-rotation, expand=True)
-                print(f"Rotated image by {-rotation} degrees")
-        else:
-            print("No rotation info in OSD, using original orientation")
+        rotation = int(osd.split('\nRotation: ')[1].split('\n')[0])
+        if rotation != 0:
+            # so we need to rotate it -90 (or 270) to fix it?
+            # Actually, 'Rotate: 90' usually means "Rotate 90 degrees clockwise to fix".
+            # Let's try standard rotation.
+            # If OSD says 90, it means the text is at 90 degrees.
+            # So we rotate by the value.
+            image = image.rotate(-rotation, expand=True)
             
     except Exception as e:
-        print(f"Orientation detection failed: {e}, using original orientation")
-        # Return original image on any error
+        print(f"Orientation detection failed: {e}")
+        # Fallback: Try rotating 90 degrees if no text found? 
+        # Or just return original.
         pass
     return image
 
@@ -930,13 +907,6 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
     print(f"OCR Request Received: {file.filename}, dry_run={dry_run}")
     try:
         contents = await file.read()
-        
-        # Initialize result containers
-        parsed_shifts = []
-        errors = []
-        unmatched_lines = []
-        unmatched_employees = []
-        imported_count = 0
         
         # Convert PDF to image if needed
         images = []
@@ -997,67 +967,68 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
             img = correct_orientation(img)
 
             # EasyOCR Strategy
-            # Convert PIL to bytes or numpy array for EasyOCR
-            img_np = np.array(img)
-            
-            results = []
-            
-            # 4-Way Rotation Check
-            # If we haven't determined the angle yet (first page), run the check
-            if determined_angle is None:
-                best_results = []
-                best_score = -1
-                best_angle = 0
+            try:
+                # Convert PIL to bytes or numpy array for EasyOCR
+                img_np = np.array(img)
                 
-                import re
+                results = []
                 
-                for angle in [0, 90, 180, 270]:
-                    # Rotate image
-                    rotated_img = img.rotate(-angle, expand=True)
-                    img_np_rot = np.array(rotated_img)
+                # 4-Way Rotation Check
+                # If we haven't determined the angle yet (first page), run the check
+                if determined_angle is None:
+                    best_results = []
+                    best_score = -1
+                    best_angle = 0
                     
-                    # Run EasyOCR
-                    curr_results = reader.readtext(img_np_rot, detail=1, paragraph=False, x_ths=0.5)
+                    import re
                     
-                    # Score this orientation
-                    score = 0
-                    text_content = " ".join([r[1] for r in curr_results])
+                    for angle in [0, 90, 180, 270]:
+                        # Rotate image
+                        rotated_img = img.rotate(-angle, expand=True)
+                        img_np_rot = np.array(rotated_img)
+                        
+                        # Run EasyOCR
+                        curr_results = reader.readtext(img_np_rot, detail=1, paragraph=False, x_ths=0.5)
+                        
+                        # Score this orientation
+                        score = 0
+                        text_content = " ".join([r[1] for r in curr_results])
+                        
+                        # Check for time patterns (e.g. 9:00, 9-5)
+                        time_matches = re.findall(r'\d{1,2}[:\.]?\d{0,2}\s*-\s*\d{1,2}[:\.]?\d{0,2}', text_content)
+                        score += len(time_matches) * 2
+                        
+                        # Check for day names
+                        days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+                        day_matches = [d for d in text_content.lower().split() if any(day in d for day in days)]
+                        score += len(day_matches)
+                        
+                        with open("ocr_debug.log", "a") as f:
+                            f.write(f"Angle {angle}: Score {score} (Times: {len(time_matches)}, Days: {len(day_matches)})\n")
+                        
+                        if score > best_score:
+                            best_score = score
+                            best_results = curr_results
+                            best_angle = angle
                     
-                    # Check for time patterns (e.g. 9:00, 9-5)
-                    time_matches = re.findall(r'\d{1,2}[:\.]?\d{0,2}\s*-\s*\d{1,2}[:\.]?\d{0,2}', text_content)
-                    score += len(time_matches) * 2
-                    
-                    # Check for day names
-                    days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
-                    day_matches = [d for d in text_content.lower().split() if any(day in d for day in days)]
-                    score += len(day_matches)
+                    determined_angle = best_angle
+                    results = best_results
                     
                     with open("ocr_debug.log", "a") as f:
-                        f.write(f"Angle {angle}: Score {score} (Times: {len(time_matches)}, Days: {len(day_matches)})\n")
+                        f.write(f"Determined Document Angle: {determined_angle} with Score {best_score}\n")
+                else:
+                    # Use determined angle for subsequent pages
+                    if determined_angle != 0:
+                        img = img.rotate(-determined_angle, expand=True)
+                        img_np = np.array(img)
                     
-                    if score > best_score:
-                        best_score = score
-                        best_results = curr_results
-                        best_angle = angle
-                
-                determined_angle = best_angle
-                results = best_results
-                
-                with open("ocr_debug.log", "a") as f:
-                    f.write(f"Determined Document Angle: {determined_angle} with Score {best_score}\n")
-            else:
-                # Use determined angle for subsequent pages
-                if determined_angle != 0:
-                    img = img.rotate(-determined_angle, expand=True)
-                    img_np = np.array(img)
-                
-                # Use x_ths=0.5 to prevent merging of close words (like headers)
-                results = reader.readtext(img_np, detail=1, paragraph=False, x_ths=0.5)
-        
-            # Sort by Y
-            results.sort(key=lambda x: x[0][0][1])
-        
-        # Group into lines
+                    # Use x_ths=0.5 to prevent merging of close words (like headers)
+                    results = reader.readtext(img_np, detail=1, paragraph=False, x_ths=0.5)
+            
+                # Sort by Y
+                results.sort(key=lambda x: x[0][0][1])
+            
+            # Group into lines
             lines_data = [] # List of lists of (bbox, text)
             current_line = []
             last_y = -1
@@ -1069,7 +1040,7 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     last_y = y
                     continue
                 
-                if abs(y - last_y) < 35:
+                if abs(y - last_y) < 10:
                     current_line.append((bbox, text))
                 else:
                     current_line.sort(key=lambda x: x[0][0][0])
@@ -1082,9 +1053,7 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                 
             # Process Lines for this Page
             day_columns = [] # List of (x_center, day_index)
-            column_dates = {} # Map col_idx -> datetime
             header_y = -1
-            current_location = "General" # Default
             
             for line_items in lines_data:
                 # Construct full text for regex checks
@@ -1092,16 +1061,11 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                 
                 # 0. Check Location
                 line_upper = full_line_text.upper()
-                for loc in KNOWN_LOCATIONS + list(LOCATION_MAPPINGS.keys()):
+                for loc in KNOWN_LOCATIONS:
                     if loc in line_upper:
-                        # Check mapping first
-                        if loc in LOCATION_MAPPINGS:
-                            current_location = LOCATION_MAPPINGS[loc]
-                        else:
-                            current_location = loc.title()
-                            if loc == "CONRAC": current_location = "Conrac"
-                            if loc == "PLAZA": current_location = "Plaza"
-                        
+                        current_location = loc.title()
+                        if loc == "CONRAC": current_location = "Conrac"
+                        if loc == "PLAZA": current_location = "Plaza"
                         with open("ocr_debug.log", "a") as f:
                             f.write(f"DEBUG: Found Location Header: {current_location} in line: {full_line_text}\n")
                         break
@@ -1115,120 +1079,52 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     found_days = [d for d in days if d in text.lower()]
                     
                     if found_days:
-                        with open("ocr_debug.log", "a") as f:
-                            f.write(f"DEBUG: Header Candidate Block: '{text}' -> Found Days: {found_days}\n")
-                        
                         if len(found_days) == 1:
                             # Single day in this block
                             x_center = (bbox[0][0] + bbox[1][0]) / 2
                             day_matches.append((x_center, text))
                         else:
-                            # Multiple days merged in one block (e.g. "SATURDAY SUNDAY" or "SATURDAYSUNDAY")
+                            # Multiple days merged in one block (e.g. "SATURDAY SUNDAY")
+                            # We need to split them and estimate positions
+                            # Simple heuristic: split by space, distribute X evenly?
+                            # Or just use the text as is?
+                            # If we have "SAT SUN", we have 2 days.
+                            # Let's try to split the bbox width
                             words = text.split()
+                            box_width = bbox[1][0] - bbox[0][0]
+                            start_x = bbox[0][0]
+                            word_width = box_width / len(words)
                             
-                            # If we have fewer words than found days, it means some are glued together without spaces
-                            if len(words) < len(found_days):
-                                # Distribute based on found_days count
-                                box_width = bbox[1][0] - bbox[0][0]
-                                start_x = bbox[0][0]
-                                segment_width = box_width / len(found_days)
-                                
-                                for i, day_name in enumerate(found_days):
-                                    # Estimate center for this segment
-                                    seg_center = start_x + (segment_width * i) + (segment_width / 2)
-                                    day_matches.append((seg_center, day_name))
-                            else:
-                                # Words are separated by space, but in one block? 
-                                # EasyOCR usually splits spaces, but if not:
-                                # We can try to map words to days?
-                                # For now, let's just use the block center for all (bad) or distribute
-                                # Distributing is safer
-                                box_width = bbox[1][0] - bbox[0][0]
-                                start_x = bbox[0][0]
-                                segment_width = box_width / len(found_days)
-                                for i, day_name in enumerate(found_days):
-                                    seg_center = start_x + (segment_width * i) + (segment_width / 2)
-                                    day_matches.append((seg_center, day_name))
+                            for i, word in enumerate(words):
+                                if any(d in word.lower() for d in days):
+                                    # Estimate center for this word
+                                    word_center = start_x + (i * word_width) + (word_width / 2)
+                                    day_matches.append((word_center, word))
                 
                 if len(day_matches) >= 3:
                     # Found header! Define columns
                     day_columns = sorted(day_matches, key=lambda x: x[0])
                     header_y = line_items[0][0][0][1] # Y of header
                     with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: Defined {len(day_columns)} columns based on header: {[d[1].upper() for d in day_columns]}\n")
+                        f.write(f"DEBUG: Defined {len(day_columns)} columns based on header: {[d[1] for d in day_columns]}\n")
                     continue
-                
-                # 1.5 Check for Date Row (e.g. 12/6/25)
-                # If we have columns, check if this line is a date row
-                if day_columns and not column_dates:
-                    date_matches = []
-                    date_regex = r'\d{1,2}/\d{1,2}/\d{2,4}'
-                    for (bbox, text) in line_items:
-                        found_dates = re.findall(date_regex, text)
-                        if found_dates:
-                            # If multiple dates in one block?
-                            if len(found_dates) == 1:
-                                x_center = (bbox[0][0] + bbox[1][0]) / 2
-                                date_matches.append((x_center, found_dates[0]))
-                            else:
-                                # Distribute
-                                box_width = bbox[1][0] - bbox[0][0]
-                                start_x = bbox[0][0]
-                                segment_width = box_width / len(found_dates)
-                                for i, d_str in enumerate(found_dates):
-                                    seg_center = start_x + (segment_width * i) + (segment_width / 2)
-                                    date_matches.append((seg_center, d_str))
-                    
-                    if len(date_matches) >= 3:
-                        # Found a date row! Map to columns
-                        with open("ocr_debug.log", "a") as f:
-                            f.write(f"DEBUG: Found Date Row with {len(date_matches)} dates\n")
-                        
-                        for (d_x, d_str) in date_matches:
-                            # Find nearest column
-                            closest_col_idx = -1
-                            min_dist = float('inf')
-                            for i, (col_x, col_name) in enumerate(day_columns):
-                                dist = abs(d_x - col_x)
-                                if dist < min_dist:
-                                    min_dist = dist
-                                    closest_col_idx = i
-                            
-                            if closest_col_idx != -1:
-                                try:
-                                    # Parse date
-                                    # Try various formats
-                                    for fmt in ["%m/%d/%y", "%m/%d/%Y"]:
-                                        try:
-                                            dt = datetime.strptime(d_str, fmt)
-                                            column_dates[closest_col_idx] = dt
-                                            break
-                                        except ValueError:
-                                            pass
-                                except Exception as e:
-                                    print(f"Date parse error: {e}")
-                        continue
                 
                 # 2. Process Row (if we have columns defined)
                 if day_columns:
-                    # We have columns, try to map items to them
-                    # Identify Name (Leftmost) vs Time Slots
+                    # Heuristic: Name is usually the first item(s) on the left
+                    # Time slots align with day_columns
                     
-                    # Heuristic: Name is usually far left, before the first column starts
-                    # First column X
+                    # Separate Name vs Times based on X position
+                    # The first column starts at day_columns[0][0]
+                    # Anything significantly to the left of that is the Name
+                    
                     first_col_x = day_columns[0][0]
-                    margin = 50 
-                    
-                    with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: First Column X: {first_col_x}, Margin: {margin}\n")
+                    margin = 50 # pixels tolerance
                     
                     name_parts = []
-                    time_slots = {} 
+                    time_slots = {} # day_idx -> text
                     
                     for (bbox, text) in line_items:
-                        y_center = (bbox[0][1] + bbox[2][1]) / 2
-                        with open("ocr_debug.log", "a") as f:
-                            f.write(f"DEBUG: Line Item: '{text}' at X: {(bbox[0][0] + bbox[1][0]) / 2}, Y: {y_center}\n")
                         x_center = (bbox[0][0] + bbox[1][0]) / 2
                         
                         if x_center < (first_col_x - margin):
@@ -1265,62 +1161,18 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     first_word = full_name.split()[0]
                     employee = session.exec(select(Employee).where(Employee.first_name.ilike(first_word))).first()
                     
-                    with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: Processing Row: '{full_name}' -> Employee Match: {employee.first_name if employee else 'None'} (Loc: {current_location})\n")
-                    
-                    # Define helper once
-                    def parse_ocr_time(t_str):
-                        # OCR Error Correction BEFORE parsing
-                        t_str = t_str.strip().upper()
+                    if employee:
+                        # We have an employee and time slots mapped to columns!
+                        # day_columns is sorted Mon-Sun (or whatever order they appeared)
+                        # We need to map them to actual dates.
+                        # Assuming header order matches the week order? 
+                        # Actually, header might be "Sat Sun Mon..."
+                        # We should parse the header text to know the day offset.
                         
-                        # Common OCR mistakes
-                        t_str = t_str.replace('S', '5')  # 9:4SAM → 9:45AM
-                        t_str = t_str.replace('O', '0')  # 1O:15 → 10:15
-                        t_str = t_str.replace(';', ':')  # 11;15 → 11:15
-                        t_str = t_str.replace('.', ':')  # 9.45 → 9:45
-                        t_str = t_str.replace(' ', '')   # Remove spaces
-                        t_str = t_str.replace('I', '1')  # I0:15 → 10:15
-                        t_str = t_str.replace('L', '1')  # L:45 → 1:45
+                        # But for now, let's assume standard order or rely on the header text
+                        # Let's use the header text to find the day index (0=Mon, 6=Sun)
                         
-                        is_pm = 'P' in t_str
-                        is_am = 'A' in t_str
-                        # Remove letters
-                        t_str = re.sub(r'[A-Z]', '', t_str)
-                        
-                        h = 0
-                        m = 0
-                        if ':' in t_str:
-                            parts = t_str.split(':')
-                            h = int(parts[0])
-                            m = int(parts[1])
-                        elif len(t_str) >= 3:
-                            # 3 or 4 digits: 930, 1030
-                            m = int(t_str[-2:])
-                            h = int(t_str[:-2])
-                        else:
-                            # 1 or 2 digits: 9, 10
-                            h = int(t_str)
-                            
-                        # PM Logic
-                        if is_pm and h != 12: h += 12
-                        elif is_am and h == 12: h = 0
-                        elif not is_pm and not is_am:
-                            if h < 7: h += 12
-                            
-                        return time(hour=h, minute=m)
-
-                    # Log time slots for debugging
-                    with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: Row '{full_name}' Time Slots: {time_slots}\n")
-                        f.write(f"DEBUG: Day Columns (X): {[(c[0], c[1]) for c in day_columns]}\n")
-
-                    # Iterate columns to find shifts
-                    row_shifts = []
-                    
-                    # Process each column to find shifts
-                    for col_idx, (col_x, col_text) in enumerate(day_columns):
-                        try:
-
+                        for col_idx, (col_x, col_text) in enumerate(day_columns):
                             # Determine day offset
                             day_lower = col_text.lower()
                             day_offset = 0
@@ -1333,216 +1185,138 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             elif "sun" in day_lower: day_offset = 6
                             
                             # Get time text for this column
-                            time_text = time_slots.get(col_idx, "OFF") 
+                            time_text = time_slots.get(col_idx, "OFF") # Default to OFF if blank
                             
-                            # Skip if OFF
-
+                            # Parse time_text (using our robust logic)
+                            # ... (Reuse time parsing logic) ...
+                            # For brevity, I'll call a helper or inline it
+                            
                             if "off" in time_text.lower():
                                 continue
                                 
-                            # Check for location override in the text (Use raw text)
-                            shift_location = current_location
-                            text_upper_raw = time_text.upper()
-                            
-                            # Check mappings first
-                            found_override = False
-                            for key, val in LOCATION_MAPPINGS.items():
-                                if key in text_upper_raw:
-                                    shift_location = val
-                                    found_override = True
-                                    break
-                            
-                            if not found_override:
-                                for loc in KNOWN_LOCATIONS:
-                                    if loc in text_upper_raw:
-                                        shift_location = loc.title()
-                                        if loc == "CONRAC": shift_location = "Conrac"
-                                        if loc == "PLAZA": shift_location = "Plaza"
-                                        break
-
                             # Clean common OCR typos first
-                            clean_time_text = time_text.upper()
+                            clean_time_text = time_text.replace('O', '0').replace('o', '0').replace('l', '1').replace('_', ' ')
                             
-                            # Filter out known non-time text (Locations/OFF)
-                            if any(x in clean_time_text for x in ['LOT', 'PLAZA', 'CONRAC', 'OFF', 'VACATION']):
-                                continue
-
-                            clean_time_text = clean_time_text.replace('O', '0').replace('Q', '0').replace('D', '0')
-                            clean_time_text = clean_time_text.replace('I', '1').replace('L', '1').replace('!', '1').replace('|', '1')
-                            clean_time_text = clean_time_text.replace('B', '8').replace('S', '5').replace('Z', '2') # Added Z->2
-                            clean_time_text = clean_time_text.replace('_', ' ').replace('.', ':').replace(';', ':').replace(',', ':')
-                            
-                            # Fix missing hyphen if numbers are jammed (e.g. "6:00P2:00A")
-                            clean_time_text = clean_time_text.replace('-', ' - ')
-                            
+                            # Regex to find "OFF" or "Time-Time"
+                            # Time part:
+                            # 1. Standard: 9:00, 9.00, 9,00, 9*00, 9 00
+                            # 2. No separator: 900, 1030 (3-4 digits)
+                            # 3. Just hour: 9, 10
+                            # Followed optionally by AM/PM
                             time_part_regex = r'(?:\d{1,2}[:.,*;\s]\d{2}|\d{3,4}|\d{1,2})[APap]*'
                             range_pattern_regex = f'({time_part_regex}\\s*-\\s*{time_part_regex})'
                             
                             time_matches_in_slot = re.findall(range_pattern_regex, clean_time_text, re.IGNORECASE)
                             
-                            if col_idx == 2:
-                                with open("ocr_debug.log", "a") as f:
-                                    f.write(f"DEBUG: Col {col_idx} Cleaned='{clean_time_text}', Matches={time_matches_in_slot}\n")
-
-                            # Calculate base date for this week (Monday)
-                            today = datetime.now()
-                            start_of_week = today - timedelta(days=today.weekday())
-                            
-                            # Determine specific date for this shift
-                            if col_idx in column_dates:
-                                current_shift_date = column_dates[col_idx]
-                            else:
-                                current_shift_date = start_of_week + timedelta(days=day_offset)
-
                             if not time_matches_in_slot:
-                                # Fallback: Store raw text if meaningful
-                                if len(clean_time_text) > 3:
-                                    # Create a dummy shift with raw text in notes
-                                    s_dt = current_shift_date.replace(hour=9, minute=0, second=0, microsecond=0)
-                                    e_dt = current_shift_date.replace(hour=17, minute=0, second=0, microsecond=0)
-                                    
-                                    row_shifts.append({
-                                        "start_time": s_dt,
-                                        "end_time": e_dt,
-                                        "location": shift_location,
-                                        "notes": f"RAW: {clean_time_text}" # Flag for frontend
-                                    })
-                                    with open("ocr_debug.log", "a") as f:
-                                        f.write(f"DEBUG: Appended Fallback Shift for Col {col_idx}\n")
-                                continue 
+                                continue # No valid time range found in this slot
                             
-                            match_str = time_matches_in_slot[0] 
-                            
-                            # Parse Time Range
-                            match_str = re.sub(r'[.,*;\s]', ':', match_str)
-                            t_parts = match_str.split('-')
-                            if len(t_parts) != 2: continue
-                            
-                            t_start_str, t_end_str = t_parts
+                            match_str = time_matches_in_slot[0] # Take the first full match
                             
                             try:
+                                # Parse Time Range
+                                # Normalize separators
+                                match_str = re.sub(r'[.,*;\s]', ':', match_str)
+                                
+                                # Split start/end
+                                t_parts = match_str.split('-')
+                                if len(t_parts) != 2: continue
+                                
+                                t_start_str, t_end_str = t_parts
+                                
+                                def parse_ocr_time(t_str):
+                                    t_str = t_str.strip().upper()
+                                    is_pm = 'P' in t_str
+                                    is_am = 'A' in t_str
+                                    # Remove letters
+                                    t_str = re.sub(r'[A-Z]', '', t_str)
+                                    
+                                    h = 0
+                                    m = 0
+                                    if ':' in t_str:
+                                        parts = t_str.split(':')
+                                        h = int(parts[0])
+                                        m = int(parts[1])
+                                    elif len(t_str) >= 3:
+                                        # 3 or 4 digits: 930, 1030
+                                        m = int(t_str[-2:])
+                                        h = int(t_str[:-2])
+                                    else:
+                                        # 1 or 2 digits: 9, 10
+                                        h = int(t_str)
+                                        
+                                    # PM Logic
+                                    if is_pm and h != 12: h += 12
+                                    elif is_am and h == 12: h = 0
+                                    elif not is_pm and not is_am:
+                                        # Heuristic: 9-11 is AM, 1-6 is PM (unless 12)
+                                        if h < 7: h += 12
+                                        
+                                    return time(hour=h, minute=m)
+
                                 s_time = parse_ocr_time(t_start_str)
                                 e_time = parse_ocr_time(t_end_str)
                                 
-                                # Handle overnight shifts (end < start)
-                                if e_time < s_time:
-                                    e_time += timedelta(days=1)
-                                    
-                                start_dt = current_shift_date.replace(hour=s_time.hour, minute=s_time.minute, second=0, microsecond=0)
-                                end_dt = current_shift_date.replace(hour=e_time.hour, minute=e_time.minute, second=0, microsecond=0)
+                                current_shift_date = current_week_start + timedelta(days=day_offset)
+                                start_dt = datetime.combine(current_shift_date.date(), s_time)
+                                end_dt = datetime.combine(current_shift_date.date(), e_time)
                                 
-                                if e_time.day > s_time.day: 
+                                if end_dt <= start_dt:
                                     end_dt += timedelta(days=1)
-
-                                # Store shift data
-                                row_shifts.append({
-                                    "start_time": start_dt,
-                                    "end_time": end_dt,
-                                    "location": shift_location
-                                })
-
-                            except Exception as e:
-                                print(f"Time parse error: {e}")
-                                # Fallback on error too
-                                s_dt = current_shift_date.replace(hour=9, minute=0, second=0, microsecond=0)
-                                e_dt = current_shift_date.replace(hour=17, minute=0, second=0, microsecond=0)
-                                row_shifts.append({
-                                    "start_time": s_dt,
-                                    "end_time": e_dt,
-                                    "location": shift_location,
-                                    "notes": f"RAW: {clean_time_text} (No match)"
-                                })
-                                continue
-                        except Exception as loop_e:
-                            print(f"CRITICAL ERROR processing column {col_idx}: {loop_e}")
-                            traceback.print_exc()
-                            continue
-
-                    with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: Loop finished for row '{full_name}'. Row Shifts: {len(row_shifts)}\n")
-
-                    print(f"DEBUG: Checking employee: {employee}")
-                    if employee:
-                        try:
-                            # Save shifts
-                            print(f"DEBUG: Saving {len(row_shifts)} shifts for {employee.first_name}")
-                            for s_data in row_shifts:
-                                # Create Shift object
-                                shift = Shift(
-                                    employee_id=employee.id,
-                                    role_id=employee.default_role_id,
-                                    start_time=s_data["start_time"],
-                                    end_time=s_data["end_time"],
-                                    location=s_data["location"],
-                                    notes=s_data.get("notes")
-                                )
+                                    
+                                shift_data = {
+                                    "employee_id": employee.id,
+                                    "employee_name": f"{employee.first_name} {employee.last_name}",
+                                    "role_id": employee.default_role_id,
+                                    "start_time": start_dt.isoformat(),
+                                    "end_time": end_dt.isoformat(),
+                                    "notes": "OCR Import",
+                                    "location": current_location,
+                                    "is_vacation": False
+                                }
+                                
                                 if dry_run:
-                                    parsed_shifts.append({
-                                        "employee_id": employee.id,
-                                        "employee_name": f"{employee.first_name} {employee.last_name}",
-                                        "role_id": employee.default_role_id,
-                                        "start_time": s_data['start_time'].isoformat(),
-                                        "end_time": s_data['end_time'].isoformat(),
-                                        "notes": s_data.get("notes", "OCR Import"),
-                                        "location": s_data['location'],
-                                        "is_vacation": False
-                                    })
+                                    parsed_shifts.append(shift_data)
                                 else:
+                                    # Create DB Object
+                                    shift = Shift(
+                                        employee_id=employee.id,
+                                        role_id=employee.default_role_id,
+                                        start_time=start_dt,
+                                        end_time=end_dt,
+                                        notes="OCR Import",
+                                        location=current_location,
+                                        is_vacation=False
+                                    )
                                     session.add(shift)
+                                
                                 imported_count += 1
                                 
-                                # Log for debug
-                                with open("ocr_debug.log", "a") as f:
-                                    f.write(f"DEBUG: Created Shift for {employee.first_name}: {s_data['start_time']} - {s_data['end_time']} ({s_data['location']})\n")
-                        except Exception as save_e:
-                            print(f"Error saving shifts for {employee.first_name}: {save_e}")
-                            traceback.print_exc()
-                            with open("ocr_debug.log", "a") as f:
-                                f.write(f"CRITICAL ERROR saving shifts for {employee.first_name}: {save_e}\n")
+                            except Exception as e:
+                                print(f"Failed to parse time match '{match_str}': {e}")
+                                errors.append(f"Failed to parse time for {employee.first_name} on {current_shift_date.strftime('%Y-%m-%d')}: {match_str} - {e}")
+                                
                     else:
-                        # Employee not found - store name AND shifts
-                        unmatched_employees.append({
-                            "name": full_name,
-                            "shifts": [
-                                {
-                                    "start_time": s['start_time'].isoformat(),
-                                    "end_time": s['end_time'].isoformat(),
-                                    "location": s['location']
-                                } for s in row_shifts
-                            ]
-                        })
-                        
-                else:
-                    unmatched_lines.append(full_line_text)
+                        unmatched_lines.append(full_line_text)
 
-            # --- Memory Cleanup per Page ---
-            del img
-            del img_np
-            if 'rotated_img' in locals(): del rotated_img
-            if 'img_np_rot' in locals(): del img_np_rot
-            if 'curr_results' in locals(): del curr_results
-            if 'results' in locals(): del results
-            gc.collect()
-
-            
-        if not dry_run:
-            try:
-                session.commit()
             except Exception as e:
-                return {"message": "Database error", "errors": [str(e)]}
-    
-        return {
-            "message": f"OCR Processing Complete. Found {imported_count} shifts.",
-            "errors": errors,
-            "raw_text_preview": extracted_text[:500] + "...", # This will be empty if direct PDF text failed
-            "parsed_shifts": parsed_shifts,
-            "unmatched_lines": unmatched_lines,
-            "unmatched_employees": unmatched_employees  # Already deduplicated by only adding once per name
-        }
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return {"message": "OCR Failed", "errors": [str(e)]}
+                print(f"Page processing failed: {e}")
+                errors.append(f"Page processing failed: {e}")
+                continue
+            
+    if not dry_run:
+        try:
+            session.commit()
+        except Exception as e:
+            return {"message": "Database error", "errors": [str(e)]}
+
+    return {
+        "message": f"OCR Processing Complete. Found {imported_count} shifts.",
+        "errors": errors,
+        "raw_text_preview": extracted_text[:500] + "...", # This will be empty if direct PDF text failed
+        "parsed_shifts": parsed_shifts,
+        "unmatched_lines": unmatched_lines
+    }
 
 @app.post("/shifts/bulk/")
 def create_shifts_bulk(shifts: List[dict], session: Session = Depends(get_session)):

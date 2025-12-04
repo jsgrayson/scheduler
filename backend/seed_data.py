@@ -17,6 +17,9 @@ def seed_data():
             Role(name="Cashier", color_hex="#FF5733"),
             Role(name="Elot", color_hex="#33FF57"),
             Role(name="CLot", color_hex="#3357FF"),
+            Role(name="Maintenance", color_hex="#FFC300"),
+            Role(name="Office", color_hex="#DAF7A6"),
+            Role(name="Supervisor", color_hex="#900C3F"),
             Role(name="Manager", color_hex="#FF33F6"),
         ]
         for r in roles:

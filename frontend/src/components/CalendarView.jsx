@@ -6,6 +6,7 @@ import { format, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
 import CallSheetPrint from './CallSheetPrint';
 import ShiftModal from './ShiftModal';
 import ExportImportButtons from './ExportImportButtons';
+import RosterView from './RosterView';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -18,12 +19,14 @@ const CalendarView = () => {
     const [roles, setRoles] = useState([]);
     const [shifts, setShifts] = useState([]);
     const [calendars, setCalendars] = useState([]);
-    const [viewMode, setViewMode] = useState('week');
+    const [viewMode, setViewMode] = useState('roster'); // Default to Roster as requested
 
     const handleViewChange = (mode) => {
         setViewMode(mode);
-        const calendarInstance = calendarRef.current.getInstance();
-        calendarInstance.changeView(mode);
+        if (mode !== 'roster' && calendarRef.current) {
+            const calendarInstance = calendarRef.current.getInstance();
+            calendarInstance.changeView(mode);
+        }
     };
 
     // Fetch initial data
@@ -116,6 +119,14 @@ const CalendarView = () => {
         }
     }, [employees, activeTab, roles]);
 
+    // Filter employees for RosterView based on activeTab
+    const getFilteredEmployees = () => {
+        if (activeTab === 'All') return employees;
+        if (activeTab === 'Open') return [];
+        const role = roles.find(r => r.name === activeTab);
+        return role ? employees.filter(e => e.default_role_id === role.id) : employees;
+    };
+
     const getRoleColor = (roleId) => {
         const role = roles.find(r => r.id === roleId);
         return role ? role.color_hex : '#999';
@@ -127,8 +138,6 @@ const CalendarView = () => {
 
     const onBeforeUpdateSchedule = async (event) => {
         const { schedule, changes } = event;
-        // Optimistic update
-        // Call API to update shift
         try {
             const updates = {};
             if (changes.start) updates.start_time = changes.start.toDate().toISOString();
@@ -138,13 +147,7 @@ const CalendarView = () => {
             }
 
             await axios.put(`${BASE_URL}/shifts/${schedule.id}`, updates);
-
-            // Refresh shifts (or update local state)
-            // For simplicity, just re-fetch or update local
-            // Re-fetching is safer for validation logic on backend
-            // But let's just update local for UI responsiveness
             calendarRef.current.getInstance().updateSchedule(schedule.id, schedule.calendarId, changes);
-
         } catch (error) {
             console.error("Update failed:", error);
             alert("Update failed: " + (error.response?.data?.detail || error.message));
@@ -168,7 +171,7 @@ const CalendarView = () => {
         setSelectedShift({
             id: schedule.id,
             employee_id: schedule.calendarId === 'OPEN' ? null : parseInt(schedule.calendarId),
-            role_id: 1, // Ideally we get this from event data if stored, or fetch
+            role_id: 1,
             start: schedule.start.toDate(),
             end: schedule.end.toDate(),
             title: schedule.title
@@ -211,6 +214,24 @@ const CalendarView = () => {
         }
     };
 
+
+
+    const onEmptyCellClick = (date, employeeId) => {
+        // Open modal for creating new shift
+        const start = new Date(date);
+        start.setHours(9, 0, 0, 0); // Default 9 AM
+        const end = new Date(date);
+        end.setHours(17, 0, 0, 0); // Default 5 PM
+
+        setSelectedShift({
+            start,
+            end,
+            employee_id: employeeId === 'OPEN' ? null : employeeId,
+            title: ''
+        });
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="h-screen flex flex-col p-4">
             {/* Toolbar */}
@@ -218,6 +239,12 @@ const CalendarView = () => {
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-bold">Schedule</h1>
                     <div className="flex gap-2">
+                        <button
+                            onClick={() => handleViewChange('roster')}
+                            className={`px-3 py-1 rounded ${viewMode === 'roster' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                        >
+                            Roster
+                        </button>
                         <button
                             onClick={() => handleViewChange('week')}
                             className={`px-3 py-1 rounded ${viewMode === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
@@ -232,21 +259,22 @@ const CalendarView = () => {
                         </button>
                     </div>
                 </div>
+                {/* ... (Date nav remains same) ... */}
                 <div className="flex gap-2">
                     <button onClick={handleToday} className="px-3 py-1 border rounded hover:bg-gray-100">Today</button>
                     <button onClick={handlePrevWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&lt;</button>
                     <button onClick={handleNextWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&gt;</button>
                     <span className="text-lg font-semibold ml-4">
-                        {viewMode === 'week' ?
-                            `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}` :
-                            format(currentDate, 'MMMM yyyy')
+                        {viewMode === 'month' ?
+                            format(currentDate, 'MMMM yyyy') :
+                            `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`
                         }
                     </span>
                 </div>
 
                 {/* Tabs */}
                 <div className="flex space-x-1 bg-gray-200 p-1 rounded">
-                    {['All', 'Cashier', 'Elot', 'CLot'].map(tab => (
+                    {['Cashier', 'Elot', 'CLot', 'Maintenance', 'Office', 'Supervisor'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -258,9 +286,9 @@ const CalendarView = () => {
                 </div>
             </div>
 
-            {/* Calendar */}
-            <div className="flex-1 border rounded shadow bg-white relative">
-                <div className="absolute top-2 right-2 z-10 flex gap-2">
+            {/* Calendar / Roster View */}
+            <div className="flex-1 border rounded shadow bg-white relative overflow-hidden">
+                <div className="absolute top-2 right-2 z-50 flex gap-2">
                     <ExportImportButtons />
                     <button
                         onClick={() => setShowCallSheet(true)}
@@ -269,26 +297,37 @@ const CalendarView = () => {
                         Print Call Sheet
                     </button>
                 </div>
-                <Calendar
-                    ref={calendarRef}
-                    height="100%"
-                    view={viewMode}
-                    week={{
-                        dayNames: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        startDayOfWeek: 1,
-                        taskView: false,
-                        eventView: ['time'],
-                        hourStart: 6,
-                        hourEnd: 24
-                    }}
-                    useCreationPopup={false}
-                    useDetailPopup={false}
-                    calendars={calendars}
-                    events={shifts}
-                    onBeforeUpdateSchedule={onBeforeUpdateSchedule}
-                    onBeforeCreateSchedule={onBeforeCreateSchedule}
-                    onClickSchedule={onClickSchedule}
-                />
+
+                {viewMode === 'roster' ? (
+                    <RosterView
+                        currentDate={currentDate}
+                        employees={getFilteredEmployees()}
+                        shifts={shifts}
+                        onShiftClick={(shift) => onClickSchedule({ schedule: shift })}
+                        onEmptyCellClick={onEmptyCellClick}
+                    />
+                ) : (
+                    <Calendar
+                        ref={calendarRef}
+                        height="100%"
+                        view={viewMode}
+                        week={{
+                            dayNames: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            startDayOfWeek: 1,
+                            taskView: false,
+                            eventView: ['time'],
+                            hourStart: 6,
+                            hourEnd: 24
+                        }}
+                        useCreationPopup={false}
+                        useDetailPopup={false}
+                        calendars={calendars}
+                        events={shifts}
+                        onBeforeUpdateSchedule={onBeforeUpdateSchedule}
+                        onBeforeCreateSchedule={onBeforeCreateSchedule}
+                        onClickSchedule={onClickSchedule}
+                    />
+                )}
             </div>
 
             {showCallSheet && <CallSheetPrint onClose={() => setShowCallSheet(false)} />}
