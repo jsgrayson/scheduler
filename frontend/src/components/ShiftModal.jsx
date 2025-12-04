@@ -10,6 +10,7 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [notes, setNotes] = useState('');
+    const [location, setLocation] = useState('');
     const [isVacation, setIsVacation] = useState(false);
     const [createOpenShift, setCreateOpenShift] = useState(false);
     const [repeat, setRepeat] = useState('');
@@ -25,6 +26,7 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             setStartTime(initialData.start ? format(new Date(initialData.start), "yyyy-MM-dd'T'HH:mm") : '');
             setEndTime(initialData.end ? format(new Date(initialData.end), "yyyy-MM-dd'T'HH:mm") : '');
             setNotes(initialData.title || '');
+            setLocation(initialData.location || '');
             setIsVacation(initialData.is_vacation || false);
             setCreateOpenShift(false);
             setRepeat('');
@@ -34,6 +36,7 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             setStartTime('');
             setEndTime('');
             setNotes('');
+            setLocation('');
             setIsVacation(false);
             setCreateOpenShift(false);
             setRepeat('');
@@ -81,6 +84,7 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             start_time: new Date(startTime).toISOString(),
             end_time: new Date(endTime).toISOString(),
             notes: notes,
+            location: location,
             is_vacation: isVacation,
             create_open_shift: createOpenShift,
             repeat: repeat || null,
@@ -156,6 +160,17 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
                             <textarea
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
+                                className="w-full border p-2 rounded"
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-bold mb-2">Location (Optional)</label>
+                            <input
+                                type="text"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                placeholder="e.g. Lot 1, Plaza"
                                 className="w-full border p-2 rounded"
                             />
                         </div>

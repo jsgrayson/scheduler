@@ -1,10 +1,9 @@
-
 from fastapi import FastAPI, Depends, HTTPException, Query, UploadFile, File
-from sqlmodel import Session, select
+from sqlmodel import SQLModel, Session, select, create_engine, delete
 from typing import List, Optional
 from datetime import datetime, timedelta, time
 from database import create_db_and_tables, get_session
-from models import Employee, Role, Shift, Availability
+from models import Employee, Role, Shift, Availability, EmployeeRole, EmployeeBase
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -37,6 +36,9 @@ LOCATION_MAPPINGS = {
     "AD": "Office",
     "SUP-MGR": "Maintenance",
     # "SUP": "Maintenance", # Too ambiguous
+    "C-LOT": "Customer Lots",
+    "CLOT": "Customer Lots",
+    "CUSTOMER LOT": "Customer Lots",
 }
 
 
@@ -45,8 +47,14 @@ LOCATION_MAPPINGS = {
 def on_startup():
     create_db_and_tables()
 
+from pydantic import BaseModel, ConfigDict
+
 # --- Employees ---
-@app.get("/employees/", response_model=List[Employee])
+class EmployeeRead(EmployeeBase):
+    id: int
+    roles: List[Role] = []
+
+@app.get("/employees/", response_model=List[EmployeeRead])
 def read_employees(session: Session = Depends(get_session)):
     employees = session.exec(select(Employee)).all()
     return employees
@@ -67,6 +75,9 @@ class EmployeeUpdate(BaseModel):
     is_full_time: Optional[bool] = None
     default_role_id: Optional[int] = None
     willing_to_work_vacation_week: Optional[bool] = None
+    max_weekly_hours: Optional[float] = None
+    hire_date: Optional[datetime] = None
+    role_ids: Optional[List[int]] = None # New field for multi-role
 
 @app.put("/employees/{employee_id}", response_model=Employee)
 def update_employee(employee_id: int, employee_data: EmployeeUpdate, session: Session = Depends(get_session)):
@@ -75,6 +86,16 @@ def update_employee(employee_id: int, employee_data: EmployeeUpdate, session: Se
         raise HTTPException(status_code=404, detail="Employee not found")
     
     hero_data = employee_data.model_dump(exclude_unset=True)
+    
+    # Handle role_ids separately
+    if "role_ids" in hero_data:
+        role_ids = hero_data.pop("role_ids")
+        # Clear existing roles
+        session.exec(delete(EmployeeRole).where(EmployeeRole.employee_id == employee_id))
+        # Add new roles
+        for rid in role_ids:
+            session.add(EmployeeRole(employee_id=employee_id, role_id=rid))
+            
     for key, value in hero_data.items():
         setattr(employee, key, value)
         
@@ -718,7 +739,11 @@ def get_recommendations(
         })
         
     # Sort by score desc
-    recommendations.sort(key=lambda x: x["score"], reverse=True)
+    # Sort by score desc, then by Hire Date asc (Seniority)
+    # We use a tuple key: (-score, hire_date)
+    # -score makes larger scores come first (since we sort ascending by default with this key)
+    # hire_date asc makes older dates come first
+    recommendations.sort(key=lambda x: (-x["score"], x["employee"].hire_date if x["employee"].hire_date else datetime.max))
     return recommendations
 
 # --- Call Sheet Rotation ---
@@ -726,8 +751,8 @@ def get_recommendations(
 def get_call_rotation(role_id: Optional[int] = None, session: Session = Depends(get_session)):
     """
     Returns employees sorted for call sheet rotation.
-    Group 1: Full Time (Sorted by last_call_time ASC - oldest call first)
-    Group 2: Part Time (Sorted by last_call_time ASC or name)
+    Group 1: Full Time (Sorted by Hire Date)
+    Group 2: Part Time + FT < Max Hours (Sorted by Hire Date)
     """
     query = select(Employee)
     if role_id:
@@ -735,17 +760,73 @@ def get_call_rotation(role_id: Optional[int] = None, session: Session = Depends(
         
     employees = session.exec(query).all()
     
-    full_time = [e for e in employees if e.is_full_time]
-    part_time = [e for e in employees if not e.is_full_time]
+    # Calculate weekly hours for FT employees to see if they should be on PT list
+    today = datetime.now()
+    start_of_week = today - timedelta(days=today.weekday())
+    start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_week = start_of_week + timedelta(days=7)
     
-    # Sort Full Time: Null last_call_time first (never called), then oldest date
-    full_time.sort(key=lambda x: (x.last_call_time is not None, x.last_call_time))
+    full_time = []
+    part_time = []
     
-    # Sort Part Time: Same logic or just by name? User said "last person called on the full time to start with next person rotating"
-    # Implies rotation is critical for FT. For PT, maybe just alphabetical or same rotation?
-    # Let's use same rotation logic for fairness.
-    part_time.sort(key=lambda x: (x.last_call_time is not None, x.last_call_time))
+    for emp in employees:
+        if emp.is_full_time:
+            full_time.append(emp)
+            
+            # Check if under hours
+            weekly_shifts = session.exec(select(Shift).where(
+                Shift.employee_id == emp.id,
+                Shift.start_time >= start_of_week,
+                Shift.end_time < end_of_week
+            )).all()
+            
+            hours = sum((s.end_time - s.start_time).total_seconds() / 3600 for s in weekly_shifts)
+            max_hours = emp.max_weekly_hours if emp.max_weekly_hours else 40.0
+            
+            if hours < max_hours:
+                # Add to PT list for extra shifts
+                # We clone or just append? Appending is fine, frontend handles display.
+                # Maybe add a flag or note?
+                part_time.append(emp)
+        else:
+            part_time.append(emp)
     
+    # Sort by Hire Date (Seniority = Oldest First)
+    # Handle None hire_date (put at end)
+    def sort_key(e):
+        return e.hire_date if e.hire_date else datetime.max
+        
+    full_time.sort(key=sort_key)
+    part_time.sort(key=sort_key)
+    
+    # Apply Rotation to Full Time List
+    # "Start at the person after the last call"
+    # 1. Find the employee with the most recent last_call_time
+    last_called_emp = None
+    most_recent_time = datetime.min
+    
+    for emp in full_time:
+        if emp.last_call_time and emp.last_call_time > most_recent_time:
+            most_recent_time = emp.last_call_time
+            last_called_emp = emp
+            
+    if last_called_emp:
+        try:
+            # Find index in the seniority-sorted list
+            # We use ID to match to avoid object identity issues if session refreshed
+            idx = -1
+            for i, e in enumerate(full_time):
+                if e.id == last_called_emp.id:
+                    idx = i
+                    break
+            
+            if idx != -1:
+                # Rotate: Elements after idx come first, then elements up to and including idx
+                # List: [A, B, C, D] -> Last Called B (idx 1) -> [C, D, A, B]
+                full_time = full_time[idx+1:] + full_time[:idx+1]
+        except ValueError:
+            pass # Should not happen given logic above
+
     return {
         "full_time": full_time,
         "part_time": part_time
@@ -1081,6 +1162,34 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                 lines_data.append(current_line)
                 
             # Process Lines for this Page
+            
+            # --- DEBUG: Save Raw Data for Offline Parsing ---
+            import json
+            # Convert numpy types to python types for JSON serialization if needed
+            # EasyOCR output is usually list of (bbox, text, prob)
+            # bbox is list of [x,y] points.
+            
+            # Helper to serialize
+            def serialize_ocr_data(data):
+                serializable = []
+                for line in data:
+                    ser_line = []
+                    for (bbox, text) in line:
+                        # bbox is list of 4 points [[x,y], [x,y], [x,y], [x,y]]
+                        # Convert to list of lists (if it's not already)
+                        ser_bbox = [[float(p[0]), float(p[1])] for p in bbox]
+                        ser_line.append((ser_bbox, text))
+                    serializable.append(ser_line)
+                return serializable
+
+            try:
+                with open("ocr_raw_output.json", "w") as f:
+                    json.dump(serialize_ocr_data(lines_data), f, indent=2)
+                print("Saved raw OCR data to ocr_raw_output.json")
+            except Exception as e:
+                print(f"Failed to save raw debug data: {e}")
+            # -----------------------------------------------
+
             day_columns = [] # List of (x_center, day_index)
             column_dates = {} # Map col_idx -> datetime
             header_y = -1
@@ -1090,10 +1199,38 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                 # Construct full text for regex checks
                 full_line_text = " ".join([t[1] for t in line_items])
                 
+                with open("ocr_debug.log", "a") as f:
+                    f.write(f"DEBUG: Raw Line: {full_line_text}\n")
+                
                 # 0. Check Location
                 line_upper = full_line_text.upper()
+                import re # Ensure re is available
+                
                 for loc in KNOWN_LOCATIONS + list(LOCATION_MAPPINGS.keys()):
-                    if loc in line_upper:
+                    # Use regex to ensure we don't match "Lot 2" inside "Lot 2:45"
+                    # We look for the location string, NOT followed by a time separator (: or .)
+                    # We also want to match "C-Lot" which might be "C-LOT" or "CLOT"
+                    
+                    # Escape the location string for regex
+                    loc_pattern = re.escape(loc)
+                    
+                    # Regex: Match loc with word boundaries to avoid partial matches
+                    # e.g. "AD" should not match "(Ad)" or "Add"
+                    # e.g. "LOT 2" should not match "LOT 2:45"
+                    # We use \b for word boundaries, but we also need to handle the case where
+                    # the location might be at the start/end of the string or surrounded by non-word chars like ()
+                    # However, \b matches between \w and \W. 
+                    # "LOT 2" has a space, so \bLOT 2\b works for " LOT 2 "
+                    # But "AD" in "(AD)" -> "(" is \W, "A" is \w, so \b matches before A.
+                    # "D" is \w, ")" is \W, so \b matches after D.
+                    # So \bAD\b matches "(AD)".
+                    # But we want to avoid "LOT 2:45". ":" is \W. So \b matches after 2.
+                    # So \bLOT 2\b matches "LOT 2:".
+                    # We need to explicitly forbid following colon/dot for time-like strings.
+                    
+                    pattern = rf"\b{loc_pattern}\b(?!\s*[:.])"
+                    
+                    if re.search(pattern, line_upper):
                         # Check mapping first
                         if loc in LOCATION_MAPPINGS:
                             current_location = LOCATION_MAPPINGS[loc]
@@ -1101,12 +1238,19 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             current_location = loc.title()
                             if loc == "CONRAC": current_location = "Conrac"
                             if loc == "PLAZA": current_location = "Plaza"
+                            if loc == "LOT 1": current_location = "Lot 1"
+                            if loc == "LOT 2": current_location = "Lot 2"
+                            if loc == "LOT 3": current_location = "Lot 3"
+                            if loc == "LOT 4": current_location = "Lot 4"
                         
                         with open("ocr_debug.log", "a") as f:
                             f.write(f"DEBUG: Found Location Header: {current_location} in line: {full_line_text}\n")
                         break
-                
+                    
                 # 1. Check Header (Define Columns)
+                with open("ocr_debug.log", "a") as f:
+                    f.write(f"DEBUG: Finished Location Check for: {full_line_text[:30]}...\n")
+                
                 days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
                 day_matches = []
                 
@@ -1114,6 +1258,10 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     # Check if this text block contains day names
                     found_days = [d for d in days if d in text.lower()]
                     
+                    # DEBUG: Print EVERYTHING
+                    with open("ocr_debug.log", "a") as f:
+                        f.write(f"DEBUG: Checking Block: '{text}' (Type: {type(text)}) -> Found: {found_days}\n")
+
                     if found_days:
                         with open("ocr_debug.log", "a") as f:
                             f.write(f"DEBUG: Header Candidate Block: '{text}' -> Found Days: {found_days}\n")
@@ -1219,42 +1367,103 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     first_col_x = day_columns[0][0]
                     margin = 50 
                     
-                    with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: First Column X: {first_col_x}, Margin: {margin}\n")
-                    
                     name_parts = []
                     time_slots = {} 
                     
+                    # Calculate average column width for gap detection
+                    col_xs = [d[0] for d in day_columns]
+                    if len(col_xs) > 1:
+                        avg_col_gap = (col_xs[-1] - col_xs[0]) / (len(col_xs) - 1)
+                    else:
+                        avg_col_gap = 200 # Fallback
+                    
                     for (bbox, text) in line_items:
-                        y_center = (bbox[0][1] + bbox[2][1]) / 2
-                        with open("ocr_debug.log", "a") as f:
-                            f.write(f"DEBUG: Line Item: '{text}' at X: {(bbox[0][0] + bbox[1][0]) / 2}, Y: {y_center}\n")
                         x_center = (bbox[0][0] + bbox[1][0]) / 2
+                        width = bbox[1][0] - bbox[0][0]
                         
                         if x_center < (first_col_x - margin):
                             name_parts.append(text)
                         else:
-                            # Map to nearest column
-                            # Find closest day column
-                            closest_col_idx = -1
-                            min_dist = float('inf')
-                            
-                            for i, (col_x, col_name) in enumerate(day_columns):
-                                dist = abs(x_center - col_x)
-                                if dist < min_dist:
-                                    min_dist = dist
-                                    closest_col_idx = i
-                            
-                            # Threshold for "too far" to prevent cross-column merging?
-                            # For now, just assign to closest
-                            if closest_col_idx != -1:
-                                # Append to that slot (handle multi-line text in one cell?)
-                                if closest_col_idx in time_slots:
-                                    time_slots[closest_col_idx] += " " + text
+                            # Check if block is wide (spans multiple columns)
+                            if width > (avg_col_gap * 1.2):
+                                # Merged block! Split it.
+                                start_x = bbox[0][0]
+                                end_x = bbox[1][0]
+                                
+                                covered_cols = []
+                                for k, (col_x, col_name) in enumerate(day_columns):
+                                    if start_x - (avg_col_gap/2) <= col_x <= end_x + (avg_col_gap/2):
+                                        covered_cols.append(k)
+                                
+                                if covered_cols:
+                                    words = text.split()
+                                    # Distribute words
+                                    if len(words) >= len(covered_cols):
+                                        chunk_size = len(words) / len(covered_cols)
+                                        for i, col_idx in enumerate(covered_cols):
+                                            s = int(i * chunk_size)
+                                            e = int((i + 1) * chunk_size)
+                                            chunk = " ".join(words[s:e])
+                                            if col_idx in time_slots:
+                                                time_slots[col_idx] += " " + chunk
+                                            else:
+                                                time_slots[col_idx] = chunk
+                                    else:
+                                        # Not enough word breaks - evenly divide and extract patterns
+                                        char_len = len(text)
+                                        chunk_size = char_len // len(covered_cols)
+                                        
+                                        # Pattern to extract time strings (including OCR errors O/0 I/1 S/5)
+                                        time_pattern = r'[0-9IO]{1,2}[:.]?[0-9IO]{0,2}[APMS]{0,3}[-–][0-9IO]{1,2}[:.]?[0-9IO]{0,2}[APMS]{0,3}'
+                                        
+                                        for i, col_idx in enumerate(covered_cols):
+                                            start = i * chunk_size
+                                            end = (i + 1) * chunk_size if i < len(covered_cols) - 1 else char_len
+                                            segment = text[start:end]
+                                            
+                                            # Try to find a time pattern within this segment
+                                            match = re.search(time_pattern, segment, re.IGNORECASE)
+                                            if match:
+                                                chunk = match.group()
+                                            else:
+                                                chunk = segment.strip()
+                                            
+                                            if col_idx in time_slots:
+                                                time_slots[col_idx] += " " + chunk
+                                            else:
+                                                time_slots[col_idx] = chunk
                                 else:
-                                    time_slots[closest_col_idx] = text
-                    
-                    # Process Name
+                                    # Fallback to center mapping
+                                    closest_col_idx = -1
+                                    min_dist = float('inf')
+                                    for k, (col_x, col_name) in enumerate(day_columns):
+                                        dist = abs(x_center - col_x)
+                                        if dist < min_dist:
+                                            min_dist = dist
+                                            closest_col_idx = k
+                                    if closest_col_idx != -1:
+                                        if closest_col_idx in time_slots:
+                                            time_slots[closest_col_idx] += " " + text
+                                        else:
+                                            time_slots[closest_col_idx] = text
+                            else:
+                                # Normal mapping (not wide)
+                                closest_col_idx = -1
+                                min_dist = float('inf')
+                                for k, (col_x, col_name) in enumerate(day_columns):
+                                    dist = abs(x_center - col_x)
+                                    if dist < min_dist:
+                                        min_dist = dist
+                                        closest_col_idx = k
+                                
+                                if closest_col_idx != -1:
+                                    # Check distance
+                                    if min_dist < (avg_col_gap * 0.6):
+                                        if closest_col_idx in time_slots:
+                                            time_slots[closest_col_idx] += " " + text
+                                        else:
+                                            time_slots[closest_col_idx] = text
+
                     full_name = " ".join(name_parts).replace('_', ' ').strip()
                     # Remove trailing dots/chars
                     full_name = re.sub(r'[.:,]+$', '', full_name).strip()
@@ -1278,7 +1487,10 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                         t_str = t_str.replace('O', '0')  # 1O:15 → 10:15
                         t_str = t_str.replace(';', ':')  # 11;15 → 11:15
                         t_str = t_str.replace('.', ':')  # 9.45 → 9:45
-                        t_str = t_str.replace(' ', '')   # Remove spaces
+                        # Smart space handling: convert "5 0P" to "5:0P" before removing spaces
+                        # This prevents "5 0P" → "50P" (hour=50 error)
+                        t_str = re.sub(r'(\d)\s+(\d)', r'\1:\2', t_str)  # digit-space-digit → digit:digit
+                        t_str = t_str.replace(' ', '')   # Now safe to remove remaining spaces
                         t_str = t_str.replace('I', '1')  # I0:15 → 10:15
                         t_str = t_str.replace('L', '1')  # L:45 → 1:45
                         
@@ -1363,8 +1575,8 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             # Clean common OCR typos first
                             clean_time_text = time_text.upper()
                             
-                            # Filter out known non-time text (Locations/OFF)
-                            if any(x in clean_time_text for x in ['LOT', 'PLAZA', 'CONRAC', 'OFF', 'VACATION']):
+                            # Filter out known non-time text (Locations/OFF) - Expanded list
+                            if any(x in clean_time_text for x in ['LOT', 'PLAZA', 'CONRAC', 'OFF', 'VACATION', '10T', 'P1AZA', 'P1A2A', 'C-LOT', 'E-LOT']):
                                 continue
 
                             clean_time_text = clean_time_text.replace('O', '0').replace('Q', '0').replace('D', '0')
@@ -1375,14 +1587,14 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             # Fix missing hyphen if numbers are jammed (e.g. "6:00P2:00A")
                             clean_time_text = clean_time_text.replace('-', ' - ')
                             
-                            time_part_regex = r'(?:\d{1,2}[:.,*;\s]\d{2}|\d{3,4}|\d{1,2})[APap]*'
+                            # Regex pattern allowing flexible separators (colon, period, comma, semicolon, space, or none)
+                            time_part_regex = r'(?:\d{1,2}[:.,;\s]?\d{0,2})\s*[APap][Mm]?'
                             range_pattern_regex = f'({time_part_regex}\\s*-\\s*{time_part_regex})'
                             
                             time_matches_in_slot = re.findall(range_pattern_regex, clean_time_text, re.IGNORECASE)
                             
-                            if col_idx == 2:
-                                with open("ocr_debug.log", "a") as f:
-                                    f.write(f"DEBUG: Col {col_idx} Cleaned='{clean_time_text}', Matches={time_matches_in_slot}\n")
+                            with open("ocr_debug.log", "a") as f:
+                                f.write(f"DEBUG: Col {col_idx} Original='{time_text}', Cleaned='{clean_time_text}', Matches={time_matches_in_slot}\n")
 
                             # Calculate base date for this week (Monday)
                             today = datetime.now()
@@ -1413,8 +1625,10 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             
                             match_str = time_matches_in_slot[0] 
                             
-                            # Parse Time Range
-                            match_str = re.sub(r'[.,*;\s]', ':', match_str)
+                            # Parse Time Range - Strip spaces around dash first
+                            match_str = match_str.replace(' - ', '-').replace('- ', '-').replace(' -', '-')
+                            # Replace period/comma/semicolon with colon (but NOT spaces)
+                            match_str = re.sub(r'[.,;]', ':', match_str)
                             t_parts = match_str.split('-')
                             if len(t_parts) != 2: continue
                             
@@ -1425,14 +1639,16 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                                 e_time = parse_ocr_time(t_end_str)
                                 
                                 # Handle overnight shifts (end < start)
+                                # Note: e_time is a time object, we track overnight by comparing times
+                                # If end < start, we already added 1 day above, so end_dt calculation below handles it
                                 if e_time < s_time:
-                                    e_time += timedelta(days=1)
+                                    # Overnight shift detected - end_dt needs to be next day
+                                    end_dt = current_shift_date.replace(hour=e_time.hour, minute=e_time.minute, second=0, microsecond=0) + timedelta(days=1)
+                                else:
+                                    end_dt = current_shift_date.replace(hour=e_time.hour, minute=e_time.minute, second=0, microsecond=0)
                                     
                                 start_dt = current_shift_date.replace(hour=s_time.hour, minute=s_time.minute, second=0, microsecond=0)
-                                end_dt = current_shift_date.replace(hour=e_time.hour, minute=e_time.minute, second=0, microsecond=0)
-                                
-                                if e_time.day > s_time.day: 
-                                    end_dt += timedelta(days=1)
+
 
                                 # Store shift data
                                 row_shifts.append({
@@ -1442,6 +1658,8 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                                 })
 
                             except Exception as e:
+                                with open("ocr_debug.log", "a") as f:
+                                    f.write(f"DEBUG: Time parse ERROR for '{t_start_str}' / '{t_end_str}': {e}\n")
                                 print(f"Time parse error: {e}")
                                 # Fallback on error too
                                 s_dt = current_shift_date.replace(hour=9, minute=0, second=0, microsecond=0)
@@ -1559,6 +1777,7 @@ def create_shifts_bulk(shifts: List[dict], session: Session = Depends(get_sessio
                 start_time=start,
                 end_time=end,
                 notes=s_data.get('notes'),
+                location=s_data.get('location'), # Added location
                 is_vacation=s_data.get('is_vacation', False)
             )
             session.add(shift)
@@ -1575,4 +1794,7 @@ def create_shifts_bulk(shifts: List[dict], session: Session = Depends(get_sessio
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Database Commit Failed: {str(e)}")
         
-    return {"message": f"Successfully created {count} shifts."}
+    print(f"DEBUG: Bulk create processed {count} shifts.")
+    return {"message": f"Created {count} shifts"}
+
+print("SERVER RESTART: Loaded main.py with Z->2 fix and improved filtering (v2)")

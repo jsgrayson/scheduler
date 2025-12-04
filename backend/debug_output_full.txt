@@ -1,0 +1,129 @@
+Loaded 12 lines.
+
+--- Line 0: LOT ---
+DEBUG: Checking 1 blocks for header...
+DEBUG: Checking Block: 'LOT' -> Found: []
+DEBUG: Skipping row (no columns defined yet)
+
+--- Line 1: 121/06/25 12/07/25 12/08/25 12109/25 12/10/25 12/11/25 12112125 ---
+DEBUG: Checking 7 blocks for header...
+DEBUG: Checking Block: '121/06/25' -> Found: []
+DEBUG: Checking Block: '12/07/25' -> Found: []
+DEBUG: Checking Block: '12/08/25' -> Found: []
+DEBUG: Checking Block: '12109/25' -> Found: []
+DEBUG: Checking Block: '12/10/25' -> Found: []
+DEBUG: Checking Block: '12/11/25' -> Found: []
+DEBUG: Checking Block: '12112125' -> Found: []
+DEBUG: Skipping row (no columns defined yet)
+
+--- Line 2: NAME SATURDAY SUNDAY MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY ---
+DEBUG: Checking 8 blocks for header...
+DEBUG: Checking Block: 'NAME' -> Found: []
+DEBUG: Checking Block: 'SATURDAY' -> Found: ['sat']
+DEBUG: Header Candidate Block: 'SATURDAY' -> Found Days: ['sat']
+DEBUG: Checking Block: 'SUNDAY' -> Found: ['sun']
+DEBUG: Header Candidate Block: 'SUNDAY' -> Found Days: ['sun']
+DEBUG: Checking Block: 'MONDAY' -> Found: ['mon']
+DEBUG: Header Candidate Block: 'MONDAY' -> Found Days: ['mon']
+DEBUG: Checking Block: 'TUESDAY' -> Found: ['tue']
+DEBUG: Header Candidate Block: 'TUESDAY' -> Found Days: ['tue']
+DEBUG: Checking Block: 'WEDNESDAY' -> Found: ['wed']
+DEBUG: Header Candidate Block: 'WEDNESDAY' -> Found Days: ['wed']
+DEBUG: Checking Block: 'THURSDAY' -> Found: ['thu']
+DEBUG: Header Candidate Block: 'THURSDAY' -> Found Days: ['thu']
+DEBUG: Checking Block: 'FRIDAY' -> Found: ['fri']
+DEBUG: Header Candidate Block: 'FRIDAY' -> Found Days: ['fri']
+DEBUG: Defined 7 columns: ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+
+--- Line 3: Arthur Soucier 11:45PM-8:1SAM 11:45PM-815AM 11:45PM-8:15AM 11:45PM-8:1SAM 11.4SPM-8:15AM ---
+DEBUG: Checking 3 blocks for header...
+DEBUG: Checking Block: 'Arthur Soucier' -> Found: ['thu']
+DEBUG: Header Candidate Block: 'Arthur Soucier' -> Found Days: ['thu']
+DEBUG: Checking Block: '11:45PM-8:1SAM' -> Found: []
+DEBUG: Checking Block: '11:45PM-815AM 11:45PM-8:15AM 11:45PM-8:1SAM 11.4SPM-8:15AM' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped '11:45PM-8:1SAM' (x=585.0) to Column 0 (SATURDAY) (dist=2.0)
+DEBUG: Mapped '11:45PM-815AM 11:45PM-8:15AM 11:45PM-8:1SAM 11.4SPM-8:15AM' (x=1624.5) to Column 5 (THURSDAY) (dist=113.5)
+DEBUG: Extracted Name: 'Arthur Soucier'
+DEBUG: Extracted Slots: {0: '11:45PM-8:1SAM', 5: '11:45PM-815AM 11:45PM-8:15AM 11:45PM-8:1SAM 11.4SPM-8:15AM'}
+
+--- Line 4: Laura DeGray C-Lot C-Lot ---
+DEBUG: Found Location Header: Customer Lots
+DEBUG: Checking 3 blocks for header...
+DEBUG: Checking Block: 'Laura DeGray' -> Found: []
+DEBUG: Checking Block: 'C-Lot' -> Found: []
+DEBUG: Checking Block: 'C-Lot' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped 'C-Lot' (x=815.0) to Column 1 (SUNDAY) (dist=1.0)
+DEBUG: Mapped 'C-Lot' (x=1738.0) to Column 5 (THURSDAY) (dist=0.0)
+DEBUG: Extracted Name: 'Laura DeGray'
+DEBUG: Extracted Slots: {1: 'C-Lot', 5: 'C-Lot'}
+
+--- Line 5: AUDREY FIELDS 10:45PM-7:1SAM  10:45PM-7:ISAM/10:45PM-7:1SAM 10:45PM-7:1SAM/10:45PM-7:1SAM ---
+DEBUG: Checking 3 blocks for header...
+DEBUG: Checking Block: 'AUDREY FIELDS' -> Found: []
+DEBUG: Checking Block: '10:45PM-7:1SAM  10:45PM-7:ISAM/10:45PM-7:1SAM' -> Found: []
+DEBUG: Checking Block: '10:45PM-7:1SAM/10:45PM-7:1SAM' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped '10:45PM-7:1SAM  10:45PM-7:ISAM/10:45PM-7:1SAM' (x=814.0) to Column 1 (SUNDAY) (dist=0.0)
+DEBUG: Mapped '10:45PM-7:1SAM/10:45PM-7:1SAM' (x=1853.5) to Column 5 (THURSDAY) (dist=115.5)
+DEBUG: Extracted Name: 'AUDREY FIELDS'
+DEBUG: Extracted Slots: {1: '10:45PM-7:1SAM  10:45PM-7:ISAM/10:45PM-7:1SAM', 5: '10:45PM-7:1SAM/10:45PM-7:1SAM'}
+
+--- Line 6: Kirk Nelson 1:45AM-1O:15AM1:4SAM-1O:15AMA:ASAM-1O:1SAMA:A5AM-1O:15AMAASAM-1O:15AM: ---
+DEBUG: Checking 2 blocks for header...
+DEBUG: Checking Block: 'Kirk Nelson' -> Found: []
+DEBUG: Checking Block: '1:45AM-1O:15AM1:4SAM-1O:15AMA:ASAM-1O:1SAMA:A5AM-1O:15AMAASAM-1O:15AM:' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped '1:45AM-1O:15AM1:4SAM-1O:15AMA:ASAM-1O:1SAMA:A5AM-1O:15AMAASAM-1O:15AM:' (x=1276.0) to Column 3 (TUESDAY) (dist=0.5)
+DEBUG: Extracted Name: 'Kirk Nelson'
+DEBUG: Extracted Slots: {3: '1:45AM-1O:15AM1:4SAM-1O:15AMA:ASAM-1O:1SAMA:A5AM-1O:15AMAASAM-1O:15AM:'}
+
+--- Line 7: Matt Toma C-Lot ---
+DEBUG: Found Location Header: Customer Lots
+DEBUG: Checking 2 blocks for header...
+DEBUG: Checking Block: 'Matt Toma' -> Found: []
+DEBUG: Checking Block: 'C-Lot' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped 'C-Lot' (x=1046.0) to Column 2 (MONDAY) (dist=1.0)
+DEBUG: Extracted Name: 'Matt Toma'
+DEBUG: Extracted Slots: {2: 'C-Lot'}
+
+--- Line 8: KANTIUS JOSHUA JR_ ---
+DEBUG: Checking 1 blocks for header...
+DEBUG: Checking Block: 'KANTIUS JOSHUA JR_' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Extracted Name: 'KANTIUS JOSHUA JR_'
+DEBUG: Extracted Slots: {}
+
+--- Line 9: Fresly Eustache ---
+DEBUG: Checking 1 blocks for header...
+DEBUG: Checking Block: 'Fresly Eustache' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Extracted Name: 'Fresly Eustache'
+DEBUG: Extracted Slots: {}
+
+--- Line 10: Brian McTeauge 1:ASAM-1O:ISAM 1:45AM-IO:ISAM ---
+DEBUG: Checking 3 blocks for header...
+DEBUG: Checking Block: 'Brian McTeauge' -> Found: []
+DEBUG: Checking Block: '1:ASAM-1O:ISAM' -> Found: []
+DEBUG: Checking Block: '1:45AM-IO:ISAM' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped '1:ASAM-1O:ISAM' (x=582.5) to Column 0 (SATURDAY) (dist=0.5)
+DEBUG: Mapped '1:45AM-IO:ISAM' (x=1969.0) to Column 6 (FRIDAY) (dist=0.0)
+DEBUG: Extracted Name: 'Brian McTeauge'
+DEBUG: Extracted Slots: {0: '1:ASAM-1O:ISAM', 6: '1:45AM-IO:ISAM'}
+
+--- Line 11: Scott G C-Lot C-Lot C-Lot ---
+DEBUG: Found Location Header: Customer Lots
+DEBUG: Checking 4 blocks for header...
+DEBUG: Checking Block: 'Scott G' -> Found: []
+DEBUG: Checking Block: 'C-Lot' -> Found: []
+DEBUG: Checking Block: 'C-Lot' -> Found: []
+DEBUG: Checking Block: 'C-Lot' -> Found: []
+DEBUG: Processing Row with 7 columns defined.
+DEBUG: Mapped 'C-Lot' (x=814.0) to Column 1 (SUNDAY) (dist=0.0)
+DEBUG: Mapped 'C-Lot' (x=1507.5) to Column 4 (WEDNESDAY) (dist=1.5)
+DEBUG: Mapped 'C-Lot' (x=1968.5) to Column 6 (FRIDAY) (dist=0.5)
+DEBUG: Extracted Name: 'Scott G'
+DEBUG: Extracted Slots: {1: 'C-Lot', 4: 'C-Lot', 6: 'C-Lot'}
