@@ -49,8 +49,8 @@ const CalendarView = () => {
     // Fetch shifts when date changes
     useEffect(() => {
         const fetchShifts = async () => {
-            const start = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday
-            const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+            const start = startOfWeek(currentDate, { weekStartsOn: 6 }); // Saturday
+            const end = endOfWeek(currentDate, { weekStartsOn: 6 });
             try {
                 const response = await axios.get(`${BASE_URL}/shifts/`, {
                     params: { start_date: start.toISOString(), end_date: end.toISOString() }
@@ -260,16 +260,27 @@ const CalendarView = () => {
                     </div>
                 </div>
                 {/* ... (Date nav remains same) ... */}
-                <div className="flex gap-2">
-                    <button onClick={handleToday} className="px-3 py-1 border rounded hover:bg-gray-100">Today</button>
-                    <button onClick={handlePrevWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&lt;</button>
-                    <button onClick={handleNextWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&gt;</button>
-                    <span className="text-lg font-semibold ml-4">
-                        {viewMode === 'month' ?
-                            format(currentDate, 'MMMM yyyy') :
-                            `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`
-                        }
-                    </span>
+                <div className="flex items-center gap-4">
+                    <div className="flex gap-2">
+                        <ExportImportButtons />
+                        <button
+                            onClick={() => setShowCallSheet(true)}
+                            className="bg-gray-800 text-white px-3 py-1 rounded shadow hover:bg-gray-700 text-sm"
+                        >
+                            Print Call Sheet
+                        </button>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                        <button onClick={handleToday} className="px-3 py-1 border rounded hover:bg-gray-100">Today</button>
+                        <button onClick={handlePrevWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&lt;</button>
+                        <button onClick={handleNextWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&gt;</button>
+                        <span className="text-lg font-semibold ml-4">
+                            {viewMode === 'month' ?
+                                format(currentDate, 'MMMM yyyy') :
+                                `${format(startOfWeek(currentDate, { weekStartsOn: 6 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 6 }), 'MMM d, yyyy')}`
+                            }
+                        </span>
+                    </div>
                 </div>
 
                 {/* Tabs */}
@@ -288,15 +299,7 @@ const CalendarView = () => {
 
             {/* Calendar / Roster View */}
             <div className="flex-1 border rounded shadow bg-white relative overflow-hidden">
-                <div className="absolute top-2 right-2 z-50 flex gap-2">
-                    <ExportImportButtons />
-                    <button
-                        onClick={() => setShowCallSheet(true)}
-                        className="bg-gray-800 text-white px-3 py-1 rounded shadow hover:bg-gray-700 text-sm"
-                    >
-                        Print Call Sheet
-                    </button>
-                </div>
+
 
                 {viewMode === 'roster' ? (
                     <RosterView
@@ -312,8 +315,7 @@ const CalendarView = () => {
                         height="100%"
                         view={viewMode}
                         week={{
-                            dayNames: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                            startDayOfWeek: 1,
+                            startDayOfWeek: 6,
                             taskView: false,
                             eventView: ['time'],
                             hourStart: 6,

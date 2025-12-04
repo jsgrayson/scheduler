@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
 
 const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellClick }) => {
-    const start = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday
+    const start = startOfWeek(currentDate, { weekStartsOn: 6 }); // Saturday
     const days = Array.from({ length: 7 }).map((_, i) => addDays(start, i));
 
     // --- Location Filtering Logic ---

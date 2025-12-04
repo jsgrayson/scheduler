@@ -48,7 +48,7 @@ const ExportImportButtons = () => {
             const response = await axios.post(`${BASE_URL}/import/ocr/?dry_run=true`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 signal: abortControllerRef.current.signal,
-                timeout: 300000, // 300 seconds (5 min) timeout for slower OCR
+                timeout: 600000, // 600 seconds (10 min) timeout for slower OCR
             });
 
             if ((response.data.parsed_shifts && response.data.parsed_shifts.length > 0) ||
