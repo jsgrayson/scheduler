@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import OCRReviewModal from './OCRReviewModal';
 
 const BASE_URL = 'http://localhost:8000';
 
-const ExportImportButtons = () => {
+const ExportImportButtons = ({ onPrintCallSheet }) => {
     const fileInputRef = useRef(null);
     const ocrInputRef = useRef(null);
     const cameraInputRef = useRef(null);
@@ -124,23 +124,78 @@ const ExportImportButtons = () => {
         }
     };
 
-    return (
-        <div className="flex space-x-2">
-            <button
-                onClick={handleExport}
-                className="bg-green-600 text-white px-3 py-1 rounded shadow hover:bg-green-700 text-sm"
-                disabled={isLoading}
-            >
-                Export Excel
-            </button>
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
-            <button
-                onClick={() => fileInputRef.current.click()}
-                className="bg-blue-600 text-white px-3 py-1 rounded shadow hover:bg-blue-700 text-sm"
-                disabled={isLoading}
-            >
-                Import Excel
-            </button>
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            {isLoading ? (
+                <button
+                    onClick={handleCancel}
+                    className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 text-sm font-medium flex items-center gap-2"
+                >
+                    <span className="animate-spin">↻</span> Cancel OCR
+                </button>
+            ) : (
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="bg-gray-800 text-white px-4 py-2 rounded shadow hover:bg-gray-700 text-sm font-medium flex items-center gap-2"
+                >
+                    Actions ▾
+                </button>
+            )}
+
+            {isOpen && !isLoading && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 border ring-1 ring-black ring-opacity-5">
+                    <div className="py-1">
+                        <button
+                            onClick={() => { handleExport(); setIsOpen(false); }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                            Export Excel
+                        </button>
+                        <button
+                            onClick={() => { fileInputRef.current.click(); setIsOpen(false); }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                            Import Excel
+                        </button>
+                        <div className="border-t border-gray-100 my-1"></div>
+                        <button
+                            onClick={() => { ocrInputRef.current.click(); setIsOpen(false); }}
+                            className="block w-full text-left px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 font-medium"
+                        >
+                            Upload Pic (OCR)
+                        </button>
+                        <button
+                            onClick={() => { cameraInputRef.current.click(); setIsOpen(false); }}
+                            className="block w-full text-left px-4 py-2 text-sm text-indigo-700 hover:bg-indigo-50 font-medium"
+                        >
+                            Scan (Camera)
+                        </button>
+                        <div className="border-t border-gray-100 my-1"></div>
+                        <button
+                            onClick={() => { onPrintCallSheet && onPrintCallSheet(); setIsOpen(false); }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                            Print Call Sheet
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Hidden Inputs */}
             <input
                 type="file"
                 ref={fileInputRef}
@@ -148,46 +203,21 @@ const ExportImportButtons = () => {
                 className="hidden"
                 accept=".xlsx, .xls"
             />
-
-            {isLoading ? (
-                <button
-                    onClick={handleCancel}
-                    className="bg-red-600 text-white px-3 py-1 rounded shadow hover:bg-red-700 text-sm"
-                >
-                    Cancel
-                </button>
-            ) : (
-                <>
-                    <button
-                        onClick={() => ocrInputRef.current.click()}
-                        className="bg-purple-600 text-white px-3 py-1 rounded shadow hover:bg-purple-700 text-sm"
-                    >
-                        Upload Pic (OCR)
-                    </button>
-                    <input
-                        type="file"
-                        ref={ocrInputRef}
-                        onChange={handleOCRImport}
-                        className="hidden"
-                        accept="image/*, .pdf, .heic, .heif"
-                    />
-
-                    <button
-                        onClick={() => cameraInputRef.current.click()}
-                        className="bg-indigo-600 text-white px-3 py-1 rounded shadow hover:bg-indigo-700 text-sm"
-                    >
-                        Scan (Camera)
-                    </button>
-                    <input
-                        type="file"
-                        ref={cameraInputRef}
-                        onChange={handleOCRImport}
-                        className="hidden"
-                        accept="image/*"
-                        capture="environment"
-                    />
-                </>
-            )}
+            <input
+                type="file"
+                ref={ocrInputRef}
+                onChange={handleOCRImport}
+                className="hidden"
+                accept="image/*, .pdf, .heic, .heif"
+            />
+            <input
+                type="file"
+                ref={cameraInputRef}
+                onChange={handleOCRImport}
+                className="hidden"
+                accept="image/*"
+                capture="environment"
+            />
 
             <OCRReviewModal
                 isOpen={reviewModalOpen}

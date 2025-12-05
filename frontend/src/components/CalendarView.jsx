@@ -20,6 +20,14 @@ const CalendarView = () => {
     const [shifts, setShifts] = useState([]);
     const [calendars, setCalendars] = useState([]);
     const [viewMode, setViewMode] = useState('roster'); // Default to Roster as requested
+    const [selectedLocation, setSelectedLocation] = useState('All');
+
+    // Build location tabs from shifts
+    const dynamicLocations = [...new Set(shifts.map(s => s.location).filter(l => l && l !== 'General'))];
+    const locations = ['All', ...dynamicLocations.filter(l => l !== 'Employee Lot'), 'Employee Lot'];
+
+    // Filter shifts by location
+    const filteredShifts = selectedLocation === 'All' ? shifts : shifts.filter(s => s.location === selectedLocation);
 
     const handleViewChange = (mode) => {
         setViewMode(mode);
@@ -47,49 +55,59 @@ const CalendarView = () => {
     }, []);
 
     // Fetch shifts when date changes
-    useEffect(() => {
-        const fetchShifts = async () => {
-            const start = startOfWeek(currentDate, { weekStartsOn: 6 }); // Saturday
-            const end = endOfWeek(currentDate, { weekStartsOn: 6 });
-            try {
-                const response = await axios.get(`${BASE_URL}/shifts/`, {
-                    params: { start_date: start.toISOString(), end_date: end.toISOString() }
-                });
+    const fetchShifts = async () => {
+        const start = startOfWeek(currentDate, { weekStartsOn: 6 }); // Saturday
+        const end = endOfWeek(currentDate, { weekStartsOn: 6 });
+        try {
+            const response = await axios.get(`${BASE_URL}/shifts/`, {
+                params: { start_date: start.toISOString(), end_date: end.toISOString() }
+            });
 
-                // Map backend shifts to Toast UI events
-                const events = response.data.map(shift => ({
-                    id: shift.id.toString(),
-                    calendarId: shift.employee_id ? shift.employee_id.toString() : 'OPEN',
-                    title: shift.notes || 'Shift',
-                    category: 'time',
-                    start: shift.start_time,
-                    end: shift.end_time,
-                    backgroundColor: getRoleColor(shift.role_id),
-                    color: '#fff'
-                }));
-                setShifts(events);
-            } catch (error) {
-                console.error("Error fetching shifts:", error);
-            }
-        };
+            // Map backend shifts to Toast UI events
+            const events = response.data.map(shift => ({
+                id: shift.id.toString(),
+                calendarId: shift.employee_id ? shift.employee_id.toString() : 'OPEN',
+                title: shift.notes || 'Shift',
+                category: 'time',
+                start: shift.start_time,
+                end: shift.end_time,
+                location: shift.location,
+                booth_number: shift.booth_number,
+                backgroundColor: getRoleColor(shift.role_id),
+                color: '#fff'
+            }));
+            setShifts(events);
+        } catch (error) {
+            console.error("Error fetching shifts:", error);
+        }
+    };
+
+    useEffect(() => {
         fetchShifts();
+        // Sync Calendar view date
+        if (calendarRef.current) {
+            calendarRef.current.getInstance().setDate(currentDate);
+        }
     }, [currentDate, roles]);
+
+    // Helper to filter employees based on active tab (Location)
+    const getEmployeesForTab = () => {
+        if (selectedLocation === 'All') return employees;
+
+        // Find shifts matching the active location
+        const locationShifts = shifts.filter(s => s.location === selectedLocation);
+        const employeeIds = new Set(locationShifts.map(s => s.calendarId));
+
+        // Note: fetchShifts mapped events to { id, calendarId, ... }. 
+        // But we store raw shifts in state? No, setShifts(events).
+        // Events have `calendarId` as string.
+
+        return employees.filter(e => employeeIds.has(e.id.toString()));
+    };
 
     // Update calendars (resources) based on active tab
     useEffect(() => {
-        let filteredEmployees = employees;
-
-        if (activeTab !== 'All') {
-            // Find role ID for the tab name
-            const role = roles.find(r => r.name === activeTab);
-            if (role) {
-                filteredEmployees = employees.filter(e => e.default_role_id === role.id);
-            } else if (activeTab === 'Open') {
-                // This case is for showing only the "Open Shifts" row,
-                // so filteredEmployees should be empty for actual employees.
-                filteredEmployees = [];
-            }
-        }
+        const filteredEmployees = getEmployeesForTab();
 
         const resources = filteredEmployees.map(emp => ({
             id: emp.id.toString(),
@@ -109,22 +127,11 @@ const CalendarView = () => {
         });
 
         setCalendars(resources);
-
-        // Update calendar instance
-        const calendarInstance = calendarRef.current?.getInstance();
-        if (calendarInstance) {
-            // Toast UI doesn't have a direct "setCalendars" for resource view in React wrapper easily?
-            // Actually it does via the `calendars` prop, but we might need to force refresh or use `setCalendars` API.
-            // For now, passing `calendars` prop should work.
-        }
     }, [employees, activeTab, roles]);
 
     // Filter employees for RosterView based on activeTab
     const getFilteredEmployees = () => {
-        if (activeTab === 'All') return employees;
-        if (activeTab === 'Open') return [];
-        const role = roles.find(r => r.name === activeTab);
-        return role ? employees.filter(e => e.default_role_id === role.id) : employees;
+        return getEmployeesForTab();
     };
 
     const getRoleColor = (roleId) => {
@@ -166,36 +173,63 @@ const CalendarView = () => {
         setIsModalOpen(true);
     };
 
-    const onClickSchedule = (event) => {
+    const onClickSchedule = async (event) => {
+        console.log("onClickSchedule event:", event);
         const { schedule } = event;
-        setSelectedShift({
-            id: schedule.id,
-            employee_id: schedule.calendarId === 'OPEN' ? null : parseInt(schedule.calendarId),
-            role_id: 1,
-            start: schedule.start.toDate(),
-            end: schedule.end.toDate(),
-            title: schedule.title
-        });
-        setIsModalOpen(true);
+
+        // Fetch the full shift data from API to get ALL fields
+        try {
+            const response = await axios.get(`${BASE_URL}/shifts/${schedule.id}`);
+            const fullShift = response.data;
+
+            setSelectedShift({
+                id: fullShift.id,
+                employee_id: fullShift.employee_id,
+                role_id: fullShift.role_id,
+                start: new Date(fullShift.start_time),
+                end: new Date(fullShift.end_time),
+                title: fullShift.notes || '',
+                location: fullShift.location,
+                booth_number: fullShift.booth_number,
+                notes: fullShift.notes,
+                is_vacation: fullShift.is_vacation
+            });
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Error fetching shift:", error);
+            alert("Failed to load shift data");
+        }
     };
 
     const handleSaveShift = async (data) => {
         try {
+            console.log('Saving shift data:', data);
+
+            // Use times as-is - they already have seconds from ShiftModal
             const payload = {
                 employee_id: data.employee_id,
                 role_id: data.role_id,
-                start_time: new Date(data.start_time).toISOString(),
-                end_time: new Date(data.end_time).toISOString(),
-                notes: data.notes
+                start_time: data.start_time,
+                end_time: data.end_time,
+                notes: data.notes || null,
+                location: data.location || null,
+                booth_number: data.booth_number || null,
+                is_vacation: data.is_vacation || false
             };
 
+            console.log('Sending payload:', payload);
+
             if (selectedShift?.id) {
+                // Update existing shift
                 await axios.put(`${BASE_URL}/shifts/${selectedShift.id}`, payload);
             } else {
+                // Create new shift (include additional fields)
+                payload.create_open_shift = data.create_open_shift || false;
+                payload.repeat = data.repeat || null;
                 await axios.post(`${BASE_URL}/shifts/`, payload);
             }
             setIsModalOpen(false);
-            window.location.reload();
+            fetchShifts(); // Refresh shifts without reloading page
         } catch (error) {
             console.error("Save failed:", error);
             alert("Save failed: " + (error.response?.data?.detail || error.message));
@@ -208,7 +242,7 @@ const CalendarView = () => {
         try {
             await axios.delete(`${BASE_URL}/shifts/${selectedShift.id}`);
             setIsModalOpen(false);
-            window.location.reload();
+            fetchShifts(); // Refresh shifts without reloading page
         } catch (error) {
             console.error("Delete failed:", error);
         }
@@ -262,13 +296,7 @@ const CalendarView = () => {
                 {/* ... (Date nav remains same) ... */}
                 <div className="flex items-center gap-4">
                     <div className="flex gap-2">
-                        <ExportImportButtons />
-                        <button
-                            onClick={() => setShowCallSheet(true)}
-                            className="bg-gray-800 text-white px-3 py-1 rounded shadow hover:bg-gray-700 text-sm"
-                        >
-                            Print Call Sheet
-                        </button>
+                        <ExportImportButtons onPrintCallSheet={() => setShowCallSheet(true)} />
                     </div>
                     <div className="flex gap-2 items-center">
                         <button onClick={handleToday} className="px-3 py-1 border rounded hover:bg-gray-100">Today</button>
@@ -282,19 +310,32 @@ const CalendarView = () => {
                         </span>
                     </div>
                 </div>
+            </div>
 
-                {/* Tabs */}
-                <div className="flex space-x-1 bg-gray-200 p-1 rounded">
-                    {['Cashier', 'Elot', 'CLot', 'Maintenance', 'Office', 'Supervisor'].map(tab => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-1 rounded ${activeTab === tab ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:bg-gray-300'}`}
-                        >
-                            {tab}
-                        </button>
+            {/* Color Legend */}
+            <div className="bg-gray-50 border rounded p-2 mb-2">
+                <div className="text-xs font-semibold text-gray-600 mb-1">Role Colors:</div>
+                <div className="flex flex-wrap gap-2">
+                    {roles.map(role => (
+                        <div key={role.id} className="flex items-center gap-1">
+                            <div
+                                className="w-4 h-4 rounded border border-gray-300"
+                                style={{ backgroundColor: role.color_hex }}
+                            ></div>
+                            <span className="text-xs text-gray-700">{role.name}</span>
+                        </div>
                     ))}
                 </div>
+            </div>
+
+            {/* Location Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-2 mb-2">
+                {locations.map(loc => (
+                    <button key={loc} onClick={() => setSelectedLocation(loc)}
+                        className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${selectedLocation === loc ? 'bg-blue-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-100 border'}`}>
+                        {loc}
+                    </button>
+                ))}
             </div>
 
             {/* Calendar / Roster View */}
@@ -305,9 +346,20 @@ const CalendarView = () => {
                     <RosterView
                         currentDate={currentDate}
                         employees={getFilteredEmployees()}
-                        shifts={shifts}
+                        shifts={filteredShifts}
                         onShiftClick={(shift) => onClickSchedule({ schedule: shift })}
                         onEmptyCellClick={onEmptyCellClick}
+                        onEmployeeClick={(emp) => {
+                            setSelectedShift({
+                                employee_id: emp.id,
+                                role_id: emp.default_role_id,
+                                start: new Date(),
+                                end: new Date(),
+                                title: `${emp.first_name} ${emp.last_name}`
+                            });
+                            setIsModalOpen(true);
+                        }}
+                        onRefresh={fetchShifts}
                     />
                 ) : (
                     <Calendar
@@ -324,7 +376,7 @@ const CalendarView = () => {
                         useCreationPopup={false}
                         useDetailPopup={false}
                         calendars={calendars}
-                        events={shifts}
+                        events={filteredShifts}
                         onBeforeUpdateSchedule={onBeforeUpdateSchedule}
                         onBeforeCreateSchedule={onBeforeCreateSchedule}
                         onClickSchedule={onClickSchedule}

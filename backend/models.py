@@ -53,6 +53,7 @@ class Shift(SQLModel, table=True):
     end_time: datetime
     notes: Optional[str] = None
     location: Optional[str] = None # For lots/sections
+    booth_number: Optional[str] = None # For Plaza booth assignments
     parent_id: Optional[int] = Field(default=None) # For recurrence grouping
     is_vacation: bool = Field(default=False)
     

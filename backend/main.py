@@ -38,6 +38,8 @@ LOCATION_MAPPINGS = {
     # "SUP": "Maintenance", # Too ambiguous
     "C-LOT": "Customer Lots",
     "CLOT": "Customer Lots",
+    "E-LOT": "Customer Lots",
+    "ELOT": "Customer Lots",
     "CUSTOMER LOT": "Customer Lots",
 }
 
@@ -116,7 +118,9 @@ def read_shifts(
     end_date: datetime,
     session: Session = Depends(get_session)
 ):
-    statement = select(Shift).where(Shift.start_time >= start_date).where(Shift.end_time <= end_date)
+    # Get shifts that overlap with the date range (not strictly within)
+    # A shift overlaps if: shift_start < range_end AND shift_end > range_start
+    statement = select(Shift).where(Shift.start_time < end_date).where(Shift.end_time > start_date)
     shifts = session.exec(statement).all()
     return shifts
 
@@ -127,6 +131,7 @@ class ShiftCreate(BaseModel):
     end_time: datetime
     notes: Optional[str] = None
     location: Optional[str] = None
+    booth_number: Optional[str] = None
     is_vacation: bool = False
     repeat: Optional[str] = None # "daily", "weekly", "mon-fri"
     create_open_shift: bool = False # If vacation, create covering open shift
@@ -139,6 +144,7 @@ class ShiftRead(BaseModel):
     end_time: datetime
     notes: Optional[str] = None
     location: Optional[str] = None
+    booth_number: Optional[str] = None
     is_vacation: bool
     parent_id: Optional[int] = None
 
@@ -191,6 +197,8 @@ def create_shift(shift_data: ShiftCreate, session: Session = Depends(get_session
             start_time=start_dt,
             end_time=end_dt,
             notes=shift_data.notes,
+            location=shift_data.location,
+            booth_number=shift_data.booth_number,
             is_vacation=shift_data.is_vacation,
             parent_id=parent_id
         )
@@ -230,34 +238,54 @@ def get_agenda(employee_id: int, session: Session = Depends(get_session)):
     now = datetime.now()
     statement = select(Shift).where(
         Shift.employee_id == employee_id,
-        Shift.start_time >= now
     ).order_by(Shift.start_time)
     shifts = session.exec(statement).all()
     return shifts
 
+class ShiftUpdate(BaseModel):
+    employee_id: Optional[int] = None
+    role_id: Optional[int] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    notes: Optional[str] = None
+    location: Optional[str] = None
+    booth_number: Optional[str] = None
+    is_vacation: Optional[bool] = None
+
+@app.get("/shifts/{shift_id}", response_model=ShiftRead)
+def get_shift(shift_id: int, session: Session = Depends(get_session)):
+    shift = session.get(Shift, shift_id)
+    if not shift:
+        raise HTTPException(status_code=404, detail="Shift not found")
+    return shift
+
 @app.put("/shifts/{shift_id}", response_model=Shift)
-def update_shift(shift_id: int, shift_data: Shift, session: Session = Depends(get_session)):
+def update_shift(shift_id: int, shift_data: ShiftUpdate, session: Session = Depends(get_session)):
     shift = session.get(Shift, shift_id)
     if not shift:
         raise HTTPException(status_code=404, detail="Shift not found")
     
+    # Update only provided fields
+    update_data = shift_data.model_dump(exclude_unset=True)
+    
     # Conflict detection (excluding self, and only if employee assigned)
-    if shift_data.employee_id:
+    if 'employee_id' in update_data and update_data['employee_id']:
+        start_time = update_data.get('start_time', shift.start_time)
+        end_time = update_data.get('end_time', shift.end_time)
+        
         statement = select(Shift).where(
-            Shift.employee_id == shift_data.employee_id,
-            Shift.start_time < shift_data.end_time,
-            Shift.end_time > shift_data.start_time,
+            Shift.employee_id == update_data['employee_id'],
+            Shift.start_time < end_time,
+            Shift.end_time > start_time,
             Shift.id != shift_id
         )
         conflicts = session.exec(statement).all()
         if conflicts:
             raise HTTPException(status_code=400, detail="Shift overlaps with an existing shift.")
-        
-    shift.start_time = shift_data.start_time
-    shift.end_time = shift_data.end_time
-    shift.role_id = shift_data.role_id
-    shift.employee_id = shift_data.employee_id # Can be None
-    shift.notes = shift_data.notes
+    
+    # Apply updates
+    for key, value in update_data.items():
+        setattr(shift, key, value)
     
     session.add(shift)
     session.commit()
@@ -272,6 +300,56 @@ def delete_shift(shift_id: int, session: Session = Depends(get_session)):
     session.delete(shift)
     session.commit()
     return {"ok": True}
+
+# --- Bulk Update Shifts ---
+class BulkShiftUpdate(BaseModel):
+    shift_ids: List[int]
+    role_id: Optional[int] = None
+    location: Optional[str] = None
+    booth_number: Optional[str] = None
+
+@app.post("/shifts/bulk-update/")
+def bulk_update_shifts(data: BulkShiftUpdate, session: Session = Depends(get_session)):
+    if not data.shift_ids:
+        raise HTTPException(status_code=400, detail="No shift IDs provided")
+    
+    if data.role_id is None and data.location is None and data.booth_number is None:
+        raise HTTPException(status_code=400, detail="No updates specified (role_id, location, or booth_number required)")
+    
+    updated_count = 0
+    for shift_id in data.shift_ids:
+        shift = session.get(Shift, shift_id)
+        if shift:
+            if data.role_id is not None:
+                shift.role_id = data.role_id
+            if data.location is not None:
+                shift.location = data.location
+            if data.booth_number is not None:
+                shift.booth_number = data.booth_number
+            session.add(shift)
+            updated_count += 1
+    
+    session.commit()
+    return {"ok": True, "updated_count": updated_count}
+
+# --- Bulk Delete Shifts ---
+class BulkShiftDelete(BaseModel):
+    shift_ids: List[int]
+
+@app.post("/shifts/bulk-delete/")
+def bulk_delete_shifts(data: BulkShiftDelete, session: Session = Depends(get_session)):
+    if not data.shift_ids:
+        raise HTTPException(status_code=400, detail="No shift IDs provided")
+    
+    deleted_count = 0
+    for shift_id in data.shift_ids:
+        shift = session.get(Shift, shift_id)
+        if shift:
+            session.delete(shift)
+            deleted_count += 1
+    
+    session.commit()
+    return {"ok": True, "deleted_count": deleted_count}
 
 # --- Availability ---
 from models import Availability
@@ -1071,6 +1149,7 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
         # Only run OCR if we don't have text yet
         extracted_text = ""
         determined_angle = None
+        column_dates = {}
         
         for img in images:
             # 1. Correct Orientation (90/180/270)
@@ -1191,9 +1270,52 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
             # -----------------------------------------------
 
             day_columns = [] # List of (x_center, day_index)
-            column_dates = {} # Map col_idx -> datetime
+            # column_dates = {} # Map col_idx -> datetime -- MOVED OUTSIDE LOOP TO PERSIST
+            pending_date_row = None # Store date row if found before header
             header_y = -1
             current_location = "General" # Default
+            
+            # PREPROCESSING: Merge split rows (e.g., time slots on one row, name on next row)
+            merged_lines = []
+            i = 0
+            while i < len(lines_data):
+                current_row = lines_data[i]
+                current_text = " ".join([t[1] for t in current_row])
+                
+                # Check if next row exists
+                if i + 1 < len(lines_data):
+                    next_row = lines_data[i + 1]
+                    next_text = " ".join([t[1] for t in next_row])
+                    
+                    # Pattern: Current row has times but starts with just a number or short text
+                    # Next row looks like it has a name
+                    # Look for time patterns in current row
+                    time_pattern = r'\d{1,2}[:.,]\d{2}\s*[APap]'
+                    has_times_current = len(re.findall(time_pattern, current_text)) >= 2
+                    
+                    # Check if current row starts with just a number (like "3")
+                    first_word = current_text.strip().split()[0] if current_text.strip() else ""
+                    starts_with_number = len(first_word) <= 2 and first_word.isdigit()
+                    
+                    # Check if next row starts with a name-like pattern (letters, possibly with periods/spaces)
+                    next_first_words = next_text.strip().split()[:2]
+                    looks_like_name = (len(next_first_words) >= 1 and 
+                                     any(c.isalpha() for c in next_first_words[0]) and
+                                     len(next_first_words[0]) > 2)
+                    
+                    # If current has times but weak name, and next has strong name, merge
+                    if has_times_current and starts_with_number and looks_like_name:
+                        # Merge: Combine items from both rows
+                        merged_row = next_row + current_row  # Put name first, then time slots
+                        merged_lines.append(merged_row)
+                        i += 2  # Skip both rows
+                        continue
+                
+                # No merge, just add current row
+                merged_lines.append(current_row)
+                i += 1
+            
+            lines_data = merged_lines  # Use merged data
             
             for line_items in lines_data:
                 # Construct full text for regex checks
@@ -1222,16 +1344,27 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     # However, \b matches between \w and \W. 
                     # "LOT 2" has a space, so \bLOT 2\b works for " LOT 2 "
                     # But "AD" in "(AD)" -> "(" is \W, "A" is \w, so \b matches before A.
-                    # "D" is \w, ")" is \W, so \b matches after D.
-                    # So \bAD\b matches "(AD)".
-                    # But we want to avoid "LOT 2:45". ":" is \W. So \b matches after 2.
-                    # So \bLOT 2\b matches "LOT 2:".
-                    # We need to explicitly forbid following colon/dot for time-like strings.
+                    line_upper = full_line_text.upper()
                     
-                    pattern = rf"\b{loc_pattern}\b(?!\s*[:.])"
+                    # First: Check if this is a VERY short line with just the location (section header)
+                    # This is most likely a page section header
+                    is_section_header = False
+                    if len(full_line_text.strip()) < 25:  # Very short line
+                        # Check if the entire line is basically just the location name
+                        clean_line = re.sub(r'[^A-Z0-9\s-]', '', line_upper).strip()
+                        if loc in clean_line or clean_line in loc:
+                            is_section_header = True
                     
-                    if re.search(pattern, line_upper):
-                        # Check mapping first
+                    # Second: Original logic for slightly longer lines
+                    is_header_candidate = False
+                    if not is_section_header and len(full_line_text) < 40:
+                        is_header_candidate = True
+                    
+                    pattern = rf"\b{loc_pattern}\b(?!\s*[:.;])"
+                    match = re.search(pattern, line_upper)
+                    
+                    # Process if it's a section header OR (candidate AND matches pattern)
+                    if is_section_header or (match and is_header_candidate):
                         if loc in LOCATION_MAPPINGS:
                             current_location = LOCATION_MAPPINGS[loc]
                         else:
@@ -1243,8 +1376,12 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             if loc == "LOT 3": current_location = "Lot 3"
                             if loc == "LOT 4": current_location = "Lot 4"
                         
+                        # Special case: Supervisors don't need a location
+                        if loc == "SUPERVISORS" or current_location == "Supervisors":
+                            current_location = None
+                        
                         with open("ocr_debug.log", "a") as f:
-                            f.write(f"DEBUG: Found Location Header: {current_location} in line: {full_line_text}\n")
+                            f.write(f"DEBUG: Found Location Header ({'SECTION' if is_section_header else 'STRICT'}): {current_location or 'None (Supervisors)'} in line: {full_line_text}\n")
                         break
                     
                 # 1. Check Header (Define Columns)
@@ -1304,58 +1441,146 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     header_y = line_items[0][0][0][1] # Y of header
                     with open("ocr_debug.log", "a") as f:
                         f.write(f"DEBUG: Defined {len(day_columns)} columns based on header: {[d[1].upper() for d in day_columns]}\n")
-                    continue
-                
-                # 1.5 Check for Date Row (e.g. 12/6/25)
-                # If we have columns, check if this line is a date row
-                if day_columns and not column_dates:
-                    date_matches = []
-                    date_regex = r'\d{1,2}/\d{1,2}/\d{2,4}'
-                    for (bbox, text) in line_items:
-                        found_dates = re.findall(date_regex, text)
-                        if found_dates:
-                            # If multiple dates in one block?
-                            if len(found_dates) == 1:
-                                x_center = (bbox[0][0] + bbox[1][0]) / 2
-                                date_matches.append((x_center, found_dates[0]))
-                            else:
-                                # Distribute
-                                box_width = bbox[1][0] - bbox[0][0]
-                                start_x = bbox[0][0]
-                                segment_width = box_width / len(found_dates)
-                                for i, d_str in enumerate(found_dates):
-                                    seg_center = start_x + (segment_width * i) + (segment_width / 2)
-                                    date_matches.append((seg_center, d_str))
                     
-                    if len(date_matches) >= 3:
-                        # Found a date row! Map to columns
-                        with open("ocr_debug.log", "a") as f:
-                            f.write(f"DEBUG: Found Date Row with {len(date_matches)} dates\n")
-                        
-                        for (d_x, d_str) in date_matches:
+                    # Check for pending date row
+                    if pending_date_row:
+                        for (d_x, d_str) in pending_date_row:
                             # Find nearest column
                             closest_col_idx = -1
                             min_dist = float('inf')
+                            
                             for i, (col_x, col_name) in enumerate(day_columns):
                                 dist = abs(d_x - col_x)
                                 if dist < min_dist:
                                     min_dist = dist
                                     closest_col_idx = i
                             
-                            if closest_col_idx != -1:
-                                try:
-                                    # Parse date
-                                    # Try various formats
-                                    for fmt in ["%m/%d/%y", "%m/%d/%Y"]:
-                                        try:
-                                            dt = datetime.strptime(d_str, fmt)
-                                            column_dates[closest_col_idx] = dt
-                                            break
-                                        except ValueError:
-                                            pass
-                                except Exception as e:
-                                    print(f"Date parse error: {e}")
-                        continue
+                            if min_dist < 150: # Threshold
+                                column_dates[closest_col_idx] = d_str
+                        
+                        with open("ocr_debug.log", "a") as f:
+                            f.write(f"DEBUG: Applied pending date row to columns: {column_dates}\n")
+                        pending_date_row = None # Clear it
+                    continue
+                
+                # 1.5 Check for Date Row (e.g. 12/6/25)
+                # Check for dates regardless of whether we have columns yet
+                # If we find them before columns, store them as pending
+                date_matches = []
+                date_regex = r'\d{1,6}/\d{1,6}(?:/\d{2,4})?'  # More lenient to catch OCR errors
+                for (bbox, text) in line_items:
+                    found_dates = re.findall(date_regex, text)
+                    if found_dates:
+                        with open("ocr_debug.log", "a") as f:
+                            f.write(f"DEBUG: Date Regex Match in '{text}': {found_dates}\n")
+                        # Clean and normalize dates
+                        cleaned_dates = []
+                        for d in found_dates:
+                            with open("ocr_debug.log", "a") as f:
+                                f.write(f"DEBUG: Cleaning date '{d}'. Count(/): {d.count('/')}\n")
+                            
+                            # Try to fix common OCR errors like '12/6125' -> '12/6/25'
+                            # or '12111/25' -> '12/11/25'
+                            original_d = d
+                            if d.count('/') == 1:
+                                parts = d.split('/')
+                                # Case 1: Missing 2nd slash (12/6125)
+                                if len(parts[1]) >= 4:  # e.g., '6125' or '7125'
+                                    day_year = parts[1]
+                                    if len(day_year) == 4:  # e.g., '6125'
+                                        day = day_year[:1]
+                                        year = day_year[1:]
+                                        if len(year) == 3 and year.startswith('1'):
+                                            year = year[1:]
+                                        d = f"{parts[0]}/{day}/{year}"
+                                    elif len(day_year) == 5:  # e.g., '12125'
+                                        day = day_year[:2]
+                                        year = day_year[2:]
+                                        if len(year) == 3 and year.startswith('1'):
+                                            year = year[1:]
+                                        d = f"{parts[0]}/{day}/{year}"
+                                # Case 2: Missing 1st slash (12111/25 -> 12/11/25)
+                                elif len(parts[0]) >= 3:
+                                    # e.g. 1219 -> 12/9, 12110 -> 12/10
+                                    # Assume first 2 digits are month, next digit is separator (often '1'), rest is day
+                                    p0 = parts[0]
+                                    if len(p0) >= 3:
+                                        month = p0[:2]
+                                        rest = p0[2:]
+                                        # If rest starts with '1' and has more digits, assume '1' is slash
+                                        if rest.startswith('1') and len(rest) > 1:
+                                            day = rest[1:]
+                                            d = f"{month}/{day}/{parts[1]}"
+                                        # Fallback: just split? 1219 -> 12/9?
+                                        elif len(rest) >= 1:
+                                            day = rest
+                                            year = parts[1]
+                                            d = f"{month}/{day}/{year}"
+                            
+                            elif d.count('/') == 2:
+                                parts = d.split('/')
+                                if len(parts) == 3:
+                                    year = parts[2]
+                                    with open("ocr_debug.log", "a") as f:
+                                        f.write(f"DEBUG: Checking year '{year}' in '{d}'. Len: {len(year)}\n")
+                                    
+                                    # Case 3: Year has 3 digits (e.g. 125 -> 25)
+                                    if len(year) == 3 and year.startswith('1'):
+                                        year = year[1:]
+                                        d = f"{parts[0]}/{parts[1]}/{year}"
+                            
+                            if d != original_d:
+                                with open("ocr_debug.log", "a") as f:
+                                    f.write(f"DEBUG: Cleaned date '{original_d}' -> '{d}'\n")
+                            
+                            cleaned_dates.append(d)
+                        
+                        # If multiple dates in one block?
+                        if len(cleaned_dates) == 1:
+                            x_center = (bbox[0][0] + bbox[1][0]) / 2
+                            date_matches.append((x_center, cleaned_dates[0]))
+                        else:
+                            # Distribute
+                            box_width = bbox[1][0] - bbox[0][0]
+                            start_x = bbox[0][0]
+                            segment_width = box_width / len(cleaned_dates)
+                            for i, d_str in enumerate(cleaned_dates):
+                                seg_center = start_x + (segment_width * i) + (segment_width / 2)
+                                date_matches.append((seg_center, d_str))
+                
+                if len(date_matches) >= 3:
+                    # Found a date row!
+                    with open("ocr_debug.log", "a") as f:
+                        f.write(f"DEBUG: Found Date Row with {len(date_matches)} dates. day_columns defined? {bool(day_columns)}\n")
+                    
+                    if day_columns:
+                        with open("ocr_debug.log", "a") as f:
+                            f.write(f"DEBUG: Entering mapping block. Columns: {len(day_columns)}\n")
+                        # Map immediately if we have columns
+                        for (d_x, d_str) in date_matches:
+                            # Find nearest column
+                            closest_col_idx = -1
+                            min_dist = float('inf')
+                            
+                            for i, (col_x, col_name) in enumerate(day_columns):
+                                dist = abs(d_x - col_x)
+                                if dist < min_dist:
+                                    min_dist = dist
+                                    closest_col_idx = i
+                            
+                            if min_dist < 150: # Threshold
+                                column_dates[closest_col_idx] = d_str
+                        
+                        with open("ocr_debug.log", "a") as f:
+                            f.write(f"DEBUG: Mapped dates to columns: {column_dates}\n")
+                    else:
+                        # Store for later
+                        pending_date_row = date_matches
+                        with open("ocr_debug.log", "a") as f:
+                            f.write(f"DEBUG: Stored pending date row (waiting for columns)\n")
+                    continue
+
+
                 
                 # 2. Process Row (if we have columns defined)
                 if day_columns:
@@ -1470,9 +1695,29 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                     
                     if not full_name: continue
                     
-                    # Match Employee
-                    first_word = full_name.split()[0]
-                    employee = session.exec(select(Employee).where(Employee.first_name.ilike(first_word))).first()
+                    # Match Employee - Try full name first, then first name only
+                    name_parts_clean = full_name.split()
+                    first_word = name_parts_clean[0] if name_parts_clean else ""
+                    
+                    employee = None
+                    # Try to match with last name if we have 2+ words
+                    if len(name_parts_clean) >= 2:
+                        # Try exact match on first + last
+                        for emp in session.exec(select(Employee)).all():
+                            emp_full = f"{emp.first_name} {emp.last_name}".lower()
+                            # Check if OCR name contains employee's last name
+                            if name_parts_clean[0].lower() == emp.first_name.lower():
+                                # First name matches, check if last name is in OCR text
+                                for part in name_parts_clean[1:]:
+                                    if part.lower() in emp.last_name.lower() or emp.last_name.lower() in part.lower():
+                                        employee = emp
+                                        break
+                            if employee:
+                                break
+                    
+                    # Fallback to first name only if no match found
+                    if not employee:
+                        employee = session.exec(select(Employee).where(Employee.first_name.ilike(first_word))).first()
                     
                     with open("ocr_debug.log", "a") as f:
                         f.write(f"DEBUG: Processing Row: '{full_name}' -> Employee Match: {employee.first_name if employee else 'None'} (Loc: {current_location})\n")
@@ -1579,13 +1824,38 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             if any(x in clean_time_text for x in ['LOT', 'PLAZA', 'CONRAC', 'OFF', 'VACATION', '10T', 'P1AZA', 'P1A2A', 'C-LOT', 'E-LOT']):
                                 continue
 
+                            # Step 1: Fix merged colons FIRST before any other transformations
+                            # Patterns like "12004" (5 digits) should become "12:00", "1200" (4 digits) -> "12:00", "830A" -> "8:30A"
+                            # OCR often reads "12:00" as "12004" where the colon becomes an extra '0'
+                            # First, handle 5-digit patterns (e.g., 12004 -> 12:00)
+                            # Match: 1-2 digits, then 2-3 more digits (one may be extra), followed by A/P or dash/space
+                            clean_time_text = time_text.upper()
+                            # Fix 5-digit times like "12004" -> "12:00" (take first 1-2 digits, then next 2, ignore extra)
+                            clean_time_text = re.sub(r'\b(\d{1,2})(\d{2})\d?(?=[APap\-\s]|$)', r'\1:\2', clean_time_text)
+                            
+                            # Step 2: Character replacements for OCR errors
                             clean_time_text = clean_time_text.replace('O', '0').replace('Q', '0').replace('D', '0')
                             clean_time_text = clean_time_text.replace('I', '1').replace('L', '1').replace('!', '1').replace('|', '1')
-                            clean_time_text = clean_time_text.replace('B', '8').replace('S', '5').replace('Z', '2') # Added Z->2
-                            clean_time_text = clean_time_text.replace('_', ' ').replace('.', ':').replace(';', ':').replace(',', ':')
+                            # Fix common time OCR pattern: "10BAM" or "1OBAM" should be "10:00AM"
+                            # B in this context is a misread '0', not '8'
+                            clean_time_text = re.sub(r'\b(1[0-2]?)B([AP])', r'\1:00\2', clean_time_text, flags=re.IGNORECASE)
+                            clean_time_text = clean_time_text.replace('B', '8').replace('S', '5').replace('Z', '2')
+                            # Treat underscores as hyphens (range separators), not spaces
+                            clean_time_text = clean_time_text.replace('_', '-').replace('.', ':').replace(';', ':').replace(',', ':')
                             
-                            # Fix missing hyphen if numbers are jammed (e.g. "6:00P2:00A")
+                            # Step 3: Fix jammed times (e.g., "1200A8.30A" -> "1200A-8.30A")
+                            # Pattern: time with A/P directly followed by another time
+                            # Match: digits:digits followed by A/P, then immediately digits
+                            clean_time_text = re.sub(r'([AP])(\d{1,2}[:.]?\d{0,2}[AP])', r'\1-\2', clean_time_text, flags=re.IGNORECASE)
+                            
+                            # Step 4: Fix missing hyphen if numbers are jammed (e.g. "6:00P2:00A")
                             clean_time_text = clean_time_text.replace('-', ' - ')
+                            
+                            # Step 4: Infer missing AM/PM markers in time ranges
+                            # E.g., "12:00 - 8:30A" should become "12:00A - 8:30A"
+                            # Pattern: time without A/P, dash, time with A/P
+                            # Match: digits:digits (no A/P), then dash, then digits:digits followed by A/P
+                            clean_time_text = re.sub(r'(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})([AP])', r'\1\3 - \2\3', clean_time_text, flags=re.IGNORECASE)
                             
                             # Regex pattern allowing flexible separators (colon, period, comma, semicolon, space, or none)
                             time_part_regex = r'(?:\d{1,2}[:.,;\s]?\d{0,2})\s*[APap][Mm]?'
@@ -1596,31 +1866,135 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             with open("ocr_debug.log", "a") as f:
                                 f.write(f"DEBUG: Col {col_idx} Original='{time_text}', Cleaned='{clean_time_text}', Matches={time_matches_in_slot}\n")
 
-                            # Calculate base date for this week (Monday)
-                            today = datetime.now()
-                            start_of_week = today - timedelta(days=today.weekday())
+                            # Calculate base date for this week
+                            # IMPROVEMENT: Use an "Anchor Date" from column_dates if available, 
+                            # instead of defaulting to datetime.now()
+                            start_of_week = None
                             
+                            # Try to find an anchor date
+                            if column_dates:
+                                for c_idx, d_str in column_dates.items():
+                                    try:
+                                        # Parse the date string
+                                        # d_str format is likely MM/DD/YY or MM/DD/YYYY from our regex/cleaning
+                                        # We need to handle 2-digit years
+                                        parts = d_str.split('/')
+                                        if len(parts) == 3:
+                                            m, d, y = map(int, parts)
+                                            if y < 100: y += 2000 # Assume 20xx
+                                            anchor_date = datetime(y, m, d)
+                                            
+                                            # Determine offset of this column
+                                            # We need to know which day of week this column corresponds to
+                                            # We have day_columns[c_idx] -> (x, "MONDAY")
+                                            if c_idx < len(day_columns):
+                                                col_name = day_columns[c_idx][1].lower()
+                                                anchor_offset = 0
+                                                if "mon" in col_name: anchor_offset = 0
+                                                elif "tue" in col_name: anchor_offset = 1
+                                                elif "wed" in col_name: anchor_offset = 2
+                                                elif "thu" in col_name: anchor_offset = 3
+                                                elif "fri" in col_name: anchor_offset = 4
+                                                elif "sat" in col_name: anchor_offset = 5 # Sat is usually before Sun in this schedule?
+                                                elif "sun" in col_name: anchor_offset = 6
+                                                
+                                                # If schedule is Sat-Fri, we need to be careful about "start of week"
+                                                # Let's assume standard Mon-Sun week for start_of_week calculation
+                                                # If Sat 12/6 is anchor (offset 5), then Mon 12/1 is start of THAT week?
+                                                # Or is Sat 12/6 part of the week starting Mon 12/8?
+                                                # The user said: Sat 12/6, Sun 12/7, Mon 12/8...
+                                                # So Sat/Sun are the *previous* week's weekend, or the schedule starts on Saturday?
+                                                # If Sat 12/6 is "Day 0" of the schedule...
+                                                
+                                                # Let's just calculate the date for the CURRENT column relative to the anchor
+                                                # We don't strictly need "start_of_week" if we map offsets relative to anchor
+                                                pass
+
+                                            # Calculate Monday of the week containing the anchor
+                                            # But wait, Sat 12/6 and Mon 12/8 are in the SAME row.
+                                            # Standard ISO week: Mon 12/1 -> Sun 12/7. Mon 12/8 is next week.
+                                            # So Sat 12/6 is in week 1, Mon 12/8 is in week 2.
+                                            
+                                            # Let's rely on the column headers to define the relative structure
+                                            # If we have Sat, Sun, Mon, Tue...
+                                            # And we have a date for Sat (12/6).
+                                            # We want to find the date for Mon.
+                                            # Mon is 2 columns after Sat? No, Sat(0), Sun(1), Mon(2).
+                                            # So Mon is +2 days from Sat?
+                                            # 12/6 + 2 days = 12/8. CORRECT.
+                                            
+                                            # So we can just use the anchor date and the difference in column indices?
+                                            # ONLY IF columns are consecutive days.
+                                            # Let's assume they are roughly consecutive or use the day names.
+                                            
+                                            # Better approach:
+                                            # 1. Identify the day-of-week index (0=Mon, 6=Sun) for the ANCHOR.
+                                            # 2. Identify the day-of-week index for the TARGET column.
+                                            # 3. Calculate difference.
+                                            # 4. Handle wrap-around? 
+                                            #    Sat(5) -> Sun(6) -> Mon(0). 
+                                            #    Difference: 6-5=1 (Sun is +1 day). 
+                                            #    0-5 = -5? No, Mon is AFTER Sun.
+                                            #    If the schedule is Sat, Sun, Mon... then Mon is +2 days from Sat.
+                                            
+                                            # Let's use the list index in day_columns as the truth for "days from start of row"
+                                            # If day_columns is [Sat, Sun, Mon, Tue...]
+                                            # Anchor = Sat (idx 0) = 12/6
+                                            # Target = Mon (idx 2)
+                                            # Target Date = Anchor Date + (Target Idx - Anchor Idx) days
+                                            # 12/6 + (2-0) = 12/8. PERFECT.
+                                            
+                                            start_of_week = anchor_date - timedelta(days=c_idx) # Virtual start date (Day 0 of the row)
+                                            break
+                                    except:
+                                        continue
+                            
+                            if not start_of_week:
+                                # Fallback to system time if NO dates found in the entire row
+                                today = datetime.now()
+                                # Default to Monday of current week? Or just today?
+                                # Let's stick to Monday of current week as a safe default
+                                start_of_week = today - timedelta(days=today.weekday())
+
+                            # Determine specific date for this shift
                             # Determine specific date for this shift
                             if col_idx in column_dates:
-                                current_shift_date = column_dates[col_idx]
+                                # Use explicit date if found
+                                try:
+                                    val = column_dates[col_idx]
+                                    if isinstance(val, datetime):
+                                        current_shift_date = val
+                                    elif isinstance(val, str):
+                                        parts = val.split('/')
+                                        if len(parts) == 3:
+                                            m, d, y = map(int, parts)
+                                            if y < 100: y += 2000
+                                            current_shift_date = datetime(y, m, d)
+                                        else:
+                                            current_shift_date = start_of_week + timedelta(days=col_idx)
+                                    else:
+                                        current_shift_date = start_of_week + timedelta(days=col_idx)
+                                except:
+                                    current_shift_date = start_of_week + timedelta(days=col_idx)
                             else:
-                                current_shift_date = start_of_week + timedelta(days=day_offset)
+                                # Calculate based on virtual start of row
+                                current_shift_date = start_of_week + timedelta(days=col_idx)
 
                             if not time_matches_in_slot:
                                 # Fallback: Store raw text if meaningful
-                                if len(clean_time_text) > 3:
-                                    # Create a dummy shift with raw text in notes
-                                    s_dt = current_shift_date.replace(hour=9, minute=0, second=0, microsecond=0)
-                                    e_dt = current_shift_date.replace(hour=17, minute=0, second=0, microsecond=0)
-                                    
-                                    row_shifts.append({
-                                        "start_time": s_dt,
-                                        "end_time": e_dt,
-                                        "location": shift_location,
-                                        "notes": f"RAW: {clean_time_text}" # Flag for frontend
-                                    })
-                                    with open("ocr_debug.log", "a") as f:
-                                        f.write(f"DEBUG: Appended Fallback Shift for Col {col_idx}\n")
+                                # if len(clean_time_text) > 3:
+                                #     # Create a dummy shift with raw text in notes
+                                #     s_dt = current_shift_date.replace(hour=9, minute=0, second=0, microsecond=0)
+                                #     e_dt = current_shift_date.replace(hour=17, minute=0, second=0, microsecond=0)
+                                #     
+                                #     row_shifts.append({
+                                #         "start_time": s_dt,
+                                #         "end_time": e_dt,
+                                #         "location": shift_location,
+                                #         "notes": f"RAW: {clean_time_text}" # Flag for frontend
+                                #     })
+                                #     with open("ocr_debug.log", "a") as f:
+                                #         f.write(f"DEBUG: Appended Fallback Shift for Col {col_idx}\n")
                                 continue 
                             
                             match_str = time_matches_in_slot[0] 
@@ -1676,8 +2050,12 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             traceback.print_exc()
                             continue
 
+                    row_shifts_count = len(row_shifts)
+                    # Flush to make these shifts visible for duplicate checks in subsequent rows
+                    session.flush()
+                    
                     with open("ocr_debug.log", "a") as f:
-                        f.write(f"DEBUG: Loop finished for row '{full_name}'. Row Shifts: {len(row_shifts)}\n")
+                        f.write(f"DEBUG: Loop finished for row '{full_name}'. Row Shifts: {row_shifts_count}\n")
 
                     print(f"DEBUG: Checking employee: {employee}")
                     if employee:
@@ -1685,7 +2063,21 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
                             # Save shifts
                             print(f"DEBUG: Saving {len(row_shifts)} shifts for {employee.first_name}")
                             for s_data in row_shifts:
-                                # Create Shift object
+                                # Check for existing shift (duplicate prevention)
+                                existing_shift = session.exec(select(Shift).where(
+                                    Shift.employee_id == employee.id,
+                                    Shift.start_time >= s_data["start_time"].replace(hour=0, minute=0, second=0),
+                                    Shift.start_time < s_data["start_time"].replace(hour=0, minute=0, second=0) + timedelta(days=1)
+                                )).first()
+                                
+                                if existing_shift:
+                                    # Skip duplicate - don't auto-update to preserve manual edits
+                                    print(f"DEBUG: Skipped duplicate shift for {employee.first_name} on {s_data['start_time'].date()}")
+                                    with open("ocr_debug.log", "a") as f:
+                                        f.write(f"DUPLICATE SKIPPED (location preserved): {employee.first_name} - {s_data['start_time']} to {s_data['end_time']}\n")
+                                    continue
+                                
+                                # Create new shift
                                 shift = Shift(
                                     employee_id=employee.id,
                                     role_id=employee.default_role_id,
@@ -1742,11 +2134,29 @@ async def import_ocr(dry_run: bool = False, file: UploadFile = File(...), sessio
             if 'results' in locals(): del results
             gc.collect()
 
-            
+
+        # MOVED OUTSIDE LOOP: Commit all shifts after processing all pages
+        print(f"DEBUG: Reached end of image loop. Total imported_count: {imported_count}")
+        with open("ocr_debug.log", "a") as f:
+            f.write(f"DEBUG: Reached end of image loop. Total imported_count: {imported_count}\\n")    
         if not dry_run:
             try:
+                # Check session state
+                print(f"DEBUG: Session has {len(session.new)} new objects before commit")
+                print(f"DEBUG: Attempting to commit {imported_count} shifts to database...")
+                with open("ocr_debug.log", "a") as f:
+                    f.write(f"DEBUG: Session has {len(session.new)} new objects\\n")
+                    f.write(f"DEBUG: Attempting to commit {imported_count} shifts to database...\\n")
                 session.commit()
+                print(f"DEBUG: Successfully committed {imported_count} shifts!")
+                with open("ocr_debug.log", "a") as f:
+                    f.write(f"DEBUG: Successfully committed {imported_count} shifts!\\n")
             except Exception as e:
+                print(f"DEBUG: COMMIT FAILED: {e}")
+                import traceback
+                traceback.print_exc()
+                with open("ocr_debug.log", "a") as f:
+                    f.write(f"DEBUG: COMMIT FAILED: {e}\\n")
                 return {"message": "Database error", "errors": [str(e)]}
     
         return {
