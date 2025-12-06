@@ -130,138 +130,168 @@ const EmployeeSettings = () => {
             </div>
 
             <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                            {isBulkEditing && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max Hours</th>}
-                            {isBulkEditing && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hire Date</th>}
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vacation Availability</th>
-                            {!isBulkEditing && <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {employees.map(emp => {
-                            const edits = bulkEdits[emp.id] || {};
-                            const displayFirstName = edits.first_name !== undefined ? edits.first_name : emp.first_name;
-                            const displayLastName = edits.last_name !== undefined ? edits.last_name : emp.last_name;
-                            const displayEmail = edits.email !== undefined ? edits.email : emp.email;
-                            const displayPhone = edits.phone !== undefined ? edits.phone : emp.phone;
-                            const displayMaxHours = edits.max_weekly_hours !== undefined ? edits.max_weekly_hours : emp.max_weekly_hours;
-                            const displayHireDate = edits.hire_date !== undefined ? edits.hire_date : (emp.hire_date ? emp.hire_date.split('T')[0] : '');
+                {(() => {
+                    const roleGroups = [
+                        { title: "Supervisors", ids: [5] },
+                        { title: "Office", ids: [6] },
+                        { title: "Maintenance", ids: [4] },
+                        { title: "Cashiers", ids: [3, 7, 8] },
+                        { title: "C-Lot", ids: [2] },
+                        { title: "E-Lot", ids: [1] }
+                    ];
 
-                            return (
-                                <tr key={emp.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {isBulkEditing ? (
-                                            <div className="flex flex-col gap-1">
-                                                <input
-                                                    className="border rounded px-1 text-sm"
-                                                    value={displayFirstName}
-                                                    onChange={e => handleBulkChange(emp.id, 'first_name', e.target.value)}
-                                                    placeholder="First Name"
-                                                />
-                                                <input
-                                                    className="border rounded px-1 text-sm"
-                                                    value={displayLastName}
-                                                    onChange={e => handleBulkChange(emp.id, 'last_name', e.target.value)}
-                                                    placeholder="Last Name"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="text-sm font-medium text-gray-900">{emp.first_name} {emp.last_name}</div>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {isBulkEditing ? (
-                                            <div className="flex flex-col gap-1">
-                                                <input
-                                                    className="border rounded px-1 text-sm"
-                                                    value={displayEmail || ''}
-                                                    onChange={e => handleBulkChange(emp.id, 'email', e.target.value)}
-                                                    placeholder="Email"
-                                                />
-                                                <input
-                                                    className="border rounded px-1 text-sm"
-                                                    value={displayPhone || ''}
-                                                    onChange={e => handleBulkChange(emp.id, 'phone', e.target.value)}
-                                                    placeholder="Phone"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="text-sm text-gray-500">{emp.email}</div>
-                                        )}
-                                    </td>
+                    // Helper to get employees for a group
+                    const getEmpsForGroup = (roleIds) => {
+                        return employees.filter(e => roleIds.includes(e.default_role_id));
+                    };
 
-                                    {isBulkEditing && (
-                                        <>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <input
-                                                    type="number" step="0.5"
-                                                    className="border rounded px-1 text-sm w-20"
-                                                    value={displayMaxHours}
-                                                    onChange={e => handleBulkChange(emp.id, 'max_weekly_hours', parseFloat(e.target.value))}
-                                                />
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <input
-                                                    type="date"
-                                                    className="border rounded px-1 text-sm"
-                                                    value={displayHireDate}
-                                                    onChange={e => handleBulkChange(emp.id, 'hire_date', e.target.value ? new Date(e.target.value).toISOString() : null)}
-                                                />
-                                            </td>
-                                        </>
-                                    )}
+                    // Identify "Other" employees
+                    const allGroupedIds = roleGroups.flatMap(g => g.ids);
+                    const otherEmps = employees.filter(e => !allGroupedIds.includes(e.default_role_id));
 
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <button
-                                            onClick={() => handleToggleFullTime(emp)}
-                                            disabled={isBulkEditing}
-                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer hover:opacity-80 ${emp.is_full_time ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'} ${isBulkEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        >
-                                            {emp.is_full_time ? 'Full-Time' : 'Part-Time'}
-                                        </button>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {emp.is_full_time ? (
-                                            <span className="text-gray-400 italic">Unavailable during vacation weeks</span>
-                                        ) : (
-                                            <label className="flex items-center cursor-pointer">
-                                                <div className="relative">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="sr-only"
-                                                        checked={emp.willing_to_work_vacation_week}
-                                                        onChange={() => handleToggleWillingness(emp)}
+                    const sections = [
+                        ...roleGroups.map(g => ({ title: g.title, data: getEmpsForGroup(g.ids) })),
+                        { title: "Other", data: otherEmps }
+                    ].filter(s => s.data.length > 0);
+
+                    return sections.map((section, idx) => (
+                        <div key={idx} className="mb-8">
+                            <h2 className="px-6 py-3 bg-gray-100 text-lg font-bold border-b border-gray-200">{section.title}</h2>
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                        {isBulkEditing && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max Hours</th>}
+                                        {isBulkEditing && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hire Date</th>}
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vacation Availability</th>
+                                        {!isBulkEditing && <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {section.data.map(emp => {
+                                        const edits = bulkEdits[emp.id] || {};
+                                        const displayFirstName = edits.first_name !== undefined ? edits.first_name : emp.first_name;
+                                        const displayLastName = edits.last_name !== undefined ? edits.last_name : emp.last_name;
+                                        const displayEmail = edits.email !== undefined ? edits.email : emp.email;
+                                        const displayPhone = edits.phone !== undefined ? edits.phone : emp.phone;
+                                        const displayMaxHours = edits.max_weekly_hours !== undefined ? edits.max_weekly_hours : emp.max_weekly_hours;
+                                        const displayHireDate = edits.hire_date !== undefined ? edits.hire_date : (emp.hire_date ? emp.hire_date.split('T')[0] : '');
+
+                                        return (
+                                            <tr key={emp.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {isBulkEditing ? (
+                                                        <div className="flex flex-col gap-1">
+                                                            <input
+                                                                className="border rounded px-1 text-sm"
+                                                                value={displayFirstName}
+                                                                onChange={e => handleBulkChange(emp.id, 'first_name', e.target.value)}
+                                                                placeholder="First Name"
+                                                            />
+                                                            <input
+                                                                className="border rounded px-1 text-sm"
+                                                                value={displayLastName}
+                                                                onChange={e => handleBulkChange(emp.id, 'last_name', e.target.value)}
+                                                                placeholder="Last Name"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="text-sm font-medium text-gray-900">{emp.first_name} {emp.last_name}</div>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {isBulkEditing ? (
+                                                        <div className="flex flex-col gap-1">
+                                                            <input
+                                                                className="border rounded px-1 text-sm"
+                                                                value={displayEmail || ''}
+                                                                onChange={e => handleBulkChange(emp.id, 'email', e.target.value)}
+                                                                placeholder="Email"
+                                                            />
+                                                            <input
+                                                                className="border rounded px-1 text-sm"
+                                                                value={displayPhone || ''}
+                                                                onChange={e => handleBulkChange(emp.id, 'phone', e.target.value)}
+                                                                placeholder="Phone"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="text-sm text-gray-500">{emp.email}</div>
+                                                    )}
+                                                </td>
+
+                                                {isBulkEditing && (
+                                                    <>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <input
+                                                                type="number" step="0.5"
+                                                                className="border rounded px-1 text-sm w-20"
+                                                                value={displayMaxHours}
+                                                                onChange={e => handleBulkChange(emp.id, 'max_weekly_hours', parseFloat(e.target.value))}
+                                                            />
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <input
+                                                                type="date"
+                                                                className="border rounded px-1 text-sm"
+                                                                value={displayHireDate}
+                                                                onChange={e => handleBulkChange(emp.id, 'hire_date', e.target.value ? new Date(e.target.value).toISOString() : null)}
+                                                            />
+                                                        </td>
+                                                    </>
+                                                )}
+
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <button
+                                                        onClick={() => handleToggleFullTime(emp)}
                                                         disabled={isBulkEditing}
-                                                    />
-                                                    <div className={`block w-10 h-6 rounded-full ${emp.willing_to_work_vacation_week ? 'bg-blue-600' : 'bg-gray-300'} ${isBulkEditing ? 'opacity-50' : ''}`}></div>
-                                                    <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${emp.willing_to_work_vacation_week ? 'transform translate-x-4' : ''}`}></div>
-                                                </div>
-                                                <div className="ml-3 text-gray-700">
-                                                    {emp.willing_to_work_vacation_week ? 'Willing to work' : 'Do not call'}
-                                                </div>
-                                            </label>
-                                        )}
-                                    </td>
-                                    {!isBulkEditing && (
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button
-                                                onClick={() => handleEditClick(emp)}
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                            >
-                                                Edit
-                                            </button>
-                                        </td>
-                                    )}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer hover:opacity-80 ${emp.is_full_time ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'} ${isBulkEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                    >
+                                                        {emp.is_full_time ? 'Full-Time' : 'Part-Time'}
+                                                    </button>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {emp.is_full_time ? (
+                                                        <span className="text-gray-400 italic">Unavailable during vacation weeks</span>
+                                                    ) : (
+                                                        <label className="flex items-center cursor-pointer">
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="sr-only"
+                                                                    checked={emp.willing_to_work_vacation_week}
+                                                                    onChange={() => handleToggleWillingness(emp)}
+                                                                    disabled={isBulkEditing}
+                                                                />
+                                                                <div className={`block w-10 h-6 rounded-full ${emp.willing_to_work_vacation_week ? 'bg-blue-600' : 'bg-gray-300'} ${isBulkEditing ? 'opacity-50' : ''}`}></div>
+                                                                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${emp.willing_to_work_vacation_week ? 'transform translate-x-4' : ''}`}></div>
+                                                            </div>
+                                                            <div className="ml-3 text-gray-700">
+                                                                {emp.willing_to_work_vacation_week ? 'Willing to work Vacation' : 'No Vacation'}
+                                                            </div>
+                                                        </label>
+                                                    )}
+                                                </td>
+                                                {!isBulkEditing && (
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                        <button
+                                                            onClick={() => handleEditClick(emp)}
+                                                            className="text-indigo-600 hover:text-indigo-900"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    ));
+                })()}
             </div>
 
             <EmployeeModal
@@ -270,7 +300,7 @@ const EmployeeSettings = () => {
                 employee={selectedEmployee}
                 onSave={handleSaveEmployee}
             />
-        </div>
+        </div >
     );
 };
 

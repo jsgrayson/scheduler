@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
+import ShiftCallSheet from './ShiftCallSheet';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -19,6 +20,9 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
     const [roles, setRoles] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
     const [loadingRecs, setLoadingRecs] = useState(false);
+    const [showCallSheet, setShowCallSheet] = useState(false);
+
+    const isNewShift = !initialData?.id;
 
     useEffect(() => {
         console.log("ShiftModal initialData:", initialData);
@@ -123,6 +127,10 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
     };
 
     if (!isOpen) return null;
+
+    if (showCallSheet && initialData?.id) {
+        return <ShiftCallSheet shiftId={initialData.id} shift={initialData} onClose={() => setShowCallSheet(false)} />;
+    }
 
     const handleCopy = () => {
         // Parse the datetime-local string directly to avoid timezone issues
@@ -358,17 +366,28 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
 
                             <div className="flex gap-2">
                                 {initialData?.id && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (window.confirm("Are you sure you want to delete this shift?")) {
-                                                onDelete();
-                                            }
-                                        }}
-                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                    >
-                                        Delete
-                                    </button>
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (window.confirm("Are you sure you want to delete this shift?")) {
+                                                    onDelete();
+                                                }
+                                            }}
+                                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                        >
+                                            Delete
+                                        </button>
+                                        {!isNewShift && initialData?.id && [3, 4, 7, 8].includes(parseInt(roleId)) && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowCallSheet(true)}
+                                                className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
+                                            >
+                                                Call Sheet
+                                            </button>
+                                        )}
+                                    </>
                                 )}
                                 <button type="button" onClick={onClose} className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
                                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save</button>

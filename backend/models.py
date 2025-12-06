@@ -26,6 +26,7 @@ class EmployeeBase(SQLModel):
     willing_to_work_vacation_week: bool = Field(default=True, description="True=Willing to work during vacation weeks")
     hire_date: Optional[datetime] = Field(default=None, description="Date of hire")
     last_call_time: Optional[datetime] = Field(default=None, description="Timestamp of last call for rotation")
+    notes: Optional[str] = Field(default=None, description="Availability notes")
 
 class Employee(EmployeeBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -55,7 +56,13 @@ class Shift(SQLModel, table=True):
     location: Optional[str] = None # For lots/sections
     booth_number: Optional[str] = None # For Plaza booth assignments
     parent_id: Optional[int] = Field(default=None) # For recurrence grouping
+    is_repeating: bool = Field(default=False) # For UI recurrence toggle
     is_vacation: bool = Field(default=False)
     
     employee: Optional[Employee] = Relationship(back_populates="shifts")
     role: Optional[Role] = Relationship(back_populates="shifts")
+
+class RotationState(SQLModel, table=True):
+    context_key: str = Field(primary_key=True, description="Key for rotation context (e.g. 'cashier_ft', 'maint_ft')")
+    last_employee_id: int
+    updated_at: datetime = Field(default_factory=datetime.utcnow)

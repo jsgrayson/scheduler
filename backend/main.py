@@ -3,7 +3,7 @@ from sqlmodel import SQLModel, Session, select, create_engine, delete
 from typing import List, Optional
 from datetime import datetime, timedelta, time
 from database import create_db_and_tables, get_session
-from models import Employee, Role, Shift, Availability, EmployeeRole, EmployeeBase
+from models import Employee, Role, Shift, Availability, EmployeeRole, EmployeeBase, RotationState
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -2207,4 +2207,297 @@ def create_shifts_bulk(shifts: List[dict], session: Session = Depends(get_sessio
     print(f"DEBUG: Bulk create processed {count} shifts.")
     return {"message": f"Created {count} shifts"}
 
-print("SERVER RESTART: Loaded main.py with Z->2 fix and improved filtering (v2)")
+@app.post("/rotations/")
+def update_rotation(state: RotationState, session: Session = Depends(get_session)):
+    try:
+        existing = session.get(RotationState, state.context_key)
+        if existing:
+            existing.last_employee_id = state.last_employee_id
+            existing.updated_at = datetime.utcnow()
+            session.add(existing)
+        else:
+            session.add(state)
+        session.commit()
+        return {"status": "success", "message": f"Rotation updated for {state.context_key}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/shifts/{shift_id}/call-sheet")
+def get_call_sheet(shift_id: int, session: Session = Depends(get_session)):
+    try:
+        # ... (Existing logic for Shift, Dates) ...
+        target_shift = session.get(Shift, shift_id)
+        if not target_shift: raise HTTPException(status_code=404, detail="Shift not found")
+        
+        # Target Week
+        start_dt = target_shift.start_time
+        start_of_week = start_dt.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=start_dt.weekday())
+        end_of_week = start_of_week + timedelta(days=7)
+        
+        # Target Day info
+        day_start = start_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        day_end = day_start + timedelta(days=1)
+        
+        # Candidates
+        cand_role_id = target_shift.role_id
+    
+        # Whitelist
+        ALLOWED_ROLES = [3, 4, 7, 8]
+        if cand_role_id not in ALLOWED_ROLES:
+            raise HTTPException(status_code=400, detail="Call Sheet not available for this role type.")
+        
+        candidate_objects = []
+        
+        if cand_role_id == 4:
+            # Maintenance
+            pt_maint = session.exec(select(Employee).where(Employee.default_role_id == 4, Employee.is_full_time == False)).all()
+            ft_maint = session.exec(select(Employee).where(Employee.default_role_id == 4, Employee.is_full_time == True)).all()
+            
+            pt_maint.sort(key=lambda x: x.hire_date or datetime.max)
+            ft_maint.sort(key=lambda x: x.hire_date or datetime.max)
+            
+            # Apply Rotation for FT Maintenance
+            rot_state = session.get(RotationState, "maint_ft")
+            if rot_state and ft_maint:
+                # Rotate list
+                try:
+                    # Find index of last called
+                    idx = next(i for i, emp in enumerate(ft_maint) if emp.id == rot_state.last_employee_id)
+                    # Rotate: Start from idx + 1
+                    ft_maint = ft_maint[idx+1:] + ft_maint[:idx+1]
+                except StopIteration:
+                    pass # Last called person not found in list (maybe deleted/changed role), keep default order
+            
+            # Store as (Employee, Section) tuples
+            candidate_objects = [(c, "Part Time Maintenance") for c in pt_maint] + \
+                                [(c, "Full Time / Probationary Maintenance") for c in ft_maint]
+        else:
+            # Cashier
+            all_cashiers = session.exec(select(Employee).where(Employee.default_role_id.in_([3, 7, 8]))).all()
+            
+            pool_a_pt = []
+            pool_b_ft = []
+            
+            # Pre-fetch shifts
+            cashier_ids = [c.id for c in all_cashiers]
+            all_week_shifts = session.exec(select(Shift).where(Shift.employee_id.in_(cashier_ids), Shift.start_time >= start_of_week, Shift.start_time < end_of_week)).all()
+            shifts_map = {cid: [] for cid in cashier_ids}
+            for s in all_week_shifts: shifts_map[s.employee_id].append(s)
+            
+            target_duration = (target_shift.end_time - target_shift.start_time).total_seconds() / 3600
+            
+            for emp in all_cashiers:
+                shifts = shifts_map.get(emp.id, [])
+                weekly_hours = sum([(s.end_time - s.start_time).total_seconds()/3600 for s in shifts])
+                
+                if emp.is_full_time and weekly_hours >= 40:
+                    pool_b_ft.append(emp)
+                else:
+                    pool_a_pt.append(emp)
+                    
+            # Sort Pools
+            pool_a_pt.sort(key=lambda x: x.hire_date or datetime.max)
+            pool_b_ft.sort(key=lambda x: x.hire_date or datetime.max)
+            
+            # Apply Rotation for FT Cashiers
+            rot_state = session.get(RotationState, "cashier_ft")
+            if rot_state and pool_b_ft:
+                try:
+                    idx = next(i for i, emp in enumerate(pool_b_ft) if emp.id == rot_state.last_employee_id)
+                    pool_b_ft = pool_b_ft[idx+1:] + pool_b_ft[:idx+1]
+                except StopIteration:
+                    pass
+            
+            # Split Pool A
+            list_1_strict = []
+            list_3_relaxed = []
+            
+            for emp in pool_a_pt:
+                shifts = shifts_map.get(emp.id, [])
+                weekly_hours = sum([(s.end_time - s.start_time).total_seconds()/3600 for s in shifts])
+                
+                overlap_duration = 0
+                daily_hours = 0
+                for s in shifts:
+                     if s.start_time < target_shift.end_time and s.end_time > target_shift.start_time:
+                         latest_start = max(s.start_time, target_shift.start_time)
+                         earliest_end = min(s.end_time, target_shift.end_time)
+                         delta = (earliest_end - latest_start).total_seconds() / 3600
+                         if delta > 0: overlap_duration += delta
+                    
+                     if s.start_time >= day_start and s.end_time < day_end:
+                         daily_hours += (s.end_time - s.start_time).total_seconds()/3600
+                
+                if overlap_duration == 0 and (daily_hours + target_duration <= 8) and (weekly_hours + target_duration <= 40):
+                    list_1_strict.append((emp, "Part Time Cashiers (Priority)"))
+                else:
+                    list_3_relaxed.append((emp, "Part Time Cashiers (OT / Extended)"))
+            
+            # Split Pool FT (Check for > 40h)
+            ft_standard = []
+            ft_ot = []
+            
+            target_duration_val = (target_shift.end_time - target_shift.start_time).total_seconds() / 3600
+            
+            for emp in pool_b_ft:
+                 shifts = shifts_map.get(emp.id, [])
+                 weekly_hours = sum([(s.end_time - s.start_time).total_seconds()/3600 for s in shifts])
+                 
+                 if weekly_hours + target_duration_val > 40:
+                     ft_ot.append((emp, "Full Time Cashiers (OT)"))
+                 else:
+                     ft_standard.append((emp, "Full Time Cashiers"))
+
+            candidate_objects = list_1_strict + ft_standard + ft_ot + list_3_relaxed
+        
+        if not candidate_objects:
+            return []
+        
+        # Calculate Final Results
+        cand_ids = [c[0].id for c in candidate_objects]
+        week_shifts = session.exec(select(Shift).where(Shift.employee_id.in_(cand_ids), Shift.start_time >= start_of_week, Shift.start_time < end_of_week)).all()
+        
+        emp_shifts = {cid: [] for cid in cand_ids}
+        for s in week_shifts:
+            if s.employee_id: emp_shifts[s.employee_id].append(s)
+            
+        # Target duration logic (Maintenance Unpaid Meal)
+        raw_target_duration = (target_shift.end_time - target_shift.start_time).total_seconds() / 3600
+        effective_target_duration = raw_target_duration
+        
+        target_shift_notes = []
+        if target_shift.role_id == 4 and raw_target_duration >= 7.5:
+             effective_target_duration -= 0.5
+             target_shift_notes.append("30m Unpaid Lunch")
+        
+        results = []
+        rank = 1
+        
+        for emp, section in candidate_objects:
+            shifts = emp_shifts.get(emp.id, [])
+            
+            # Recalculate Weekly Hours with Deduction Logic for existing Maintenance Shifts
+            weekly_hours = 0
+            for s in shifts:
+                 duration = (s.end_time - s.start_time).total_seconds() / 3600
+                 # If it's a Maintenance shift (Role 4) >= 7.5h, deduct 0.5h
+                 if s.role_id == 4 and duration >= 7.5:
+                     duration -= 0.5
+                 weekly_hours += duration
+            
+            overlap_duration = 0
+            working_today = False
+            daily_hours = 0
+            
+            for s in shifts:
+                if s.start_time < target_shift.end_time and s.end_time > target_shift.start_time:
+                    latest_start = max(s.start_time, target_shift.start_time)
+                    earliest_end = min(s.end_time, target_shift.end_time)
+                    delta = (earliest_end - latest_start).total_seconds() / 3600
+                    if delta > 0: overlap_duration += delta
+                
+                if s.start_time >= day_start and s.end_time < day_end:
+                    working_today = True
+                    # Recalculate Daily Hours with Deduction Logic
+                    duration = (s.end_time - s.start_time).total_seconds() / 3600
+                    if s.role_id == 4 and duration >= 7.5:
+                         duration -= 0.5
+                    daily_hours += duration
+            
+            status = "Available"
+            details = ""
+            
+            if overlap_duration > 0:
+                status = "Working"
+                details = f"Overlap {overlap_duration:.1f}h"
+            elif working_today:
+                 status = "Working"
+                 details = f"Shift today ({daily_hours:.1f}h)"
+                 
+                 # Daily Limit Logic
+                 if section == "Part Time Cashiers (Priority)":
+                     limit = 8
+                     if daily_hours + effective_target_duration > limit:
+                         status = "OT"
+                         details = f"Daily > {limit}h ({daily_hours+effective_target_duration:.1f}h)"
+            
+            # Global 16h Safety Warning
+            if daily_hours + effective_target_duration > 16:
+                details += f" Warning: >16h ({daily_hours+effective_target_duration:.1f}h)"
+
+            # Weekly OT Logic
+            if weekly_hours + effective_target_duration > 40:
+                status = "OT"
+                details = f"Weekly > 40h ({weekly_hours+effective_target_duration:.1f}h)"
+            
+            # Append notes about meal break to details if applicable
+            if target_shift_notes:
+                 details += " (" + ", ".join(target_shift_notes) + ")"
+
+            # Note-Based Constraints Logic
+            if emp.notes:
+                notes_lower = emp.notes.lower()
+                violation_reason = None
+                
+                # "No Plaza" Check
+                if "no plaza" in notes_lower and target_shift.location == "Plaza":
+                    violation_reason = "Restricted: No Plaza"
+                
+                # "Only 1st" Check (5am - 10am)
+                elif "only 1st" in notes_lower:
+                     if not (5 <= target_shift.start_time.hour < 10):
+                         violation_reason = "Unavailable: Only 1st Shift"
+                
+                # "Only 2nd" Check (1pm - 4pm => 13 - 16)
+                elif "only 2nd" in notes_lower:
+                     if not (13 <= target_shift.start_time.hour < 16):
+                         violation_reason = "Unavailable: Only 2nd Shift"
+                
+                # "Only 3rd" Check (8pm - 12am => 20 - 24)
+                elif "only 3rd" in notes_lower:
+                     if not (20 <= target_shift.start_time.hour < 24):
+                         violation_reason = "Unavailable: Only 3rd Shift"
+                
+                if violation_reason:
+                    status = "Unavailable"
+                    # Prepend restriction to details for visibility
+                    details = f"{violation_reason}. " + details
+            
+            # Determine Answer Field Value
+            answer_val = ""
+            if violation_reason:
+                answer_val = "No"
+            elif overlap_duration > 0:
+                answer_val = f"OL {overlap_duration:.1f}h"
+            elif weekly_hours + effective_target_duration > 40:
+                answer_val = "Over 40"
+            elif status == "Working" or (status == "OT" and section == "Part Time Cashiers (Priority)"):
+                answer_val = "W"
+            elif status == "OT":
+                # Fallback for other OT cases (like Relaxed PT > 40 not caught above?) 
+                # Actually >40 is caught above. This might be unused but safe.
+                answer_val = "OT"
+
+            entry = {
+                "rank": rank,
+                "section": section,
+                "id": emp.id,
+                "name": f"{emp.first_name} {emp.last_name}",
+                "phone": emp.phone,
+                "hire_date": emp.hire_date.isoformat() if emp.hire_date else None,
+                "notes": emp.notes,
+                "status": status,
+                "details": details.strip(),
+                "weekly_hours": round(weekly_hours, 1),
+                "answer": answer_val
+            }
+            results.append(entry)
+            rank += 1
+            
+        return results
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8000';
 
-const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellClick, onEmployeeClick, onRefresh }) => {
+const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellClick, onEmployeeClick, onRefresh, selectedLocation, readOnly = false }) => {
     const start = startOfWeek(currentDate, { weekStartsOn: 6 }); // Saturday
     const days = Array.from({ length: 7 }).map((_, i) => addDays(start, i));
 
@@ -88,6 +88,8 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
             const shiftEmpId = shift.calendarId === 'OPEN' ? 'OPEN' : parseInt(shift.calendarId);
             if (employeeId === 'OPEN') {
                 if (shiftEmpId !== 'OPEN') return false;
+                // Strict location filtering for Open Shifts row
+                if (selectedLocation !== 'All' && shift.location !== selectedLocation) return false;
             } else {
                 if (shiftEmpId !== employeeId) return false;
             }
@@ -161,9 +163,9 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
     };
 
     return (
-        <div className="flex flex-col h-full gap-2">
+        <div className={`flex flex-col gap-2 ${readOnly ? '' : 'h-full'}`}>
             {/* Bulk Edit Toggle and Bar */}
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2 ${readOnly ? 'hidden' : ''}`}>
                 <button
                     onClick={() => {
                         setBulkEditMode(!bulkEditMode);
@@ -225,7 +227,7 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
 
 
 
-            <div className="overflow-x-auto border rounded shadow bg-white h-full flex flex-col">
+            <div className={`border rounded shadow bg-white flex flex-col ${readOnly ? '' : 'overflow-x-auto h-full'}`}>
                 <table className="min-w-full divide-y divide-gray-200 h-full">
                     <thead className="bg-gray-50">
                         <tr>
@@ -328,11 +330,17 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                                                                     e.preventDefault();
                                                                 }
                                                             }}
-                                                                className={`text-xs p-1 rounded text-white shadow-sm ${bulkEditMode ? 'cursor-default' : 'cursor-pointer'} truncate flex-1`}
-                                                                style={{ backgroundColor: shift.backgroundColor || '#3b82f6' }}
+                                                                className={`shift-card text-xs p-1 rounded text-white shadow-sm ${bulkEditMode ? 'cursor-default' : 'cursor-pointer'} truncate flex-1`}
+                                                                style={{ backgroundColor: shift.backgroundColor || '#3b82f6', opacity: (selectedLocation !== 'All' && shift.location !== selectedLocation) ? 0.6 : 1 }}
                                                                 title={`${format(new Date(shift.start), 'h:mm a')} - ${format(new Date(shift.end), 'h:mm a')} \n${shift.title} `}>
-                                                                {format(new Date(shift.start), 'h:mm a')} - {format(new Date(shift.end), 'h:mm a')}
-                                                                {shift.booth_number && <div className="text-[10px] font-semibold mt-0.5">Booth {shift.booth_number}</div>}
+                                                                {(selectedLocation !== 'All' && shift.location !== selectedLocation) ? (
+                                                                    <div className="font-bold text-center">{shift.location}</div>
+                                                                ) : (
+                                                                    <>
+                                                                        {format(new Date(shift.start), 'h:mm a')} - {format(new Date(shift.end), 'h:mm a')}
+                                                                        {shift.booth_number && <div className="text-[10px] font-semibold mt-0.5">Booth {shift.booth_number}</div>}
+                                                                    </>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     ))}

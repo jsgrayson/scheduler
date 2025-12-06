@@ -7,12 +7,22 @@ import CallSheetPrint from './CallSheetPrint';
 import ShiftModal from './ShiftModal';
 import ExportImportButtons from './ExportImportButtons';
 import RosterView from './RosterView';
+import PrintSchedule from './PrintSchedule';
 
 const BASE_URL = 'http://localhost:8000';
 
 const CalendarView = () => {
     const calendarRef = useRef(null);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [isPrinting, setIsPrinting] = useState(false);
+
+    const handlePrint = () => {
+        setIsPrinting(true);
+        setTimeout(() => {
+            window.print();
+            setIsPrinting(false);
+        }, 500);
+    };
     const [activeTab, setActiveTab] = useState('All');
     const [showCallSheet, setShowCallSheet] = useState(false);
     const [employees, setEmployees] = useState([]);
@@ -74,6 +84,7 @@ const CalendarView = () => {
                 location: shift.location,
                 booth_number: shift.booth_number,
                 backgroundColor: getRoleColor(shift.role_id),
+                roleId: shift.role_id,
                 color: '#fff'
             }));
             setShifts(events);
@@ -267,133 +278,140 @@ const CalendarView = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col p-4">
-            {/* Toolbar */}
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-bold">Schedule</h1>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handleViewChange('roster')}
-                            className={`px-3 py-1 rounded ${viewMode === 'roster' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                        >
-                            Roster
-                        </button>
-                        <button
-                            onClick={() => handleViewChange('week')}
-                            className={`px-3 py-1 rounded ${viewMode === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                        >
-                            Week
-                        </button>
-                        <button
-                            onClick={() => handleViewChange('month')}
-                            className={`px-3 py-1 rounded ${viewMode === 'month' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                        >
-                            Month
-                        </button>
-                    </div>
-                </div>
-                {/* ... (Date nav remains same) ... */}
-                <div className="flex items-center gap-4">
-                    <div className="flex gap-2">
-                        <ExportImportButtons onPrintCallSheet={() => setShowCallSheet(true)} />
-                    </div>
-                    <div className="flex gap-2 items-center">
-                        <button onClick={handleToday} className="px-3 py-1 border rounded hover:bg-gray-100">Today</button>
-                        <button onClick={handlePrevWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&lt;</button>
-                        <button onClick={handleNextWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&gt;</button>
-                        <span className="text-lg font-semibold ml-4">
-                            {viewMode === 'month' ?
-                                format(currentDate, 'MMMM yyyy') :
-                                `${format(startOfWeek(currentDate, { weekStartsOn: 6 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 6 }), 'MMM d, yyyy')}`
-                            }
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Color Legend */}
-            <div className="bg-gray-50 border rounded p-2 mb-2">
-                <div className="text-xs font-semibold text-gray-600 mb-1">Role Colors:</div>
-                <div className="flex flex-wrap gap-2">
-                    {roles.map(role => (
-                        <div key={role.id} className="flex items-center gap-1">
-                            <div
-                                className="w-4 h-4 rounded border border-gray-300"
-                                style={{ backgroundColor: role.color_hex }}
-                            ></div>
-                            <span className="text-xs text-gray-700">{role.name}</span>
+        <>
+            <div className="h-screen flex flex-col p-4 print:hidden">
+                {/* Toolbar */}
+                <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-2xl font-bold">Schedule</h1>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handleViewChange('roster')}
+                                className={`px-3 py-1 rounded ${viewMode === 'roster' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                            >
+                                Roster
+                            </button>
+                            <button
+                                onClick={() => handleViewChange('week')}
+                                className={`px-3 py-1 rounded ${viewMode === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                            >
+                                Week
+                            </button>
+                            <button
+                                onClick={() => handleViewChange('month')}
+                                className={`px-3 py-1 rounded ${viewMode === 'month' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                            >
+                                Month
+                            </button>
                         </div>
+                    </div>
+                    {/* ... (Date nav remains same) ... */}
+                    <div className="flex items-center gap-4">
+                        <div className="flex gap-2">
+                            <ExportImportButtons onPrintCallSheet={() => setShowCallSheet(true)} />
+                            <button onClick={handlePrint} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 flex items-center gap-2 font-medium shadow-sm">
+                                Print / PDF
+                            </button>
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <button onClick={handleToday} className="px-3 py-1 border rounded hover:bg-gray-100">Today</button>
+                            <button onClick={handlePrevWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&lt;</button>
+                            <button onClick={handleNextWeek} className="px-3 py-1 border rounded hover:bg-gray-100">&gt;</button>
+                            <span className="text-lg font-semibold ml-4">
+                                {viewMode === 'month' ?
+                                    format(currentDate, 'MMMM yyyy') :
+                                    `${format(startOfWeek(currentDate, { weekStartsOn: 6 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 6 }), 'MMM d, yyyy')}`
+                                }
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Color Legend */}
+                <div className="bg-gray-50 border rounded p-2 mb-2">
+                    <div className="text-xs font-semibold text-gray-600 mb-1">Role Colors:</div>
+                    <div className="flex flex-wrap gap-2">
+                        {roles.map(role => (
+                            <div key={role.id} className="flex items-center gap-1">
+                                <div
+                                    className="w-4 h-4 rounded border border-gray-300"
+                                    style={{ backgroundColor: role.color_hex }}
+                                ></div>
+                                <span className="text-xs text-gray-700">{role.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Location Tabs */}
+                <div className="flex gap-2 overflow-x-auto pb-2 mb-2">
+                    {locations.map(loc => (
+                        <button key={loc} onClick={() => setSelectedLocation(loc)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${selectedLocation === loc ? 'bg-blue-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-100 border'}`}>
+                            {loc}
+                        </button>
                     ))}
                 </div>
+
+                {/* Calendar / Roster View */}
+                <div className="flex-1 border rounded shadow bg-white relative overflow-hidden">
+
+
+                    {viewMode === 'roster' ? (
+                        <RosterView
+                            currentDate={currentDate}
+                            employees={getFilteredEmployees()} // Only employees matching filters
+                            shifts={shifts} // Pass ALL shifts so we can show "Other Location" shifts
+                            selectedLocation={selectedLocation}
+                            onShiftClick={(shift) => onClickSchedule({ schedule: shift })}
+                            onEmptyCellClick={onEmptyCellClick}
+                            onEmployeeClick={(emp) => {
+                                setSelectedShift({
+                                    employee_id: emp.id,
+                                    role_id: emp.default_role_id,
+                                    start: new Date(),
+                                    end: new Date(),
+                                    title: `${emp.first_name} ${emp.last_name}`
+                                });
+                                setIsModalOpen(true);
+                            }}
+                            onRefresh={fetchShifts}
+                        />
+                    ) : (
+                        <Calendar
+                            ref={calendarRef}
+                            height="100%"
+                            view={viewMode}
+                            week={{
+                                startDayOfWeek: 6,
+                                taskView: false,
+                                eventView: ['time'],
+                                hourStart: 6,
+                                hourEnd: 24
+                            }}
+                            useCreationPopup={false}
+                            useDetailPopup={false}
+                            calendars={calendars}
+                            events={filteredShifts}
+                            onBeforeUpdateSchedule={onBeforeUpdateSchedule}
+                            onBeforeCreateSchedule={onBeforeCreateSchedule}
+                            onClickSchedule={onClickSchedule}
+                        />
+                    )}
+                </div>
+
+                {showCallSheet && <CallSheetPrint onClose={() => setShowCallSheet(false)} />}
+
+                <ShiftModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    initialData={selectedShift}
+                    onSave={handleSaveShift}
+                    onDelete={handleDeleteShift}
+                />
             </div>
-
-            {/* Location Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-2">
-                {locations.map(loc => (
-                    <button key={loc} onClick={() => setSelectedLocation(loc)}
-                        className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${selectedLocation === loc ? 'bg-blue-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-100 border'}`}>
-                        {loc}
-                    </button>
-                ))}
-            </div>
-
-            {/* Calendar / Roster View */}
-            <div className="flex-1 border rounded shadow bg-white relative overflow-hidden">
-
-
-                {viewMode === 'roster' ? (
-                    <RosterView
-                        currentDate={currentDate}
-                        employees={getFilteredEmployees()}
-                        shifts={filteredShifts}
-                        onShiftClick={(shift) => onClickSchedule({ schedule: shift })}
-                        onEmptyCellClick={onEmptyCellClick}
-                        onEmployeeClick={(emp) => {
-                            setSelectedShift({
-                                employee_id: emp.id,
-                                role_id: emp.default_role_id,
-                                start: new Date(),
-                                end: new Date(),
-                                title: `${emp.first_name} ${emp.last_name}`
-                            });
-                            setIsModalOpen(true);
-                        }}
-                        onRefresh={fetchShifts}
-                    />
-                ) : (
-                    <Calendar
-                        ref={calendarRef}
-                        height="100%"
-                        view={viewMode}
-                        week={{
-                            startDayOfWeek: 6,
-                            taskView: false,
-                            eventView: ['time'],
-                            hourStart: 6,
-                            hourEnd: 24
-                        }}
-                        useCreationPopup={false}
-                        useDetailPopup={false}
-                        calendars={calendars}
-                        events={filteredShifts}
-                        onBeforeUpdateSchedule={onBeforeUpdateSchedule}
-                        onBeforeCreateSchedule={onBeforeCreateSchedule}
-                        onClickSchedule={onClickSchedule}
-                    />
-                )}
-            </div>
-
-            {showCallSheet && <CallSheetPrint onClose={() => setShowCallSheet(false)} />}
-
-            <ShiftModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                initialData={selectedShift}
-                onSave={handleSaveShift}
-                onDelete={handleDeleteShift}
-            />
-        </div>
+            {isPrinting && <PrintSchedule shifts={shifts} employees={employees} currentDate={currentDate} />}
+        </>
     );
 };
 
