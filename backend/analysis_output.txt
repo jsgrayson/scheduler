@@ -1,0 +1,54 @@
+2025-12-04 12:26:08,194 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-04 12:26:08,196 INFO sqlalchemy.engine.Engine SELECT shift.id AS shift_id, shift.employee_id AS shift_employee_id, shift.role_id AS shift_role_id, shift.start_time AS shift_start_time, shift.end_time AS shift_end_time, shift.notes AS shift_notes, shift.location AS shift_location, shift.parent_id AS shift_parent_id, shift.is_vacation AS shift_is_vacation 
+FROM shift
+2025-12-04 12:26:08,196 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ()
+Total Shifts: 396
+
+--- Potential Duplicates ---
+2025-12-04 12:26:08,203 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,203 INFO sqlalchemy.engine.Engine [generated in 0.00017s] (7,)
+Jim E (Sup/24hr): 2025-12-08 09:00:00 (Count: 2)
+
+--- Overlapping Shifts ---
+Jim E (Sup/24hr): 2025-12-06 04:15:00-2025-12-06 12:45:00 OVERLAPS 2025-12-06 09:00:00-2025-12-06 17:00:00
+Jim E (Sup/24hr): 2025-12-06 09:00:00-2025-12-06 17:00:00 OVERLAPS 2025-12-06 09:45:00-2025-12-06 17:45:00
+Jim E (Sup/24hr): 2025-12-08 09:00:00-2025-12-08 17:00:00 OVERLAPS 2025-12-08 09:00:00-2025-12-08 17:00:00
+Jim E (Sup/24hr): 2025-12-09 01:00:00-2025-12-09 09:30:00 OVERLAPS 2025-12-09 09:00:00-2025-12-09 17:00:00
+2025-12-04 12:26:08,204 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,204 INFO sqlalchemy.engine.Engine [cached since 0.001396s ago] (10,)
+Ken D: 2025-12-06 09:00:00-2025-12-06 17:30:00 OVERLAPS 2025-12-06 14:45:00-2025-12-06 23:15:00
+Ken D: 2025-12-07 14:45:00-2025-12-07 23:15:00 OVERLAPS 2025-12-07 17:00:00-2025-12-08 01:30:00
+2025-12-04 12:26:08,205 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,205 INFO sqlalchemy.engine.Engine [cached since 0.001789s ago] (35,)
+Steve Zagorski: 2025-12-07 07:45:00-2025-12-07 16:15:00 OVERLAPS 2025-12-07 09:00:00-2025-12-07 17:00:00
+2025-12-04 12:26:08,205 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,205 INFO sqlalchemy.engine.Engine [cached since 0.002193s ago] (68,)
+Derrick Thomas: 2025-12-03 09:00:00-2025-12-03 17:00:00 OVERLAPS 2025-12-03 14:45:00-2025-12-03 23:15:00
+Derrick Thomas: 2025-12-04 09:00:00-2025-12-04 17:00:00 OVERLAPS 2025-12-04 12:45:00-2025-12-04 21:15:00
+2025-12-04 12:26:08,205 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,205 INFO sqlalchemy.engine.Engine [cached since 0.002553s ago] (74,)
+Vincent Creary: 2025-12-03 06:45:00-2025-12-03 16:15:00 OVERLAPS 2025-12-03 10:45:00-2025-12-03 20:15:00
+2025-12-04 12:26:08,206 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,206 INFO sqlalchemy.engine.Engine [cached since 0.002876s ago] (96,)
+Matthew Ramlall: 2025-12-05 15:45:00-2025-12-06 00:15:00 OVERLAPS 2025-12-05 23:45:00-2025-12-06 08:15:00
+Matthew Ramlall: 2025-12-06 15:45:00-2025-12-07 00:15:00 OVERLAPS 2025-12-06 23:45:00-2025-12-07 08:15:00
+
+--- Suspicious Durations (< 2h or > 16h) ---
+2025-12-04 12:26:08,206 INFO sqlalchemy.engine.Engine SELECT employee.first_name AS employee_first_name, employee.last_name AS employee_last_name, employee.default_role_id AS employee_default_role_id, employee.email AS employee_email, employee.phone AS employee_phone, employee.max_weekly_hours AS employee_max_weekly_hours, employee.is_full_time AS employee_is_full_time, employee.willing_to_work_vacation_week AS employee_willing_to_work_vacation_week, employee.hire_date AS employee_hire_date, employee.last_call_time AS employee_last_call_time, employee.id AS employee_id 
+FROM employee 
+WHERE employee.id = ?
+2025-12-04 12:26:08,206 INFO sqlalchemy.engine.Engine [cached since 0.003465s ago] (82,)
+Jeffrey Smith: 2025-12-01 01:45:00-2025-12-01 20:15:00 (18.5 hours) - Loc: Customer Lots
+2025-12-04 12:26:08,207 INFO sqlalchemy.engine.Engine ROLLBACK

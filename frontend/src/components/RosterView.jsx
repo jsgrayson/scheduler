@@ -97,12 +97,49 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
         });
     };
 
+    // Check if a shift overlaps with any other shift for the same employee
+    const hasOverlap = (shift, allShiftsForCell) => {
+        const shiftStart = typeof shift.start === 'string' ? parseISO(shift.start) : shift.start;
+        const shiftEnd = typeof shift.end === 'string' ? parseISO(shift.end) : shift.end;
+
+        return allShiftsForCell.some(other => {
+            if (other.id === shift.id) return false; // Skip self
+            const otherStart = typeof other.start === 'string' ? parseISO(other.start) : other.start;
+            const otherEnd = typeof other.end === 'string' ? parseISO(other.end) : other.end;
+            // Overlap: starts before other ends AND ends after other starts
+            return shiftStart < otherEnd && shiftEnd > otherStart;
+        });
+    };
+
     const toggleShiftSelection = (shiftId) => {
         const newSelection = new Set(selectedShiftIds);
         if (newSelection.has(shiftId)) {
             newSelection.delete(shiftId);
         } else {
             newSelection.add(shiftId);
+        }
+        setSelectedShiftIds(newSelection);
+    };
+
+    // Toggle all shifts for an employee (for bulk edit row selection)
+    const toggleAllShiftsForEmployee = (empId) => {
+        // Get all shift IDs for this employee in the current week
+        const empShiftIds = [];
+        days.forEach(day => {
+            const cellShifts = getShiftsForCell(empId, day);
+            cellShifts.forEach(shift => empShiftIds.push(shift.id)); // Keep as string to match checkbox logic
+        });
+
+        const newSelection = new Set(selectedShiftIds);
+        // Check if all are already selected
+        const allSelected = empShiftIds.length > 0 && empShiftIds.every(id => newSelection.has(id));
+
+        if (allSelected) {
+            // Deselect all
+            empShiftIds.forEach(id => newSelection.delete(id));
+        } else {
+            // Select all
+            empShiftIds.forEach(id => newSelection.add(id));
         }
         setSelectedShiftIds(newSelection);
     };
@@ -162,6 +199,26 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
         }
     };
 
+    const handleBulkLock = async (lock) => {
+        if (selectedShiftIds.size === 0) {
+            alert('No shifts selected');
+            return;
+        }
+        try {
+            const payload = {
+                shift_ids: Array.from(selectedShiftIds).map(id => parseInt(id)),
+                is_locked: lock
+            };
+            await axios.post(`${BASE_URL}/shifts/bulk-update/`, payload);
+            alert(`${lock ? 'Locked' : 'Unlocked'} ${selectedShiftIds.size} shifts`);
+            setSelectedShiftIds(new Set());
+            if (onRefresh) onRefresh();
+        } catch (error) {
+            console.error('Bulk lock failed:', error);
+            alert(`Bulk lock failed: ${error.response?.data?.detail || error.message}`);
+        }
+    };
+
     return (
         <div className={`flex flex-col gap-2 ${readOnly ? '' : 'h-full'}`}>
             {/* Bulk Edit Toggle and Bar */}
@@ -196,14 +253,16 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                         </select>
                         <select value={bulkLocation} onChange={(e) => setBulkLocation(e.target.value)} className="border rounded px-2 py-1 text-sm">
                             <option value="">Change Location...</option>
-                            <option value="Office">Office</option>
-                            <option value="Plaza">Plaza</option>
-                            <option value="Conrac">Conrac</option>
-                            <option value="Customer Lots">Customer Lots</option>
-                            <option value="Lot 1">Lot 1</option>
-                            <option value="Lot 2">Lot 2</option>
-                            <option value="Lot 3">Lot 3</option>
-                            <option value="Lot 4">Lot 4</option>
+                            <option value="OFFICE">Office</option>
+                            <option value="SUPERVISORS">Supervisors</option>
+                            <option value="MAINTENANCE">Maintenance</option>
+                            <option value="PLAZA">Plaza</option>
+                            <option value="CONRAC">Conrac</option>
+                            <option value="CUSTOMER LOTS">Customer Lots</option>
+                            <option value="LOT 1">Lot 1</option>
+                            <option value="LOT 2">Lot 2</option>
+                            <option value="LOT 3">Lot 3</option>
+                            <option value="LOT 4">Lot 4</option>
                         </select>
                         {bulkLocation === 'Plaza' && (
                             <select value={bulkBooth} onChange={(e) => setBulkBooth(e.target.value)} className="border rounded px-2 py-1 text-sm">
@@ -214,6 +273,12 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                         )}
                         <button onClick={handleBulkUpdate} className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 text-sm font-medium">
                             Apply Changes
+                        </button>
+                        <button onClick={() => handleBulkLock(true)} className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm font-medium">
+                            🔒 Lock
+                        </button>
+                        <button onClick={() => handleBulkLock(false)} className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600 text-sm font-medium">
+                            🔓 Unlock
                         </button>
                         <button onClick={handleBulkDelete} className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-sm font-medium">
                             Delete
@@ -268,18 +333,18 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                                                             className="mt-1 cursor-pointer" />
                                                     )}
                                                     <div onClick={(e) => {
+                                                        e.stopPropagation();
                                                         console.log('Shift clicked, bulkEditMode:', bulkEditMode);
                                                         if (!bulkEditMode) {
-                                                            e.stopPropagation();
                                                             onShiftClick(shift);
                                                         } else {
-                                                            e.stopPropagation();
-                                                            e.preventDefault();
+                                                            toggleShiftSelection(shift.id);
                                                         }
                                                     }}
-                                                        className={`text-xs p-1 rounded border shadow-sm ${bulkEditMode ? 'cursor-default' : 'cursor-pointer'} bg-white border-red-200 text-red-800 truncate flex-1`}
-                                                        title={`${format(new Date(shift.start), 'h:mm a')} - ${format(new Date(shift.end), 'h:mm a')}${shift.notes ? `\n${shift.notes}` : ''} `}>
-                                                        {format(new Date(shift.start), 'h:mm a')} - {format(new Date(shift.end), 'h:mm a')}
+                                                        className={`text-xs p-1 rounded border shadow-sm cursor-pointer bg-white border-red-200 text-red-800 truncate flex-1`}
+                                                        title={`ID: ${shift.id}\n${format(new Date(shift.start), 'h:mm a')} - ${format(new Date(shift.end), 'h:mm a')}${shift.notes ? `\n${shift.notes}` : ''}`}>
+                                                        {shift.is_locked && <span className="font-bold text-red-600 hide-on-print">*</span>}
+                                                        <div>{format(new Date(shift.start), 'h:mm a')} - {format(new Date(shift.end), 'h:mm a')}</div>
                                                         {shift.booth_number && <div className="text-[10px] font-semibold text-red-900 mt-0.5">Booth {shift.booth_number}</div>}
                                                         {shift.notes && <div className="text-[10px] font-mono truncate bg-red-50 px-1 rounded mt-0.5">{shift.notes}</div>}
                                                     </div>
@@ -296,8 +361,14 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                             const empRole = roles.find(r => r.id === emp.default_role_id);
                             return (
                                 <tr key={emp.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 sticky left-0 bg-white border-r z-10 cursor-pointer hover:bg-blue-50 transition-colors"
-                                        onClick={() => onEmployeeClick?.(emp)}>
+                                    <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 sticky left-0 bg-white border-r z-10 cursor-pointer hover:bg-blue-50 transition-colors ${bulkEditMode ? 'select-none' : ''}`}
+                                        onClick={() => {
+                                            if (bulkEditMode) {
+                                                toggleAllShiftsForEmployee(emp.id);
+                                            } else {
+                                                onEmployeeClick?.(emp);
+                                            }
+                                        }}>
                                         <div className="hover:underline font-semibold" style={{ color: empRole?.color_hex }}>
                                             {emp.first_name} {emp.last_name}
                                         </div>
@@ -327,12 +398,18 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                                                                 if (!bulkEditMode) {
                                                                     onShiftClick(shift);
                                                                 } else {
-                                                                    e.preventDefault();
+                                                                    toggleShiftSelection(shift.id);
                                                                 }
                                                             }}
-                                                                className={`shift-card text-xs p-1 rounded text-white shadow-sm ${bulkEditMode ? 'cursor-default' : 'cursor-pointer'} truncate flex-1`}
+                                                                className={`shift-card text-xs p-1 rounded text-white shadow-sm cursor-pointer truncate flex-1 ${hasOverlap(shift, cellShifts) ? 'ring-2 ring-red-500 ring-offset-1' : ''}`}
                                                                 style={{ backgroundColor: shift.backgroundColor || '#3b82f6', opacity: (selectedLocation !== 'All' && shift.location !== selectedLocation) ? 0.6 : 1 }}
-                                                                title={`${format(new Date(shift.start), 'h:mm a')} - ${format(new Date(shift.end), 'h:mm a')} \n${shift.title} `}>
+                                                                title={`${hasOverlap(shift, cellShifts) ? ' ⚠️ OVERLAP' : ''}\n${format(new Date(shift.start), 'h:mm a')} - ${format(new Date(shift.end), 'h:mm a')} \n${shift.title} `}>
+                                                                <div className="flex justify-between items-center">
+                                                                    <div className="flex gap-1">
+                                                                        {shift.is_locked && <span className="font-bold hide-on-print" title="Locked">*</span>}
+                                                                        {hasOverlap(shift, cellShifts) && <span className="text-[10px]" title="Overlap Detected">⚠️</span>}
+                                                                    </div>
+                                                                </div>
                                                                 {(selectedLocation !== 'All' && shift.location !== selectedLocation) ? (
                                                                     <div className="font-bold text-center">{shift.location}</div>
                                                                 ) : (
@@ -353,8 +430,8 @@ const RosterView = ({ currentDate, employees, shifts, onShiftClick, onEmptyCellC
                         })}
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

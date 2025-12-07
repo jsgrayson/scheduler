@@ -1,1 +1,164 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Executive Clarity Design System */
+:root {
+    /* Colors */
+    --color-primary: #1a56db;
+    --color-primary-hover: #1e40af;
+    --color-primary-light: #dbeafe;
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-width: 64px;
+}
+
+/* Base Typography */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-900);
+}
+
+/* Print Styles */
+@page {
+    size: landscape;
+    margin: 0.5cm;
+}
+
+@media print {
+    .hide-on-print {
+        display: none !important;
+    }
+}
+
+/* Custom Button Styles */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+    background-color: white;
+    color: var(--color-gray-700);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-gray-300);
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-gray-50);
+    border-color: var(--color-gray-400);
+}
+
+/* Card Component */
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-200);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: var(--sidebar-width);
+    background: white;
+    border-right: 1px solid var(--color-gray-200);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1rem;
+}
+
+.sidebar-link {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    color: var(--color-gray-500);
+    transition: all 0.15s ease;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-700);
+}
+
+.sidebar-link.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+/* Header Styles */
+.app-header {
+    height: 64px;
+    background: white;
+    border-bottom: 1px solid var(--color-gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+}
+
+.page-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-gray-900);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    overflow: auto;
+    padding: 1.5rem;
+}
+
+/* Toast UI Calendar Popup Fix */
+.toastui-calendar-popup {
+    z-index: 9999 !important;
+    max-width: 320px !important;
+}
+
+.toastui-calendar-popup-container {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+.toastui-calendar-detail-container {
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+}

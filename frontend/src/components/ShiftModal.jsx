@@ -14,13 +14,16 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
     const [location, setLocation] = useState('');
     const [boothNumber, setBoothNumber] = useState('');
     const [isVacation, setIsVacation] = useState(false);
+    const [isLocked, setIsLocked] = useState(false);
     const [createOpenShift, setCreateOpenShift] = useState(false);
     const [repeat, setRepeat] = useState('');
+    const [forceSave, setForceSave] = useState(false);
     const [employees, setEmployees] = useState([]);
     const [roles, setRoles] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
     const [loadingRecs, setLoadingRecs] = useState(false);
     const [showCallSheet, setShowCallSheet] = useState(false);
+    const [saveError, setSaveError] = useState(null);
 
     const isNewShift = !initialData?.id;
 
@@ -35,8 +38,11 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             setLocation(initialData.location || '');
             setBoothNumber(initialData.booth_number || '');
             setIsVacation(initialData.is_vacation || false);
+            setIsLocked(initialData.is_locked || false);
             setCreateOpenShift(false);
             setRepeat('');
+            setForceSave(false);
+            setSaveError(null);
         } else {
             setEmployeeId('');
             setRoleId('');
@@ -46,8 +52,11 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             setLocation('');
             setBoothNumber('');
             setIsVacation(false);
+            setIsLocked(false);
             setCreateOpenShift(false);
             setRepeat('');
+            setForceSave(false);
+            setSaveError(null);
         }
         fetchDropdowns();
     }, [initialData]);
@@ -103,6 +112,12 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             return;
         }
 
+        // Validate end time is after start time
+        if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+            alert('End time must be after start time');
+            return;
+        }
+
         // Convert datetime-local to ISO without timezone shift
         // datetime-local format: "2025-12-10T09:00"
         // We want to keep this exact time, not convert to UTC
@@ -118,11 +133,14 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
             location: location || null,
             booth_number: location === 'Plaza' ? boothNumber : null,
             is_vacation: isVacation,
+            is_locked: isLocked,
             create_open_shift: createOpenShift,
             repeat: repeat || null,
+            force_save: forceSave,
             id: initialData?.id // Include ID for editing existing shifts
         };
         console.log('ShiftModal submitting:', shiftData);
+        setSaveError(null);
         onSave(shiftData);
     };
 
@@ -269,16 +287,16 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
                                 className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             >
                                 <option value="">Select Location</option>
-                                <option value="Office">Office</option>
-                                <option value="Supervisors">Supervisors</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Plaza">Plaza</option>
-                                <option value="Conrac">Conrac</option>
-                                <option value="Customer Lots">Customer Lots</option>
-                                <option value="Lot 1">Lot 1</option>
-                                <option value="Lot 2">Lot 2</option>
-                                <option value="Lot 3">Lot 3</option>
-                                <option value="Lot 4">Lot 4</option>
+                                <option value="OFFICE">Office</option>
+                                <option value="SUPERVISORS">Supervisors</option>
+                                <option value="MAINTENANCE">Maintenance</option>
+                                <option value="PLAZA">Plaza</option>
+                                <option value="CONRAC">Conrac</option>
+                                <option value="CUSTOMER LOTS">Customer Lots</option>
+                                <option value="LOT 1">Lot 1</option>
+                                <option value="LOT 2">Lot 2</option>
+                                <option value="LOT 3">Lot 3</option>
+                                <option value="LOT 4">Lot 4</option>
                             </select>
                             {location === 'Plaza' && (
                                 <div className="mt-2">
@@ -330,17 +348,27 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
                             </div>
                         </div>
 
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Repeat</label>
-                            <select
-                                value={repeat}
-                                onChange={(e) => setRepeat(e.target.value)}
-                                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            >
-                                <option value="">Does not repeat</option>
-                                <option value="daily">Daily (7 days)</option>
-                                <option value="weekly">Weekly (4 weeks)</option>
-                            </select>
+
+
+                        <div className="mb-4 flex items-center gap-6">
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={forceSave}
+                                    onChange={(e) => setForceSave(e.target.checked)}
+                                    className="mr-2 leading-tight"
+                                />
+                                <label className="text-sm text-orange-600 font-bold">Force Save</label>
+                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={isLocked}
+                                    onChange={(e) => setIsLocked(e.target.checked)}
+                                    className="mr-2 leading-tight"
+                                />
+                                <label className="text-sm text-blue-600 font-bold">🔒 Lock Shift</label>
+                            </div>
                         </div>
 
                         <div className="flex justify-between items-center mt-6 pt-4 border-t">
@@ -433,8 +461,8 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
                         )}
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

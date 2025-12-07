@@ -1,0 +1,136 @@
+Total Employees: 127
+------------------------------------------------------------
+ID    | First Name      | Last Name       | Role  | Phone
+------------------------------------------------------------
+136   |                 | Steven zagorski | 8     | 860-976-8945
+138   |                 | Winston patterson | 4     | 860-519-0434
+43    | AIMEE           | BEDNAZ          | 8     | 860-814-8020
+115   | AUDREY          | FIELDS          | 1     | None
+95    | Alan            | Blomquist       | 2     | None
+63    | Alicia          | Phillips        | 8     | 860-849-1833
+5     | Alonso          | F. (Sup)        | 5     | 
+80    | Alphonso        | Martin          | 2     | None
+126   | Anna            | George          | 7     | 860-214-2429
+108   | Anthony         | Pozzato         | 1     | None
+113   | Arthur          | Soucier         | 1     | None
+39    | Asia            | Breedlove       | 8     | None
+77    | Audley          | MCLean          | 2     | None
+120   | Brian           | McTeauge        | 1     | None
+3     | Brooke          | M.              | 6     | 
+28    | Bryan           | Melendez        | 4     | 860-328-6505
+101   | CANUTE          | KERR            | 1     | None
+58    | Chandrakant     | Patel           | 8     | None
+38    | Cherone         | Levy            | 7     | 860-794-3097
+48    | Cindy           | Saulnier        | 8     | 860-549-4928
+89    | Clarence        | Facey           | 2     | None
+75    | Curtis          | Clarke          | 2     | None
+25    | Dan             | R-              | 4     | None
+71    | Dan             | McKay           | 2     | None
+137   | Daniel          | Ringrose        | 4     | 860-821-6081
+52    | Darcy           | Lombardi        | 8     | 860-324-1110
+13    | Debbie          | P. (Off Mgr)    | 6     | 
+72    | Delvin          | Gumbs           | 2     | None
+68    | Derrick         | Thomas          | 2     | None
+88    | Derrick         | Wallen          | 2     | None
+94    | Donavan         | Levy            | 2     | None
+92    | Edward          | Milner          | 2     | None
+26    | Edwin           | Faria           | 4     | 413-285-5956
+30    | Eric            | N. (Sup-Mgr)    | 4     | None
+14    | Erin            | A. (RecptAR)    | 6     | None
+129   | Errol           | Flynn:          | 7     | 860-983-4194
+131   | Ethel           | Harris          | 7     | 203-988-8076
+87    | Franklyn        | Jeffers         | 2     | None
+119   | Fresly          | Eustache        | 1     | None
+49    | Gloria          | Bond            | 8     | 860-716-9887
+27    | Gossett         | Jumpp           | 4     | 860-995-0232
+33    | GraceAnn        | Gordon          | 8     | 
+135   | Graceann        | Gordan          | 8     | 860-987-8155
+15    | Harolyn         | D. (Aud)        | 6     | 
+22    | Isabella        | D. (Ad)         | 6     | None
+110   | JAMES           | GLENN           | 1     | None
+100   | JULIAN          | FELIX           | 1     | None
+57    | Jamiel          | Saleh           | 8     | None
+107   | Jay             | Discount        | 1     | None
+109   | Jeff            | Styles          | 1     | None
+82    | Jeffrey         | Smith           | 2     | None
+64    | Jen             | Atkins          | 8     | None
+134   | Jennipher       | Atkins          | 8     | 860-214-6433
+11    | Jeremy          | G (Sup/Admin)   | 6     | 
+37    | Jessica         | White           | 8     | None
+133   | Jestina         | Hawes           | 7     | 860-655-9172
+7     | Jim             | E (Sup/24hr)    | 5     | 
+56    | Jim             | Quinn           | 8     | 860-756-6136
+69    | Jim             | Tillona         | 2     | None
+1     | Jochy           | G.              | 5     | None
+84    | Joe             | Gerhauser       | 2     | None
+78    | Joel            | Quail           | 2     | None
+65    | John            | Karzak          | 7     | 
+121   | John            | Karazk          | 7     | 860-687-1971
+24    | Jose            | Rosa            | 4     | 860-869-4927
+36    | Joshua          | Leighton        | 8     | None
+44    | Judith          | Bednarz         | 8     | 860-670-4521
+118   | KANTIUS         | JOSHUA JR       | 1     | None
+104   | KATHY           | MACKECHNIE      | 1     | 
+16    | Katelin         | S (Admin)       | 6     | 
+93    | Kelvin          | Williams        | 2     | 
+10    | Ken             | D               | 4     | 
+79    | Ken             | Bailey          | 2     | None
+130   | Kerry           | Corbin          | 7     | 860-796-6608
+103   | Kevin           | Brown           | 1     | None
+128   | Kimberley       | Stephens        | 7     | 860-707-8289
+145   | Kimberley       | Stephens | _    | 7     | 860-707-8289
+116   | Kirk            | Nelson          | 1     | None
+81    | Laura           | DeGray          | 2     | None
+41    | Lawrence        | Minor           | 7     | 404-313-8118
+76    | Lawrence        | Bempong         | 2     | None
+73    | Leach           | Kelly           | 2     | None
+29    | Lotif           | Raheem          | 4     | None
+143   | Lotif           | Raheen          | 4     | 860-977-6101
+40    | Lynn            | Tamsin          | 7     | 860-436-7505
+6     | Maria           | C. (Sup)        | 5     | 
+19    | Mariah          | Mercer HRC      | 6     | None
+34    | Maritza         | Rodriguez       | 8     | None
+122   | Marjorie        | Dwyer           | 7     | 860-796-2777
+99    | Mark            | Dempsey (AFM)   | 2     | None
+97    | Matt            | Toma (S)        | 2     | 
+96    | Matthew         | Ramlall         | 2     | None
+106   | Matthew         | Grehn           | 1     | None
+123   | Maty            | Bonesteel       | 7     | 860-810-1194
+4     | Meghan          | S.              | 6     | 
+21    | Michelle        | D: (Ad)         | 6     | None
+55    | Mike            | Bostock         | 7     | 860-895-3545
+62    | Mike            | Boyster         | 8     | 4-413-301-6558
+66    | Miracle         | C-Brown         | 7     | None
+125   | Miracle         | Brown           | 7     | 860-997-8215
+86    | Munroe          | Carter          | 2     | None
+132   | Nallelys        | Santiago        | 7     | 860-670-3256
+20    | Paul            | M: (AFM)        | 6     | None
+70    | Paul            | Pasquarelli     | 2     | None
+9     | Ralph           | R               | 4     | 
+91    | Richard         | Abbott          | 2     | None
+8     | Robert          | W (Float)       | 5     | 
+83    | Robert          | Kyerematen      | 2     | None
+98    | Scott           | Ganhao (S)      | 2     | 
+54    | Shacora         | Powell          | 7     | 959-777-0699
+53    | Shantae         | Rios            | 8     | None
+47    | Sharon          | Moyer           | 8     | 860-543-9634
+50    | Sheila          | Andersen        | 8     | 860-614-1858
+2     | Stacian         | Hamilton        | 8     | None
+35    | Steve           | Zagorski        | 8     | None
+102   | Steve           | Brown           | 1     | None
+127   | Tiwanna         | Duncan          | 7     | 203-715-8825
+67    | Tom             | McCarthy        | 2     | None
+124   | Tracysmallman   |                 | 7     | 959-929-8203
+144   | Tracysmallman   |                 | 7     | 959-929-8203
+42    | Vilma           | Vevecka         | 8     | 860-306-7019
+74    | Vincent         | Creary          | 2     | None
+85    | Vincent         | Grady           | 2     | None
+90    | Wayne           | Edwards         | 2     | None
+23    | Winston         | P               | 4     | None
+146   | |               | Steven zagorski | 8     | 860-976-8945
+147   | |               | Winston patterson | | 4     | 860-519-0434
+
+!!! POTENTIAL DUPLICATES DETECTED !!!
+Original: Tracysmallman  (ID: 124)
+Duplicate: Tracysmallman  (ID: 144)
+------------------------------

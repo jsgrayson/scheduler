@@ -6,11 +6,13 @@ const BASE_URL = 'http://localhost:8000';
 
 const EmployeeSettings = () => {
     const [employees, setEmployees] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [isBulkEditing, setIsBulkEditing] = useState(false);
     const [bulkEdits, setBulkEdits] = useState({}); // { id: { field: value } }
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchEmployees();
@@ -18,10 +20,14 @@ const EmployeeSettings = () => {
 
     const fetchEmployees = async () => {
         try {
-            const res = await axios.get(`${BASE_URL}/employees/`);
-            setEmployees(res.data);
+            const [empRes, roleRes] = await Promise.all([
+                axios.get(`${BASE_URL}/employees/`),
+                axios.get(`${BASE_URL}/roles/`)
+            ]);
+            setEmployees(empRes.data);
+            setRoles(roleRes.data);
         } catch (error) {
-            console.error("Error fetching employees:", error);
+            console.error("Error fetching data:", error);
         } finally {
             setLoading(false);
         }
@@ -60,8 +66,13 @@ const EmployeeSettings = () => {
 
     const handleSaveEmployee = async (updatedData) => {
         try {
-            const res = await axios.put(`${BASE_URL}/employees/${updatedData.id}`, updatedData);
-            setEmployees(employees.map(e => e.id === updatedData.id ? res.data : e));
+            if (updatedData.id) {
+                const res = await axios.put(`${BASE_URL}/employees/${updatedData.id}`, updatedData);
+                setEmployees(employees.map(e => e.id === updatedData.id ? res.data : e));
+            } else {
+                const res = await axios.post(`${BASE_URL}/employees/`, updatedData);
+                setEmployees([...employees, res.data]);
+            }
             setIsModalOpen(false);
             setSelectedEmployee(null);
         } catch (error) {
@@ -115,44 +126,72 @@ const EmployeeSettings = () => {
 
     return (
         <div className="p-4 max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 gap-4">
                 <h1 className="text-2xl font-bold">Employee Settings</h1>
-                <div>
+                <div className="flex items-center gap-2 flex-1 justify-end">
+                    <input
+                        type="text"
+                        placeholder="Search employees..."
+                        className="border rounded px-3 py-2 text-sm w-64"
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                    />
                     {isBulkEditing ? (
                         <>
-                            <button onClick={cancelBulkEdit} className="bg-gray-300 px-4 py-2 rounded mr-2 hover:bg-gray-400">Cancel</button>
+                            <button onClick={cancelBulkEdit} className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
                             <button onClick={saveBulkEdits} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Save All</button>
                         </>
                     ) : (
-                        <button onClick={() => setIsBulkEditing(true)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Bulk Edit</button>
+                        <>
+                            <button
+                                onClick={() => { setSelectedEmployee(null); setIsModalOpen(true); }}
+                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center gap-2"
+                            >
+                                <span>+ New Hire</span>
+                            </button>
+                            <button onClick={() => setIsBulkEditing(true)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Bulk Edit</button>
+                        </>
                     )}
                 </div>
             </div>
 
             <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
                 {(() => {
-                    const roleGroups = [
-                        { title: "Supervisors", ids: [5] },
-                        { title: "Office", ids: [6] },
-                        { title: "Maintenance", ids: [4] },
-                        { title: "Cashiers", ids: [3, 7, 8] },
-                        { title: "C-Lot", ids: [2] },
-                        { title: "E-Lot", ids: [1] }
-                    ];
+                    // Filter employees first
+                    const filteredList = employees.filter(emp =>
+                        !searchTerm ||
+                        `${emp.first_name} ${emp.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
 
-                    // Helper to get employees for a group
-                    const getEmpsForGroup = (roleIds) => {
-                        return employees.filter(e => roleIds.includes(e.default_role_id));
-                    };
+                    // Group by Role
+                    const roledGroups = {};
+                    filteredList.forEach(emp => {
+                        const rId = emp.default_role_id;
+                        if (!roledGroups[rId]) roledGroups[rId] = [];
+                        roledGroups[rId].push(emp);
+                    });
 
-                    // Identify "Other" employees
-                    const allGroupedIds = roleGroups.flatMap(g => g.ids);
-                    const otherEmps = employees.filter(e => !allGroupedIds.includes(e.default_role_id));
+                    // Convert to Sections
+                    let sections = Object.keys(roledGroups).map(rId => {
+                        const role = roles.find(r => r.id === parseInt(rId));
+                        return {
+                            title: role ? role.name : "Other / Unknown",
+                            roleId: parseInt(rId),
+                            data: roledGroups[rId]
+                        };
+                    });
 
-                    const sections = [
-                        ...roleGroups.map(g => ({ title: g.title, data: getEmpsForGroup(g.ids) })),
-                        { title: "Other", data: otherEmps }
-                    ].filter(s => s.data.length > 0);
+                    // Sort Sections (Priority: Supervisor, Office, Maintenance, others)
+                    const priority = ["Supervisor", "Office", "Maintenance", "Cashier", "Lot"];
+                    sections.sort((a, b) => {
+                        const idxA = priority.findIndex(p => a.title.includes(p));
+                        const idxB = priority.findIndex(p => b.title.includes(p));
+
+                        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                        if (idxA !== -1) return -1;
+                        if (idxB !== -1) return 1;
+                        return a.title.localeCompare(b.title);
+                    });
 
                     return sections.map((section, idx) => (
                         <div key={idx} className="mb-8">

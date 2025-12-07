@@ -8,6 +8,7 @@ import ShiftModal from './ShiftModal';
 import ExportImportButtons from './ExportImportButtons';
 import RosterView from './RosterView';
 import PrintSchedule from './PrintSchedule';
+import TemplateEditor from './TemplateEditor';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -29,15 +30,40 @@ const CalendarView = () => {
     const [roles, setRoles] = useState([]);
     const [shifts, setShifts] = useState([]);
     const [calendars, setCalendars] = useState([]);
-    const [viewMode, setViewMode] = useState('roster'); // Default to Roster as requested
+    const [viewMode, setViewMode] = useState('roster'); // Default to Roster
     const [selectedLocation, setSelectedLocation] = useState('All');
+    const [zoomLevel, setZoomLevel] = useState(0); // Fully zoomed out (00:00 start)
 
     // Build location tabs from shifts
-    const dynamicLocations = [...new Set(shifts.map(s => s.location).filter(l => l && l !== 'General'))];
-    const locations = ['All', ...dynamicLocations.filter(l => l !== 'Employee Lot'), 'Employee Lot'];
+    // Sort priority
+    const LOC_PRIORITY = ['SUPERVISORS', 'OFFICE', 'MAINTENANCE', 'CONRAC', 'PLAZA', 'CUSTOMER LOTS', 'LOT 1', 'LOT 2', 'LOT 3', 'LOT 4', 'EMPLOYEE LOT'];
 
-    // Filter shifts by location
-    const filteredShifts = selectedLocation === 'All' ? shifts : shifts.filter(s => s.location === selectedLocation);
+    // Build location tabs from shifts (Case Insensitive normalization)
+    const normalizeLoc = (loc) => loc ? loc.toUpperCase().trim() : '';
+
+    const allLocs = shifts.map(s => normalizeLoc(s.location)).filter(l => l && l !== 'GENERAL');
+    const dynamicLocations = [...new Set(allLocs)];
+
+    dynamicLocations.sort((a, b) => {
+        const idxA = LOC_PRIORITY.indexOf(a);
+        const idxB = LOC_PRIORITY.indexOf(b);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return a.localeCompare(b);
+    });
+
+    const locations = ['All', ...dynamicLocations];
+
+    // Filter shifts by location (Case Insensitive) and Map for Calendar
+    const filteredShifts = (selectedLocation === 'All'
+        ? shifts
+        : shifts.filter(s => normalizeLoc(s.location) === selectedLocation)
+    ).map(s => ({
+        ...s,
+        isReadOnly: s.is_locked,
+        category: 'time'
+    }));
 
     const handleViewChange = (mode) => {
         setViewMode(mode);
@@ -74,19 +100,30 @@ const CalendarView = () => {
             });
 
             // Map backend shifts to Toast UI events
-            const events = response.data.map(shift => ({
-                id: shift.id.toString(),
-                calendarId: shift.employee_id ? shift.employee_id.toString() : 'OPEN',
-                title: shift.notes || 'Shift',
-                category: 'time',
-                start: shift.start_time,
-                end: shift.end_time,
-                location: shift.location,
-                booth_number: shift.booth_number,
-                backgroundColor: getRoleColor(shift.role_id),
-                roleId: shift.role_id,
-                color: '#fff'
-            }));
+            const events = response.data.map(shift => {
+                // Find employee name for tooltip
+                const emp = employees.find(e => e.id === shift.employee_id);
+                const empName = emp ? `${emp.first_name} ${emp.last_name}` : 'Open Shift';
+                const role = roles.find(r => r.id === shift.role_id);
+                const roleName = role ? role.name : 'Unknown Role';
+
+                return {
+                    id: shift.id.toString(),
+                    calendarId: shift.employee_id ? shift.employee_id.toString() : 'OPEN',
+                    title: empName,
+                    body: `${roleName}${shift.location ? ' @ ' + shift.location : ''}${shift.notes ? '\n' + shift.notes : ''}`,
+                    category: 'time',
+                    start: shift.start_time,
+                    end: shift.end_time,
+                    location: shift.location,
+                    booth_number: shift.booth_number,
+                    backgroundColor: getRoleColor(shift.role_id),
+                    roleId: shift.role_id,
+                    color: '#fff',
+                    is_locked: shift.is_locked,
+                    isReadOnly: shift.is_locked
+                };
+            });
             setShifts(events);
         } catch (error) {
             console.error("Error fetching shifts:", error);
@@ -186,11 +223,19 @@ const CalendarView = () => {
 
     const onClickSchedule = async (event) => {
         console.log("onClickSchedule event:", event);
-        const { schedule } = event;
+
+        // Handle both old (schedule) and new (event) Toast UI format
+        const schedule = event.schedule || event.event || event;
+        const shiftId = schedule.id;
+
+        if (!shiftId) {
+            console.error("No shift ID found in event:", event);
+            return;
+        }
 
         // Fetch the full shift data from API to get ALL fields
         try {
-            const response = await axios.get(`${BASE_URL}/shifts/${schedule.id}`);
+            const response = await axios.get(`${BASE_URL}/shifts/${shiftId}`);
             const fullShift = response.data;
 
             setSelectedShift({
@@ -225,7 +270,8 @@ const CalendarView = () => {
                 notes: data.notes || null,
                 location: data.location || null,
                 booth_number: data.booth_number || null,
-                is_vacation: data.is_vacation || false
+                is_vacation: data.is_vacation || false,
+                force_save: data.force_save || false
             };
 
             console.log('Sending payload:', payload);
@@ -243,7 +289,8 @@ const CalendarView = () => {
             fetchShifts(); // Refresh shifts without reloading page
         } catch (error) {
             console.error("Save failed:", error);
-            alert("Save failed: " + (error.response?.data?.detail || error.message));
+            const errorMsg = error.response?.data?.detail || error.message;
+            alert("Save failed: " + errorMsg + "\n\nTip: Check 'Force Save' to override conflict detection.");
         }
     };
 
@@ -256,6 +303,34 @@ const CalendarView = () => {
             fetchShifts(); // Refresh shifts without reloading page
         } catch (error) {
             console.error("Delete failed:", error);
+        }
+    };
+
+    const handleProjectSchedule = async () => {
+        const weeks = prompt("Project Master Schedule for how many weeks?", "4");
+        if (!weeks) return;
+
+        const numWeeks = parseInt(weeks);
+        if (isNaN(numWeeks) || numWeeks <= 0) {
+            alert("Invalid number of weeks");
+            return;
+        }
+
+        if (!confirm(`This will generate shifts from the MASTER TEMPLATES for the next ${numWeeks} weeks. \n\nNote: This will ADD new shifts. It will NOT delete existing locked shifts.`)) return;
+
+        try {
+            const startOfWeekDate = startOfWeek(currentDate, { weekStartsOn: 6 }); // Saturday start
+            const payload = {
+                start_date: format(startOfWeekDate, "yyyy-MM-dd'T'HH:mm:ss"),
+                num_weeks: numWeeks
+            };
+
+            const response = await axios.post(`${BASE_URL}/shifts/apply-schedule/`, payload);
+            alert(`Schedule Projected Successfully!\nCreated ${response.data.created_count} shifts from templates.`);
+            fetchShifts();
+        } catch (error) {
+            console.error("Projection failed:", error);
+            alert(`Projection failed: ${error.response?.data?.detail || error.message}`);
         }
     };
 
@@ -279,37 +354,38 @@ const CalendarView = () => {
 
     return (
         <>
-            <div className="h-screen flex flex-col p-4 print:hidden">
+            <div className="h-full flex flex-col print:hidden">
                 {/* Toolbar */}
                 <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold">Schedule</h1>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1">
                             <button
                                 onClick={() => handleViewChange('roster')}
-                                className={`px-3 py-1 rounded ${viewMode === 'roster' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'roster' ? 'btn-primary' : 'btn-secondary'}`}
                             >
                                 Roster
                             </button>
                             <button
                                 onClick={() => handleViewChange('week')}
-                                className={`px-3 py-1 rounded ${viewMode === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'week' ? 'btn-primary' : 'btn-secondary'}`}
                             >
                                 Week
                             </button>
                             <button
-                                onClick={() => handleViewChange('month')}
-                                className={`px-3 py-1 rounded ${viewMode === 'month' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                onClick={() => handleViewChange('master')}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'master' ? 'btn-primary' : 'btn-secondary'}`}
                             >
-                                Month
+                                Master Schedule
                             </button>
                         </div>
                     </div>
-                    {/* ... (Date nav remains same) ... */}
                     <div className="flex items-center gap-4">
                         <div className="flex gap-2">
+                            <button onClick={handleProjectSchedule} className="bg-purple-600 text-white px-3 py-1.5 rounded text-sm hover:bg-purple-700 font-medium">
+                                🚀 Project Schedule
+                            </button>
                             <ExportImportButtons onPrintCallSheet={() => setShowCallSheet(true)} />
-                            <button onClick={handlePrint} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 flex items-center gap-2 font-medium shadow-sm">
+                            <button onClick={handlePrint} className="btn-primary flex items-center gap-2">
                                 Print / PDF
                             </button>
                         </div>
@@ -344,20 +420,22 @@ const CalendarView = () => {
                 </div>
 
                 {/* Location Tabs */}
-                <div className="flex gap-2 overflow-x-auto pb-2 mb-2">
+                <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
                     {locations.map(loc => (
                         <button key={loc} onClick={() => setSelectedLocation(loc)}
-                            className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${selectedLocation === loc ? 'bg-blue-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-100 border'}`}>
+                            className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${selectedLocation === loc ? 'btn-primary' : 'btn-secondary'}`}>
                             {loc}
                         </button>
                     ))}
                 </div>
 
                 {/* Calendar / Roster View */}
-                <div className="flex-1 border rounded shadow bg-white relative overflow-hidden">
+                <div className="card flex-1 relative overflow-hidden">
 
 
-                    {viewMode === 'roster' ? (
+                    {viewMode === 'master' ? (
+                        <TemplateEditor selectedLocation={selectedLocation} />
+                    ) : viewMode === 'roster' ? (
                         <RosterView
                             currentDate={currentDate}
                             employees={getFilteredEmployees()} // Only employees matching filters
@@ -378,25 +456,68 @@ const CalendarView = () => {
                             onRefresh={fetchShifts}
                         />
                     ) : (
-                        <Calendar
-                            ref={calendarRef}
-                            height="100%"
-                            view={viewMode}
-                            week={{
-                                startDayOfWeek: 6,
-                                taskView: false,
-                                eventView: ['time'],
-                                hourStart: 6,
-                                hourEnd: 24
-                            }}
-                            useCreationPopup={false}
-                            useDetailPopup={false}
-                            calendars={calendars}
-                            events={filteredShifts}
-                            onBeforeUpdateSchedule={onBeforeUpdateSchedule}
-                            onBeforeCreateSchedule={onBeforeCreateSchedule}
-                            onClickSchedule={onClickSchedule}
-                        />
+                        <div className="h-full flex flex-col">
+                            {/* Zoom Controls */}
+                            <div className="flex items-center gap-3 mb-2 px-2">
+                                <span className="text-xs text-gray-500">Zoom:</span>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="8"
+                                    value={zoomLevel}
+                                    onChange={(e) => setZoomLevel(parseInt(e.target.value))}
+                                    className="w-24 h-1 accent-blue-600"
+                                />
+                                <span className="text-xs text-gray-400">{zoomLevel}:00 - 24:00</span>
+                            </div>
+                            <div className="flex-1">
+                                <Calendar
+                                    ref={calendarRef}
+                                    height="100%"
+                                    view={viewMode}
+                                    template={{
+                                        time: function (schedule) {
+                                            return `<span style="color: inherit;">${schedule.isReadOnly ? '<span class="hide-on-print" style="font-weight:bold; color:white;">*</span> ' : ''}${schedule.title}</span>`;
+                                        }
+                                    }}
+                                    week={{
+                                        startDayOfWeek: 6,
+                                        taskView: false,
+                                        eventView: ['time'],
+                                        hourStart: zoomLevel,
+                                        hourEnd: 24
+                                    }}
+                                    useCreationPopup={false}
+                                    useDetailPopup={true}
+                                    calendars={calendars}
+                                    events={filteredShifts}
+                                    onBeforeUpdateSchedule={onBeforeUpdateSchedule}
+                                    onBeforeCreateSchedule={onBeforeCreateSchedule}
+                                    onSelectDateTime={(e) => {
+                                        // Create new shift on time selection
+                                        setSelectedShift({
+                                            start: new Date(e.start),
+                                            end: new Date(e.end),
+                                            title: ''
+                                        });
+                                        setIsModalOpen(true);
+                                    }}
+                                    onBeforeDeleteEvent={(e) => {
+                                        // Handle Delete button from popup
+                                        const shiftId = e.id;
+                                        if (confirm("Delete this shift?")) {
+                                            axios.delete(`${BASE_URL}/shifts/${shiftId}`)
+                                                .then(() => fetchShifts())
+                                                .catch(err => alert("Delete failed: " + err.message));
+                                        }
+                                    }}
+                                    onBeforeUpdateEvent={(e) => {
+                                        // Handle Edit button from popup - open our modal
+                                        onClickSchedule({ event: e.event });
+                                    }}
+                                />
+                            </div>
+                        </div>
                     )}
                 </div>
 

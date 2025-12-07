@@ -47,6 +47,27 @@ LOCATION_MAPPINGS = {
 
 @app.on_event("startup")
 def on_startup():
+    # Database Backup
+    import shutil
+    import os
+    try:
+        db_file = "schedule.db"
+        if os.path.exists(db_file):
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_name = f"backups/schedule_backup_{timestamp}.db"
+            os.makedirs("backups", exist_ok=True)
+            shutil.copy2(db_file, backup_name)
+            print(f"Database backed up to {backup_name}")
+            
+            # Keep only last 10 backups
+            backups = sorted([f for f in os.listdir("backups") if f.endswith(".db")])
+            if len(backups) > 10:
+                for b in backups[:-10]:
+                    os.remove(os.path.join("backups", b))
+                    print(f"Removed old backup {b}")
+    except Exception as e:
+        print(f"Backup failed: {e}")
+
     create_db_and_tables()
 
 from pydantic import BaseModel, ConfigDict
@@ -146,10 +167,15 @@ class ShiftRead(BaseModel):
     location: Optional[str] = None
     booth_number: Optional[str] = None
     is_vacation: bool
+    is_locked: bool = False
     parent_id: Optional[int] = None
 
 @app.post("/shifts/", response_model=List[ShiftRead])
 def create_shift(shift_data: ShiftCreate, session: Session = Depends(get_session)):
+    # Validate end time is after start time
+    if shift_data.end_time <= shift_data.start_time:
+        raise HTTPException(status_code=400, detail="End time must be after start time")
+    
     # 1. Base Shift Data
     shifts_to_create = []
     
@@ -251,6 +277,8 @@ class ShiftUpdate(BaseModel):
     location: Optional[str] = None
     booth_number: Optional[str] = None
     is_vacation: Optional[bool] = None
+    is_locked: Optional[bool] = None
+    force_save: Optional[bool] = False  # Skip conflict detection
 
 @app.get("/shifts/{shift_id}", response_model=ShiftRead)
 def get_shift(shift_id: int, session: Session = Depends(get_session)):
@@ -267,11 +295,21 @@ def update_shift(shift_id: int, shift_data: ShiftUpdate, session: Session = Depe
     
     # Update only provided fields
     update_data = shift_data.model_dump(exclude_unset=True)
+    force_save = update_data.pop('force_save', False)
     
-    # Conflict detection (excluding self, and only if employee assigned)
-    if 'employee_id' in update_data and update_data['employee_id']:
+    # Check if shift is locked (unless we're just unlocking it)
+    is_unlocking = update_data.get('is_locked') == False
+    if shift.is_locked and not is_unlocking and not force_save:
+        raise HTTPException(status_code=403, detail="Shift is locked. Use Force Save to override.")
+    
+    # Conflict detection (excluding self, and only if employee assigned) - skip if force_save
+    if not force_save and 'employee_id' in update_data and update_data['employee_id']:
         start_time = update_data.get('start_time', shift.start_time)
         end_time = update_data.get('end_time', shift.end_time)
+        
+        # Validate end time is after start time
+        if end_time <= start_time:
+            raise HTTPException(status_code=400, detail="End time must be after start time")
         
         statement = select(Shift).where(
             Shift.employee_id == update_data['employee_id'],
@@ -293,10 +331,12 @@ def update_shift(shift_id: int, shift_data: ShiftUpdate, session: Session = Depe
     return shift
 
 @app.delete("/shifts/{shift_id}")
-def delete_shift(shift_id: int, session: Session = Depends(get_session)):
+def delete_shift(shift_id: int, force: bool = False, session: Session = Depends(get_session)):
     shift = session.get(Shift, shift_id)
     if not shift:
         raise HTTPException(status_code=404, detail="Shift not found")
+    if shift.is_locked and not force:
+        raise HTTPException(status_code=403, detail="Shift is locked. Cannot delete.")
     session.delete(shift)
     session.commit()
     return {"ok": True}
@@ -307,14 +347,15 @@ class BulkShiftUpdate(BaseModel):
     role_id: Optional[int] = None
     location: Optional[str] = None
     booth_number: Optional[str] = None
+    is_locked: Optional[bool] = None
 
 @app.post("/shifts/bulk-update/")
 def bulk_update_shifts(data: BulkShiftUpdate, session: Session = Depends(get_session)):
     if not data.shift_ids:
         raise HTTPException(status_code=400, detail="No shift IDs provided")
     
-    if data.role_id is None and data.location is None and data.booth_number is None:
-        raise HTTPException(status_code=400, detail="No updates specified (role_id, location, or booth_number required)")
+    if data.role_id is None and data.location is None and data.booth_number is None and data.is_locked is None:
+        raise HTTPException(status_code=400, detail="No updates specified")
     
     updated_count = 0
     for shift_id in data.shift_ids:
@@ -326,6 +367,8 @@ def bulk_update_shifts(data: BulkShiftUpdate, session: Session = Depends(get_ses
                 shift.location = data.location
             if data.booth_number is not None:
                 shift.booth_number = data.booth_number
+            if data.is_locked is not None:
+                shift.is_locked = data.is_locked
             session.add(shift)
             updated_count += 1
     
@@ -350,6 +393,309 @@ def bulk_delete_shifts(data: BulkShiftDelete, session: Session = Depends(get_ses
     
     session.commit()
     return {"ok": True, "deleted_count": deleted_count}
+
+# --- Project Locked Shifts to Future Weeks ---
+class ProjectLockedRequest(BaseModel):
+    base_week_start: datetime  # Saturday of the base week
+    num_weeks: int = 4  # Number of future weeks to project to
+
+@app.post("/shifts/project-locked/")
+def project_locked_shifts(data: ProjectLockedRequest, session: Session = Depends(get_session)):
+    from datetime import timedelta
+    
+    # Get all locked shifts in the base week
+    base_week_end = data.base_week_start + timedelta(days=7)
+    locked_shifts = session.exec(
+        select(Shift).where(
+            Shift.is_locked == True,
+            Shift.start_time >= data.base_week_start,
+            Shift.start_time < base_week_end
+        )
+    ).all()
+    
+    if not locked_shifts:
+        raise HTTPException(status_code=400, detail="No locked shifts found in the base week")
+    
+    created_count = 0
+    updated_count = 0
+    
+    for week_offset in range(1, data.num_weeks + 1):
+        days_offset = timedelta(days=7 * week_offset)
+        
+        for base_shift in locked_shifts:
+            new_start = base_shift.start_time + days_offset
+            new_end = base_shift.end_time + days_offset
+            
+            # Target day range
+            target_day_start = new_start.replace(hour=0, minute=0, second=0, microsecond=0)
+            target_day_end = target_day_start + timedelta(days=1)
+            
+            # Check for existing shifts for this employee on this day
+            existing_shifts = session.exec(
+                select(Shift).where(
+                    Shift.employee_id == base_shift.employee_id,
+                    Shift.start_time >= target_day_start,
+                    Shift.start_time < target_day_end
+                )
+            ).all()
+            
+            # Logic:
+            # 1. If any existing shift is LOCKED, skip this projection (conflict with another master)
+            # 2. If existing shifts are UNLOCKED, delete them (assume we are overwriting with new master)
+            
+            has_locked_conflict = any(s.is_locked for s in existing_shifts)
+            if has_locked_conflict:
+                continue # Skip, respect future lock
+            
+            # Delete existing unlocked shifts on this day to prevent recurrence duplicates
+            for s in existing_shifts:
+                session.delete(s)
+                updated_count += 1 # Count deletions as updates
+            
+            # Create new projected shift
+            new_shift = Shift(
+                employee_id=base_shift.employee_id,
+                role_id=base_shift.role_id,
+                start_time=new_start,
+                end_time=new_end,
+                notes=base_shift.notes,
+                location=base_shift.location,
+                booth_number=base_shift.booth_number,
+                is_locked=False,  # Projected shifts are not locked
+                is_vacation=base_shift.is_vacation
+            )
+            session.add(new_shift)
+            created_count += 1
+    
+    session.commit()
+    return {"ok": True, "created_count": created_count, "deleted_old_count": updated_count, "weeks_projected": data.num_weeks}
+
+# --- Shift Templates (Master Schedule) ---
+from models import ShiftTemplate
+
+@app.get("/templates/", response_model=List[ShiftTemplate])
+def read_templates(session: Session = Depends(get_session)):
+    return session.exec(select(ShiftTemplate)).all()
+
+class ShiftTemplateRequest(BaseModel):
+    employee_id: int
+    role_id: int
+    day_of_week: int
+    start_time: str
+    end_time: str
+    location: Optional[str] = None
+    booth_number: Optional[str] = None
+    sync_to_locked: bool = False
+
+@app.post("/templates/", response_model=ShiftTemplate)
+def create_template(data: ShiftTemplateRequest, session: Session = Depends(get_session)):
+    template = ShiftTemplate(
+        employee_id=data.employee_id,
+        role_id=data.role_id,
+        day_of_week=data.day_of_week,
+        start_time=data.start_time,
+        end_time=data.end_time,
+        location=data.location,
+        booth_number=data.booth_number
+    )
+    session.add(template)
+    session.commit()
+    session.refresh(template)
+    
+    if data.sync_to_locked:
+        from datetime import date
+        today = datetime.now().date()
+        
+        # Calculate first occurrence of the target day
+        days_ahead = data.day_of_week - today.weekday()
+        if days_ahead < 0: 
+            days_ahead += 7
+        
+        start_date = today + timedelta(days=days_ahead)
+        
+        # Sync for 8 weeks
+        for i in range(8):
+            target_date = start_date + timedelta(weeks=i)
+            
+            # Find ANY shift for this employee on this day
+            day_start = datetime.combine(target_date, time(0,0))
+            day_end = datetime.combine(target_date, time(23,59,59))
+            
+            existing_shift = session.exec(select(Shift).where(
+                Shift.employee_id == data.employee_id,
+                Shift.start_time >= day_start,
+                Shift.start_time <= day_end
+            )).first()
+            
+            # Prepare new times
+            th, tm = map(int, data.start_time.split(':'))
+            eh, em = map(int, data.end_time.split(':'))
+            
+            new_start_dt = datetime.combine(target_date, time(th, tm))
+            
+            if data.start_time > data.end_time:
+                end_date = target_date + timedelta(days=1)
+            else:
+                end_date = target_date
+            
+            new_end_dt = datetime.combine(end_date, time(eh, em))
+            
+            if existing_shift:
+                # Update and Lock
+                existing_shift.start_time = new_start_dt
+                existing_shift.end_time = new_end_dt
+                existing_shift.role_id = data.role_id
+                existing_shift.location = data.location
+                existing_shift.booth_number = data.booth_number
+                existing_shift.is_locked = True
+                session.add(existing_shift)
+            else:
+                # Create New
+                new_shift = Shift(
+                    employee_id=data.employee_id,
+                    role_id=data.role_id,
+                    start_time=new_start_dt,
+                    end_time=new_end_dt,
+                    location=data.location,
+                    booth_number=data.booth_number,
+                    is_locked=True,
+                    is_repeating=False
+                )
+                session.add(new_shift)
+                
+        session.commit()
+
+    return template
+
+@app.delete("/templates/{template_id}")
+def delete_template(template_id: int, session: Session = Depends(get_session)):
+    template = session.get(ShiftTemplate, template_id)
+    if not template:
+        raise HTTPException(status_code=404, detail="Template not found")
+    session.delete(template)
+    session.commit()
+    return {"ok": True}
+
+class ApplyScheduleRequest(BaseModel):
+    start_date: datetime
+    num_weeks: int = 4
+
+@app.post("/shifts/apply-schedule/")
+def apply_schedule(data: ApplyScheduleRequest, session: Session = Depends(get_session)):
+    # Applies templates to generate shifts
+    templates = session.exec(select(ShiftTemplate)).all()
+    if not templates:
+        raise HTTPException(status_code=400, detail="No templates found")
+        
+    created_count = 0
+    from datetime import timedelta
+    
+    # Loop through weeks
+    for week_i in range(data.num_weeks):
+        # Calculate Monday of this week
+        # Assumes start_date is the start of the period
+        week_start = data.start_date + timedelta(weeks=week_i)
+        
+        for tmpl in templates:
+            # Calculate target date: Week Start + Day of Week
+            # Note: template.day_of_week 0=Monday. 
+            # If week_start is Saturday, we need to adjust.
+            # Let's assume week_start provided is the "Start of Week" (e.g. Saturday)
+            # And our Week definition is Sat=0? Or Mon=0?
+            # Model says 0=Monday.
+            # Week starts on Saturday (5). Monday is (0).
+            # So if start_date is Saturday:
+            # Sat(5), Sun(6), Mon(0), Tue(1)...
+            
+            # Simple approach: Find the date that matches the day_of_week within the 7 days following week_start containing
+            
+            for day_offset in range(7):
+                current_day = week_start + timedelta(days=day_offset)
+                if current_day.weekday() == tmpl.day_of_week:
+                    # Match! Create shift
+                    
+                    # Parse HH:MM
+                    th, tm = map(int, tmpl.start_time.split(':'))
+                    eh, em = map(int, tmpl.end_time.split(':'))
+                    
+                    s_dt = current_day.replace(hour=th, minute=tm, second=0, microsecond=0)
+                    e_dt = current_day.replace(hour=eh, minute=em, second=0, microsecond=0)
+                    
+                    # Handle overnight shifts (end < start)
+                    if e_dt <= s_dt:
+                        e_dt += timedelta(days=1)
+                        
+                    # Check for existing locked shift? (Respect Manual Locks)
+                    existing = session.exec(select(Shift).where(
+                        Shift.employee_id == tmpl.employee_id,
+                        Shift.start_time == s_dt,
+                        Shift.is_locked == True
+                    )).first()
+                    
+                    if not existing:
+                        # Create locked shift from template
+                        shift = Shift(
+                            employee_id=tmpl.employee_id,
+                            role_id=tmpl.role_id,
+                            start_time=s_dt,
+                            end_time=e_dt,
+                            location=tmpl.location,
+                            booth_number=tmpl.booth_number,
+                            is_repeating=False,
+                            is_locked=True # Template shifts are locked by default
+                        )
+                        session.add(shift)
+                        created_count += 1
+                    break
+    
+    session.commit()
+    return {"ok": True, "created_count": created_count}
+
+@app.post("/templates/import-from-locked/")
+def import_templates_from_locked(week_start: datetime, session: Session = Depends(get_session)):
+    # Find locked shifts in this week
+    week_end = week_start + timedelta(days=7)
+    locked_shifts = session.exec(select(Shift).where(
+        Shift.is_locked == True,
+        Shift.start_time >= week_start,
+        Shift.start_time < week_end
+    )).all()
+    
+    if not locked_shifts:
+        raise HTTPException(status_code=400, detail="No locked shifts found in this week")
+        
+    created_count = 0
+    skipped_count = 0
+    
+    for s in locked_shifts:
+        # Check if template already exists (same emp, day, time)
+        day_of_week = s.start_time.weekday()
+        s_time = s.start_time.strftime("%H:%M")
+        e_time = s.end_time.strftime("%H:%M")
+        
+        existing = session.exec(select(ShiftTemplate).where(
+            ShiftTemplate.employee_id == s.employee_id,
+            ShiftTemplate.day_of_week == day_of_week,
+            ShiftTemplate.start_time == s_time
+        )).first()
+        
+        if not existing:
+            tmpl = ShiftTemplate(
+                employee_id=s.employee_id,
+                role_id=s.role_id,
+                day_of_week=day_of_week,
+                start_time=s_time,
+                end_time=e_time,
+                location=s.location,
+                booth_number=s.booth_number
+            )
+            session.add(tmpl)
+            created_count += 1
+        else:
+            skipped_count += 1
+            
+    session.commit()
+    return {"ok": True, "created": created_count, "skipped": skipped_count}
 
 # --- Availability ---
 from models import Availability

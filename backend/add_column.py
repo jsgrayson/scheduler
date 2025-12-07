@@ -1,17 +1,11 @@
-from sqlmodel import text
-from database import engine, Session
+from sqlmodel import create_engine, text
 
-def add_column():
-    with Session(engine) as session:
-        try:
-            # Check if column exists first to avoid error
-            session.exec(text("SELECT willing_to_work_vacation_week FROM employee LIMIT 1"))
-            print("Column 'willing_to_work_vacation_week' already exists.")
-        except Exception:
-            print("Adding column 'willing_to_work_vacation_week'...")
-            session.exec(text("ALTER TABLE employee ADD COLUMN willing_to_work_vacation_week BOOLEAN DEFAULT 1"))
-            session.commit()
-            print("Column added successfully.")
+engine = create_engine("sqlite:///schedule.db")
 
-if __name__ == "__main__":
-    add_column()
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE shift ADD COLUMN is_repeating BOOLEAN DEFAULT 0"))
+        conn.commit()
+        print("Column is_repeating added successfully.")
+    except Exception as e:
+        print(f"Error (maybe column exists): {e}")
