@@ -780,7 +780,15 @@ def autofill_shifts(session: Session = Depends(get_session)):
             # --- Check 3: Weekly Hours Cap ---
             if employee.max_weekly_hours:
                 shift_start = shift.start_time
-                start_of_week = shift_start - timedelta(days=shift_start.weekday())
+                # Week starts on Saturday (5). Monday is 0.
+                # Calculate days to subtract to get to previous Saturday
+                # Mon(0)->Sat(-2 or +5), Tue(1)->Sat(-3)...
+                # Formula: (weekday + 2) % 7 is days since Saturday?
+                # 0(Mon) -> 2 days since Sat? Sat(-2), Sun(-1)? Yes.
+                # 5(Sat) -> 0 days since Sat.
+                # 6(Sun) -> 1 day since Sat.
+                days_since_saturday = (shift_start.weekday() + 2) % 7
+                start_of_week = shift_start - timedelta(days=days_since_saturday)
                 start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
                 end_of_week = start_of_week + timedelta(days=7)
                 
@@ -969,8 +977,9 @@ def validate_shifts(request: ValidationRequest, session: Session = Depends(get_s
             employee = session.get(Employee, shift.employee_id)
             if not employee: continue
             
-            shift_start = shift.start_time
-            start_of_week = shift_start - timedelta(days=shift_start.weekday())
+            # Week starts on Saturday
+            days_since_saturday = (shift_start.weekday() + 2) % 7
+            start_of_week = shift_start - timedelta(days=days_since_saturday)
             start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
             end_of_week = start_of_week + timedelta(days=7)
             
@@ -1016,19 +1025,33 @@ def get_recommendations(
     5. Daily Hours (Prefer < 8)
     """
     
-    # Get candidates
+    # 1. Get candidates (Broad role check)
     if role_id:
-        candidates = session.exec(select(Employee).where(Employee.default_role_id == role_id)).all()
+        # Match if default_role_id == role_id OR role_id is in their secondary roles
+        # This is hard to do in one SQL select with SQLModel effectively without join complexity
+        # Easier to fetch all active employees and filter in python for this MVP scale (<100 employees)
+        all_emps = session.exec(select(Employee).where(Employee.is_active == True)).all()
+        candidates = []
+        for emp in all_emps:
+            # Check default role
+            if emp.default_role_id == role_id:
+                candidates.append(emp)
+                continue
+            # Check secondary roles
+            if any(r.id == role_id for r in emp.roles):
+                candidates.append(emp)
     else:
-        candidates = session.exec(select(Employee)).all()
+        candidates = session.exec(select(Employee).where(Employee.is_active == True)).all()
     # 2. Filter and Score Employees
     recommendations = []
     
     # Calculate start/end of the week for the proposed shift
-    # Assuming week starts on Monday
-    shift_date = start_time.date()
-    start_of_week = shift_date - timedelta(days=shift_date.weekday())
+    # Week starts on Saturday (5)
+    days_since_saturday = (shift_date.weekday() + 2) % 7
+    start_of_week = shift_date - timedelta(days=days_since_saturday)
     end_of_week = start_of_week + timedelta(days=6)
+    
+    # Ensure naive datetime for logic consistency
     week_start_dt = datetime.combine(start_of_week, datetime.min.time())
     week_end_dt = datetime.combine(end_of_week, datetime.max.time())
 
@@ -1118,7 +1141,9 @@ def get_recommendations(
             continue # Skip invalid candidates
             
         # 3. Weekly Hours Check
-        start_of_week = start_time - timedelta(days=start_time.weekday())
+        # Week starts on Saturday
+        days_since_saturday = (start_time.weekday() + 2) % 7
+        start_of_week = start_time - timedelta(days=days_since_saturday)
         start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_week = start_of_week + timedelta(days=7)
         
@@ -1133,10 +1158,14 @@ def get_recommendations(
         projected_weekly = current_weekly_hours + new_shift_hours
         
         if emp.max_weekly_hours and projected_weekly > emp.max_weekly_hours:
-            score -= 50
-            reasons.append(f"Overtime Risk: {projected_weekly:.1f} / {emp.max_weekly_hours} hrs")
+            # User Request: STRICT "None OT"
+            is_valid = False
+            reasons.append(f"Would exceed max hours ({projected_weekly:.1f} > {emp.max_weekly_hours})")
         else:
             reasons.append(f"Weekly: {projected_weekly:.1f} hrs")
+            
+        if not is_valid:
+            continue
             
         # 4. Daily Hours Check
         # Get shifts for just this day
@@ -1185,8 +1214,10 @@ def get_call_rotation(role_id: Optional[int] = None, session: Session = Depends(
     employees = session.exec(query).all()
     
     # Calculate weekly hours for FT employees to see if they should be on PT list
+    # Week starts Saturday
     today = datetime.now()
-    start_of_week = today - timedelta(days=today.weekday())
+    days_since_saturday = (today.weekday() + 2) % 7
+    start_of_week = today - timedelta(days=days_since_saturday)
     start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
     end_of_week = start_of_week + timedelta(days=7)
     
@@ -2696,26 +2727,57 @@ def get_call_sheet(shift_id: int, session: Session = Depends(get_session)):
             # Sort by hire date
             sorted_cashiers = sorted(all_cashiers, key=lambda x: x.hire_date or datetime.max)
             
+            # Probationary: hire_date + 90 days >= current date
+            def is_probationary(emp):
+                if not emp.hire_date:
+                    return False
+                probation_end = emp.hire_date + timedelta(days=90)
+                return probation_end >= datetime.now()
+            
+            # Separate regular and probationary for each page
+            page_1_regular = []
+            page_1_probation = []
+            page_2_regular = []
+            page_2_probation = []
+            page_3_regular = []
+            page_3_probation = []
+            
             for emp in sorted_cashiers:
                 weekly_hours = round(get_weekly_hours(emp.id), 1)  # Round to fix floating point precision
                 is_ft = is_full_time(emp)
+                is_prob = is_probationary(emp)
                 
                 # FT with <= 32h scheduled is treated as PT for call sheet
                 treat_as_pt = (not is_ft) or (is_ft and weekly_hours <= 32)
                 
                 if treat_as_pt:
                     # PT employee (or FT with <= 32h) -> Page 1 AND Page 3
-                    page_1_list.append((emp, "Page 1"))
-                    page_3_list.append((emp, "Page 3"))
+                    if is_prob:
+                        page_1_probation.append((emp, "Page 1 (Probationary)"))
+                        page_3_probation.append((emp, "Page 3 (Probationary)"))
+                    else:
+                        page_1_regular.append((emp, "Page 1"))
+                        page_3_regular.append((emp, "Page 3"))
                 elif is_ft:
                     # FT employee with > 32h
                     if weekly_hours >= 40 or (weekly_hours + target_duration) > 40:
                         # FT at or over 40h -> Page 2 (OT)
-                        page_2_list.append((emp, "Page 2"))
+                        if is_prob:
+                            page_2_probation.append((emp, "Page 2 (Probationary)"))
+                        else:
+                            page_2_regular.append((emp, "Page 2"))
                     else:
                         # FT between 32-40h -> Page 1 only
-                        page_1_list.append((emp, "Page 1"))
+                        if is_prob:
+                            page_1_probation.append((emp, "Page 1 (Probationary)"))
+                        else:
+                            page_1_regular.append((emp, "Page 1"))
 
+            # Combine: regular first, probationary at end of each page section
+            page_1_list = page_1_regular + page_1_probation
+            page_2_list = page_2_regular + page_2_probation
+            page_3_list = page_3_regular + page_3_probation
+            
             candidate_objects = page_1_list + page_2_list + page_3_list
         
         if not candidate_objects:
@@ -2774,6 +2836,16 @@ def get_call_sheet(shift_id: int, session: Session = Depends(get_session)):
             
             status = "Available"
             details = ""
+            
+            # Check if probationary (section contains '(Probationary)')
+            is_probationary_emp = "(Probationary)" in section
+            if is_probationary_emp:
+                if emp.hire_date:
+                    days_since_hire = (datetime.now() - emp.hire_date).days
+                    days_remaining = 90 - days_since_hire
+                    details = f"Probationary ({days_remaining} days left)"
+                else:
+                    details = "Probationary"
             
             # Check if this is the employee who originally had the shift (Called Out)
             if target_shift.employee_id and emp.id == target_shift.employee_id:

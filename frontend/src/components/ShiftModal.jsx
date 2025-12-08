@@ -88,10 +88,15 @@ const ShiftModal = ({ isOpen, onClose, initialData, onSave, onDelete }) => {
         if (!startTime || !endTime) return;
         setLoadingRecs(true);
         try {
+            // Send as local time string (YYYY-MM-DDTHH:mm:ss) to match backend naive storage
+            // startTime is typically YYYY-MM-DDTHH:mm
+            const startStr = startTime.length === 16 ? startTime + ':00' : startTime;
+            const endStr = endTime.length === 16 ? endTime + ':00' : endTime;
+
             const response = await axios.get(`${BASE_URL}/recommendations/`, {
                 params: {
-                    start_time: new Date(startTime).toISOString(),
-                    end_time: new Date(endTime).toISOString(),
+                    start_time: startStr,
+                    end_time: endStr,
                     role_id: roleId || undefined
                 }
             });

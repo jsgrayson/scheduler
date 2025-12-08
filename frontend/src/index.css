@@ -46,8 +46,44 @@ body {
 }
 
 @media print {
-    .hide-on-print {
+    body {
+        background: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .hide-on-print,
+    .print\\:hidden {
         display: none !important;
+    }
+
+    /* Ensure fixed modals print properly */
+    .fixed {
+        position: static !important;
+    }
+
+    /* Show print content */
+    .print-content {
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    /* Ensure tables display */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    th,
+    td {
+        border: 1px solid black !important;
+        padding: 4px !important;
+    }
+
+    /* Page breaks */
+    .break-after-page {
+        break-after: page;
+        page-break-after: always;
     }
 }
 

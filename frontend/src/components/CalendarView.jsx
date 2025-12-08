@@ -37,14 +37,22 @@ const CalendarView = () => {
 
     // Build location tabs from shifts
     // Sort priority
-    const LOC_PRIORITY = ['SUPERVISORS', 'OFFICE', 'MAINTENANCE', 'CONRAC', 'PLAZA', 'CUSTOMER LOTS', 'LOT 1', 'LOT 2', 'LOT 3', 'LOT 4', 'EMPLOYEE LOT'];
+    const LOC_PRIORITY = [
+        'LOT 1', 'LOT 2', 'LOT 3', 'LOT 4', 'ELOT',
+        'PLAZA', 'CONRAC', 'OFFICE', 'MAINTENANCE',
+        'SUPERVISORS', 'CUSTOMER LOTS', 'CASHIER'
+    ];
 
     // Build location tabs from shifts (Case Insensitive normalization)
     const normalizeLoc = (loc) => loc ? loc.toUpperCase().trim() : '';
 
     const allLocs = shifts.map(s => normalizeLoc(s.location)).filter(l => l && l !== 'GENERAL');
-    const dynamicLocations = [...new Set(allLocs)];
+    // Merge dynamic locations with our priority list to ensure all "Standard" locations exist
+    // even if they have no shifts yet (important for Master Schedule)
+    const uniqueLocations = new Set([...LOC_PRIORITY, ...allLocs]);
 
+    // Sort logic
+    const dynamicLocations = [...uniqueLocations];
     dynamicLocations.sort((a, b) => {
         const idxA = LOC_PRIORITY.indexOf(a);
         const idxB = LOC_PRIORITY.indexOf(b);

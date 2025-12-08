@@ -15,7 +15,7 @@ const DAYS = [
 ];
 
 const LOCATIONS = [
-    "LOT 1", "LOT 2", "LOT 3", "LOT 4",
+    "LOT 1", "LOT 2", "LOT 3", "LOT 4", "ELOT",
     "PLAZA", "CONRAC", "OFFICE", "MAINTENANCE",
     "SUPERVISORS", "CUSTOMER LOTS", "CASHIER"
 ];
