@@ -14,6 +14,23 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
     const [willingToWorkVacation, setWillingToWorkVacation] = useState(false);
     const [maxWeeklyHours, setMaxWeeklyHours] = useState(40);
     const [hireDate, setHireDate] = useState('');
+    const [noOvertime, setNoOvertime] = useState(false);
+    const [noPlaza, setNoPlaza] = useState(false);
+    const [notes, setNotes] = useState('');
+    const [isActive, setIsActive] = useState(true);
+
+    // Availability grid: {day: {shift: bool}}
+    const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const SHIFTS = ['1st', '2nd', '3rd'];
+    const defaultGrid = () => {
+        const grid = {};
+        DAYS.forEach(day => {
+            grid[day] = {};
+            SHIFTS.forEach(shift => { grid[day][shift] = true; }); // Default all available
+        });
+        return grid;
+    };
+    const [availabilityGrid, setAvailabilityGrid] = useState(defaultGrid());
 
     const [roles, setRoles] = useState([]);
 
@@ -35,6 +52,21 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
             setWillingToWorkVacation(employee.willing_to_work_vacation_week || false);
             setMaxWeeklyHours(employee.max_weekly_hours || 40);
             setHireDate(employee.hire_date ? employee.hire_date.split('T')[0] : '');
+            setNoOvertime(employee.no_overtime || false);
+            setNoPlaza(employee.no_plaza || false);
+            setNotes(employee.notes || '');
+            setIsActive(employee.is_active !== false);
+
+            // Parse availability grid from JSON string
+            if (employee.availability_grid) {
+                try {
+                    setAvailabilityGrid(JSON.parse(employee.availability_grid));
+                } catch (e) {
+                    setAvailabilityGrid(defaultGrid());
+                }
+            } else {
+                setAvailabilityGrid(defaultGrid());
+            }
         } else {
             // Reset or defaults if creating new (though we are only editing for now)
             setFirstName('');
@@ -47,6 +79,11 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
             setWillingToWorkVacation(false);
             setMaxWeeklyHours(40);
             setHireDate('');
+            setNoOvertime(false);
+            setNoPlaza(false);
+            setNotes('');
+            setIsActive(true);
+            setAvailabilityGrid(defaultGrid());
         }
         fetchRoles();
     }, [employee]);
@@ -80,7 +117,12 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
             is_full_time: isFullTime,
             willing_to_work_vacation_week: isFullTime ? false : willingToWorkVacation,
             max_weekly_hours: parseFloat(maxWeeklyHours),
-            hire_date: hireDate ? new Date(hireDate).toISOString() : null
+            hire_date: hireDate ? new Date(hireDate).toISOString() : null,
+            no_overtime: noOvertime,
+            no_plaza: noPlaza,
+            notes: notes,
+            is_active: isActive,
+            availability_grid: JSON.stringify(availabilityGrid)
         };
         onSave(updatedData);
     };
@@ -88,9 +130,9 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-            <div className="bg-white p-5 rounded-lg shadow-xl w-full max-w-md">
-                <h2 className="text-xl font-bold mb-4">Edit Employee</h2>
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-start justify-center pt-4 pb-4">
+            <div className="bg-white p-5 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <h2 className="text-xl font-bold mb-4 sticky top-0 bg-white pb-2">Edit Employee</h2>
 
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-2 gap-4 mb-4">
@@ -175,28 +217,52 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
                         </select>
                     </div>
 
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Max Weekly Hours</label>
-                        <input
-                            type="number"
-                            step="0.5"
-                            value={maxWeeklyHours}
-                            onChange={(e) => setMaxWeeklyHours(e.target.value)}
-                            className="w-full border p-2 rounded"
-                        />
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label className="block text-sm font-bold mb-2">Max Weekly Hours</label>
+                            <input
+                                type="number"
+                                step="0.5"
+                                value={maxWeeklyHours}
+                                onChange={(e) => setMaxWeeklyHours(e.target.value)}
+                                className="w-full border p-2 rounded"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold mb-2">Hire Date</label>
+                            <input
+                                type="date"
+                                value={hireDate}
+                                onChange={(e) => setHireDate(e.target.value)}
+                                className="w-full border p-2 rounded"
+                            />
+                        </div>
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Hire Date</label>
-                        <input
-                            type="date"
-                            value={hireDate}
-                            onChange={(e) => setHireDate(e.target.value)}
-                            className="w-full border p-2 rounded"
+                        <label className="block text-sm font-bold mb-2">Notes</label>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            className="w-full border p-2 rounded h-16 text-sm"
+                            placeholder="Availability notes, restrictions, etc."
                         />
                     </div>
 
                     <div className="mb-4 border-t pt-4">
+                        <div className="flex items-center mb-2">
+                            <input
+                                type="checkbox"
+                                id="isActive"
+                                className="mr-2"
+                                checked={isActive}
+                                onChange={(e) => setIsActive(e.target.checked)}
+                            />
+                            <label htmlFor="isActive" className={`text-sm font-bold ${isActive ? 'text-green-600' : 'text-red-600'}`}>
+                                {isActive ? 'Active Employee' : 'INACTIVE - Removed from Schedules'}
+                            </label>
+                        </div>
+
                         <div className="flex items-center mb-2">
                             <input
                                 type="checkbox"
@@ -220,6 +286,71 @@ const EmployeeModal = ({ isOpen, onClose, employee, onSave }) => {
                                 <label htmlFor="willingVacation" className="text-sm text-gray-700">Willing to work vacation weeks</label>
                             </div>
                         )}
+
+                        <div className="flex items-center mb-2">
+                            <input
+                                type="checkbox"
+                                id="noOvertime"
+                                className="mr-2"
+                                checked={noOvertime}
+                                onChange={(e) => setNoOvertime(e.target.checked)}
+                            />
+                            <label htmlFor="noOvertime" className="text-sm text-red-600 font-bold">No Overtime</label>
+                        </div>
+
+                        <div className="flex items-center mb-2">
+                            <input
+                                type="checkbox"
+                                id="noPlaza"
+                                className="mr-2"
+                                checked={noPlaza}
+                                onChange={(e) => setNoPlaza(e.target.checked)}
+                            />
+                            <label htmlFor="noPlaza" className="text-sm text-orange-600 font-bold">No Plaza</label>
+                        </div>
+                    </div>
+
+                    {/* Availability Grid */}
+                    <div className="mb-4 border-t pt-4">
+                        <label className="block text-sm font-bold mb-2">Availability (Days & Shifts)</label>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-xs border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th className="border p-1 bg-gray-100"></th>
+                                        {DAYS.map(day => (
+                                            <th key={day} className="border p-1 bg-gray-100 uppercase">{day}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {SHIFTS.map(shift => (
+                                        <tr key={shift}>
+                                            <td className="border p-1 font-bold bg-gray-50">{shift}</td>
+                                            {DAYS.map(day => (
+                                                <td key={`${day}-${shift}`} className="border p-1 text-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={availabilityGrid[day]?.[shift] ?? true}
+                                                        onChange={(e) => {
+                                                            setAvailabilityGrid(prev => ({
+                                                                ...prev,
+                                                                [day]: {
+                                                                    ...prev[day],
+                                                                    [shift]: e.target.checked
+                                                                }
+                                                            }));
+                                                        }}
+                                                        className="w-4 h-4"
+                                                    />
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Check = Available for that shift/day. Uncheck = Not available.</p>
                     </div>
 
                     <div className="flex justify-end gap-2 mt-6">

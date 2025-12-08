@@ -9,6 +9,7 @@ import ExportImportButtons from './ExportImportButtons';
 import RosterView from './RosterView';
 import PrintSchedule from './PrintSchedule';
 import TemplateEditor from './TemplateEditor';
+import EmployeeModal from './EmployeeModal';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -211,6 +212,10 @@ const CalendarView = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedShift, setSelectedShift] = useState(null);
+
+    // Employee modal state
+    const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     const onBeforeCreateSchedule = (event) => {
         setSelectedShift({
@@ -444,14 +449,8 @@ const CalendarView = () => {
                             onShiftClick={(shift) => onClickSchedule({ schedule: shift })}
                             onEmptyCellClick={onEmptyCellClick}
                             onEmployeeClick={(emp) => {
-                                setSelectedShift({
-                                    employee_id: emp.id,
-                                    role_id: emp.default_role_id,
-                                    start: new Date(),
-                                    end: new Date(),
-                                    title: `${emp.first_name} ${emp.last_name}`
-                                });
-                                setIsModalOpen(true);
+                                setSelectedEmployee(emp);
+                                setIsEmployeeModalOpen(true);
                             }}
                             onRefresh={fetchShifts}
                         />
@@ -529,6 +528,24 @@ const CalendarView = () => {
                     initialData={selectedShift}
                     onSave={handleSaveShift}
                     onDelete={handleDeleteShift}
+                />
+
+                <EmployeeModal
+                    isOpen={isEmployeeModalOpen}
+                    onClose={() => setIsEmployeeModalOpen(false)}
+                    employee={selectedEmployee}
+                    onSave={async (updatedData) => {
+                        try {
+                            await axios.put(`${BASE_URL}/employees/${updatedData.id}`, updatedData);
+                            setIsEmployeeModalOpen(false);
+                            // Refresh employees list
+                            const res = await axios.get(`${BASE_URL}/employees/`);
+                            setEmployees(res.data);
+                        } catch (error) {
+                            console.error("Error saving employee:", error);
+                            alert(`Failed to save employee: ${error.response?.data?.detail || error.message}`);
+                        }
+                    }}
                 />
             </div>
             {isPrinting && <PrintSchedule shifts={shifts} employees={employees} currentDate={currentDate} />}

@@ -27,6 +27,10 @@ class EmployeeBase(SQLModel):
     hire_date: Optional[datetime] = Field(default=None, description="Date of hire")
     last_call_time: Optional[datetime] = Field(default=None, description="Timestamp of last call for rotation")
     notes: Optional[str] = Field(default=None, description="Availability notes")
+    availability_grid: Optional[str] = Field(default=None, description="JSON: {day: {shift: bool}} - days: sun,mon,tue,wed,thu,fri,sat - shifts: 1st,2nd,3rd")
+    no_overtime: bool = Field(default=False, description="Employee cannot work overtime")
+    no_plaza: bool = Field(default=False, description="Employee cannot work at Plaza location")
+    is_active: bool = Field(default=True, description="Active employees appear in schedules, inactive do not")
 
 class Employee(EmployeeBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
